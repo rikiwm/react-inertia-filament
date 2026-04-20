@@ -31,6 +31,9 @@
   "dependencies": {
     "@icons-pack/react-simple-icons": "^13.7.0",
     "@inertiajs/react": "^2.1",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-navigation-menu": "^1.2.14",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.539.0",
     "motion": "^12.23.12",

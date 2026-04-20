@@ -9,13 +9,15 @@ import {
     fetchAllProgulData,
     getProgulCategories,
     getActivasiByProgul,
-    type ProgulItem,
+    type ProgulData,
     type ProgulCategory,
-    type ActivasiCategory
+    type ActivasiCategory,
+    type KinerjaItem,
+    type ActivasiItem
 } from "@/Services/progulService";
 
 export function useProgulData() {
-    const [data, setData] = useState<ProgulItem[]>([]);
+    const [data, setData] = useState<ProgulData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
 
@@ -46,23 +48,31 @@ export function useProgulData() {
         return getActivasiByProgul(data, progulId);
     }, [data]);
 
-    const getKinerjaList = useCallback((activasiId: number): ProgulItem[] => {
-        return data.filter(item => item.id_sub_progul === activasiId);
+    const getKinerjaList = useCallback((activasiId: number): KinerjaItem[] => {
+        for (const progul of data) {
+            const activasi = progul.activasi.find(a => a.id === activasiId);
+            if (activasi) return activasi.kinerja;
+        }
+        return [];
     }, [data]);
 
     const getProgulById = useCallback((id: number): ProgulCategory | undefined => {
         return categories.find(c => c.id === id);
     }, [categories]);
 
-    const getActivasiById = useCallback((id: number): ActivasiCategory | undefined => {
-        const item = data.find(i => i.id_sub_progul === id);
-        if (!item) return undefined;
-        return {
-            id: item.id_sub_progul,
-            name: item.sub_progul,
-            progul_id: item.id_progul,
-            count: data.filter(i => i.id_sub_progul === id).length
-        };
+    const getActivasiById = useCallback((id: number): ActivasiCategory & { progul_id: number } | undefined => {
+        for (const progul of data) {
+            const activasi = progul.activasi.find(a => a.id === id);
+            if (activasi) {
+                return {
+                    id: activasi.id,
+                    name: activasi.nama,
+                    progul_id: progul.id,
+                    count: activasi.kinerja.length
+                };
+            }
+        }
+        return undefined;
     }, [data]);
 
     return {
@@ -77,3 +87,4 @@ export function useProgulData() {
         refetch: fetchData
     };
 }
+

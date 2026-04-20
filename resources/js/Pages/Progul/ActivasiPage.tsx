@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import FrontWrapper from '@/Wrappers/FrontWrapper';
 import { useProgulData } from '@/Hooks/useProgulData';
 import { motion } from 'motion/react';
+import { ReactNode } from 'react';
 import {
     ChevronLeft,
     Activity,
@@ -23,7 +24,7 @@ const ActivasiPage = ({ id }: Props) => {
     const activasiList = useMemo(() => getActivasiList(id), [getActivasiList, id]);
 
     return (
-        <FrontWrapper title={progul?.name || "Activasi Progul"}>
+        <>
             <Head title={`${progul?.name || 'Progul'} - Detail Activasi`} />
 
             <div className="min-h-screen bg-transparent pt-18 pb-20">
@@ -130,8 +131,9 @@ const ActivasiPage = ({ id }: Props) => {
                     )}
                 </div>
             </div>
-        </FrontWrapper>
+        </>
     );
 };
+ActivasiPage.layout = (page: ReactNode) => <FrontWrapper title="Activasi Program Unggulan Kota Padang">{page}</FrontWrapper>;
 
 export default ActivasiPage;

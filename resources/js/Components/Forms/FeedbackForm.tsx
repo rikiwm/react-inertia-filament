@@ -30,10 +30,10 @@ type ResponseStatus = "not-initiated" | "loading" | "success" | "error";
  */
 const FeedbackForm = () => {
     /** URL endpoint API eksternal untuk menerima umpan balik FLIRT Kit. */
-    const feedbackEndpoint = "https://flirt-kit.laravelnepal.com/feedback";
+    const feedbackEndpoint = "";
 
     const { errors, data, setData, setError } = useForm({
-        message: "Hey! I installed FLIRT Kit.",
+        message: "Hey! I installed PDG Kit.",
     });
 
     /**

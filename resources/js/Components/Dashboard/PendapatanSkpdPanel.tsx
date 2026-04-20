@@ -18,6 +18,7 @@ import { usePendapatanSkpd } from "@/Hooks/usePendapatanSkpd";
 import { cn } from "@/Lib/Utils";
 import type { PendapatanSkpdNormalized } from "@/Types/PendapatanSkpd";
 import { memo, useMemo, useState } from "react";
+import { route } from "ziggy-js";
 import {
     Bar,
     BarChart,
@@ -279,7 +280,7 @@ export const PendapatanSkpdPanel = memo(function PendapatanSkpdPanel({
                             />
                             <Bar dataKey="anggaran" fill="#e2e8f0" radius={[0, 8, 8, 0]} name="anggaran">
                                 {displayData.map((_, i) => (
-                                    <Cell key={i} className="dark:fill-neutral-800"/>
+                                    <Cell key={i} className="dark:fill-neutral-800" />
                                 ))}
                             </Bar>
                             <Bar dataKey="realisasi" fill="#025d58" radius={[0, 8, 8, 0]} name="realisasi">
@@ -366,7 +367,6 @@ export const PendapatanSkpdTable = memo(function PendapatanSkpdTable({
                                 <Table.Td align="center" className="" noWrap>
                                     {i + 1}
                                 </Table.Td>
-
                                 <Table.Td>
                                     <p className="text-neutral-900 uppercase dark:text-teal-400 text-xs mt-0.5 truncate font-semibold max-w-xs sm:max-w-md" title={skpd.label}>
                                         {skpd.label}

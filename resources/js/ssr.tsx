@@ -24,7 +24,7 @@ createServer((page) =>
             // @ts-expect-error - Define global route helper
             global.route = (name: RouteName, params?: any, absolute?: boolean) =>
                 route(name, params, absolute, {
-                    ...ziggy,
+                    ...ziggy as any,
                     location: new URL(ziggy.location),
                 });
             // eslint-enable

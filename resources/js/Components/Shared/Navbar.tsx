@@ -12,11 +12,28 @@
  */
 
 import ThemeToggler from "@/Components/Components/ThemeToggler";
+import { Button } from "@/Components/ui/Button";
+import {
+    NavigationMenu,
+    NavigationMenuContent,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+    NavigationMenuTrigger,
+    navigationMenuTriggerStyle,
+} from "@/Components/ui/NavigationMenu";
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/Components/ui/Sheet";
 import useTheme from "@/Hooks/useTheme";
 import { cn } from "@/Lib/Utils";
 import { SharedData } from "@/Types/Types";
-import { SiGithub } from "@icons-pack/react-simple-icons";
 import { Link, usePage } from "@inertiajs/react";
+import { Menu } from "lucide-react";
 import { motion } from "motion/react";
 import { route } from "ziggy-js";
 
@@ -27,6 +44,7 @@ import { route } from "ziggy-js";
  * 1. Mengambil `siteSettings` dari Inertia shared data untuk logo/nama aplikasi.
  * 2. Menyesuaikan warna background animasi berdasarkan mode tema aktif.
  * 3. Menampilkan logo gambar jika tersedia, atau nama aplikasi sebagai teks gradien.
+ * 4. Responsif: Desktop menggunakan NavigationMenu, Mobile menggunakan Sheet/Drawer.
  *
  * Navbar menggunakan animasi Framer Motion:
  * - Initial: transparan, sedikit di atas posisi akhir (y: -20)
@@ -35,12 +53,9 @@ import { route } from "ziggy-js";
 const Navbar = () => {
     const { siteSettings, menus } = usePage<SharedData>().props;
 
-    /** Nama aplikasi dari variabel lingkungan, dengan fallback ke "FLIRT Kit". */
+    /** Nama aplikasi dari variabel lingkungan, dengan fallback ke "PDG Kit". */
     const appName = import.meta.env.VITE_APP_NAME || "PDG Kit";
     const { isDarkMode } = useTheme();
-
-    /** Tautan repositori GitHub yang ditampilkan di pojok kanan navbar. */
-    const githubLink = "https://github.com/rikimukhra/vue-filament";
 
     /** Class CSS bersama untuk ikon-ikon interaktif di navbar. */
     const iconClass = "cursor-pointer text-teal-800 dark:text-teal-300 h-5";
@@ -99,29 +114,126 @@ const Navbar = () => {
                 )}
             </Link>
 
-            {/* Grup tautan navigasi kanan */}
-            <div className="flex flex-row items-center justify-end gap-2 lg:gap-5">
-                {/* Tautan Menu Dinamis */}
-                {menus.map((item) => (
-                    <Link
-                        key={item.id}
-                        href={item.resolved_url || item.url || "#"}
-                        target={item.target}
-                        className="text-black dark:text-teal-400/60 hover:text-teal-600 dark:hover:text-teal-400 transition-colors duration-200"
-                        prefetch
-                        cacheFor={60}
-                    >
-                        {item.title}
-                    </Link>
-                ))}
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex flex-row items-center justify-center flex-1">
+                <NavigationMenu>
+                    <NavigationMenuList>
+                        {menus.map((item) => (
+                            <NavigationMenuItem key={item.id}>
+                                {item.children && item.children.length > 0 ? (
+                                    <>
+                                        <NavigationMenuTrigger
+                                            className={cn(
+                                                "bg-transparent hover:bg-teal-500/10 focus:bg-teal-500/10 transition-colors ",
+                                                "text-black dark:text-teal-400/60 hover:text-teal-600 dark:hover:text-teal-400"
+                                            )}
+                                        >
+                                            {item.title}
+                                        </NavigationMenuTrigger>
+                                        <NavigationMenuContent>
+                                            <ul className="grid w-[400px] gap-3 p-4 md:grid-cols-2 bg-white/90 dark:bg-black/90 backdrop-blur-md border border-teal-500/20 rounded-xl  transition-all duration-300">
+                                                {item.children.map((child) => (
+                                                    <li key={child.id}>
+                                                        <NavigationMenuLink asChild>
+                                                            <Link
+                                                                href={child.resolved_url || child.url || "#"}
+                                                                target={child.target}
+                                                                className={cn(
+                                                                    "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors",
+                                                                    "hover:bg-teal-500/10 hover:text-teal-600 dark:hover:text-teal-400",
+                                                                    "text-sm font-medium text-black dark:text-teal-400/80"
+                                                                )}
+                                                                prefetch
+                                                                cacheFor={60}
+                                                            >
+                                                                {child.title}
+                                                            </Link>
+                                                        </NavigationMenuLink>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </NavigationMenuContent>
+                                    </>
+                                ) : (
+                                    <NavigationMenuLink asChild>
+                                        <Link
+                                            href={item.resolved_url || item.url || "#"}
+                                            target={item.target}
+                                            prefetch
+                                            cacheFor={60}
+                                            className={cn(
+                                                navigationMenuTriggerStyle(),
+                                                "bg-transparent hover:bg-teal-500/10 focus:bg-teal-500/10 transition-colors",
+                                                "text-black dark:text-teal-400/60 hover:text-teal-600 dark:hover:text-teal-400"
+                                            )}
+                                        >
+                                            {item.title}
+                                        </Link>
+                                    </NavigationMenuLink>
+                                )}
+                            </NavigationMenuItem>
+                        ))}
+                    </NavigationMenuList>
+                </NavigationMenu>
+            </div>
 
-                {/* Tautan GitHub eksternal */}
-                {/* <a href={githubLink} target="_blank" rel="noopener noreferrer" className="ml-8">
-                    <SiGithub className={iconClass} />
-                </a> */}
-
-                {/* Toggle tema Light/Dark/System */}
+            {/* Right Actions (Mobile Menu + Theme Toggler) */}
+            <div className="flex flex-row items-center justify-center gap-2 lg:gap-5 transition-all">
+                {/* Toggle tema Light/Dark/System (Always visible) */}
                 <ThemeToggler className={iconClass} />
+
+                {/* Mobile Menu Trigger */}
+                <div className="lg:hidden">
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button variant="ghost" size="icon" className="text-teal-800 dark:text-teal-300 hover:bg-teal-500/10 rounded-full">
+                                <Menu className="h-6 w-6" />
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="top" className="w-full border-teal-400/20 dark:border-teal-700/40 bg-white/80 dark:bg-black/80 backdrop-blur-md transition-all">
+                            <SheetHeader className="text-left">
+                                <SheetTitle className="text-teal-800 dark:text-teal-400">Navigation Menu</SheetTitle>
+                            </SheetHeader>
+                            <div className="flex flex-col gap-2 mt-8 overflow-y-auto max-h-[80vh]">
+                                {menus.map((item) => (
+                                    <div key={item.id} className="flex flex-col gap-2">
+                                        <Link
+                                            href={item.resolved_url || item.url || "#"}
+                                            target={item.target}
+                                            className={cn(
+                                                "text-lg font-medium transition-colors transition-all",
+                                                "text-black dark:text-teal-400/80 hover:text-teal-600 dark:hover:text-teal-400"
+                                            )}
+                                            prefetch
+                                            cacheFor={60}
+                                        >
+                                            {item.title}
+                                        </Link>
+                                        {item.children && item.children.length > 0 && (
+                                            <div className="flex flex-col gap-2 ml-4 border-l border-teal-500/20 pl-4 py-1">
+                                                {item.children.map((child) => (
+                                                    <Link
+                                                        key={child.id}
+                                                        href={child.resolved_url || child.url || "#"}
+                                                        target={child.target}
+                                                        className={cn(
+                                                            " font-medium transition-colors",
+                                                            "text-neutral-600 dark:text-teal-400/50 hover:text-teal-600 dark:hover:text-teal-400"
+                                                        )}
+                                                        prefetch
+                                                        cacheFor={60}
+                                                    >
+                                                        {child.title}
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+                </div>
             </div>
         </motion.div>
     );

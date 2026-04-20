@@ -51,7 +51,7 @@ const Input = (props: InputFieldProps) => {
                         className={cn(
                             "flex w-full rounded-lg",
                             "px-3 py-2",
-                            "border border-neutral-600",
+                            "border border-neutral-600 dark:border-teal-900",
                             "bg-neutral-300/20 dark:bg-neutral-700/20",
                             "text-neutral-800 dark:text-neutral-100",
                             "file:text-neutral-300 placeholder:text-neutral-500",

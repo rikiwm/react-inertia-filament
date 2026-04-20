@@ -39,6 +39,21 @@ export const ucWords = (str: string): string => {
         .join(" ");
 };
 
+export const createOpdSlug = (namaOpd: string): string => {
+    return namaOpd
+        .toLowerCase()
+        .trim()
+        // Replace spaces with hyphens
+        .replace(/\s+/g, "-")
+        // Replace other special characters with hyphens
+        .replace(/[^\w-]/g, "")
+        // Replace multiple consecutive hyphens with single hyphen
+        .replace(/-+/g, "-")
+        // Remove leading/trailing hyphens
+        .replace(/^-+|-+$/g, "");
+}
+
+
 /**
  * Memfilter dan mengonversi pengaturan media sosial menjadi daftar item dock.
  *

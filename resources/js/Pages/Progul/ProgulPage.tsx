@@ -1,4 +1,5 @@
 import React from 'react';
+import { ReactNode } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import FrontWrapper from '@/Wrappers/FrontWrapper';
 import { useProgulData } from '@/Hooks/useProgulData';
@@ -36,7 +37,7 @@ const ProgulPage = () => {
     const { categories, loading, error } = useProgulData();
 
     return (
-        <FrontWrapper title="Program Unggulan">
+        <>
             <Head title="Kinerja Progul - Program Unggulan Kota Padang" />
 
             <div className="min-h-screen bg-transparent pt-20 pb-20">
@@ -144,8 +145,11 @@ const ProgulPage = () => {
                     )}
                 </div>
             </div>
-        </FrontWrapper>
+        </>
+
     );
 };
+ProgulPage.layout = (page: ReactNode) => <FrontWrapper title="Program Unggulan Kota Padang">{page}</FrontWrapper>;
+
 
 export default ProgulPage;

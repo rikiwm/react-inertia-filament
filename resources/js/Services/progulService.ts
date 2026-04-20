@@ -5,22 +5,41 @@
  * Mengambil data dari API eksternal dan menyediakan fungsi pengolahan data.
  */
 
-export interface ProgulItem {
-    id_progul: number;
-    progul: string;
-    id_sub_progul: number;
-    sub_progul: string;
-    nama_satker: string;
-    kode_satker: string;
-    short_name: string;
-    kinerja: string;
-    indikator: string;
-    satuan: string;
-    tahun: string;
-    tahun_mulai: string;
-    tahun_selesai: string;
+export interface YearPerformance {
+    tahun: number;
+    target: string | number | null;
+    capaian: string | number | null;
+    persen: string | number | null;
+    tw1: string | number | null;
+    tw2: string | number | null;
+    tw3: string | number | null;
+    tw4: string | number | null;
+    bukti_dukung: string | null;
+    keterangan: string | null;
 }
 
+export interface KinerjaItem {
+    id: number;
+    nama_kinerja: string;
+    indikator: string;
+    satuan: string;
+    perangkat_daerah: string;
+    years: YearPerformance[];
+}
+
+export interface ActivasiItem {
+    id: number;
+    nama: string;
+    kinerja: KinerjaItem[];
+}
+
+export interface ProgulData {
+    id: number;
+    nama: string;
+    activasi: ActivasiItem[];
+}
+
+// Keeping these for backward compatibility if needed, but updated to match new logic
 export interface ProgulCategory {
     id: number;
     name: string;
@@ -34,12 +53,12 @@ export interface ActivasiCategory {
     count: number;
 }
 
-const API_URL = "https://dashboard.padang.go.id/api/progul-kota-padang";
+const API_URL = "http://103.141.74.143/api/progul";
 
 /**
  * Mengambil semua data progul dari API.
  */
-export async function fetchAllProgulData(signal?: AbortSignal): Promise<ProgulItem[]> {
+export async function fetchAllProgulData(signal?: AbortSignal): Promise<ProgulData[]> {
     try {
         const response = await fetch(API_URL, {
             signal,
@@ -61,42 +80,29 @@ export async function fetchAllProgulData(signal?: AbortSignal): Promise<ProgulIt
 }
 
 /**
- * Mendapatkan daftar kategori progul unik.
+ * Mendapatkan daftar kategori progul unik dari data terstruktur.
  */
-export function getProgulCategories(data: ProgulItem[]): ProgulCategory[] {
-    const groups: Record<number, { name: string; count: number }> = {};
-
-    data.forEach((item) => {
-        if (!groups[item.id_progul]) {
-            groups[item.id_progul] = { name: item.progul, count: 0 };
-        }
-        groups[item.id_progul].count++;
-    });
-
-    return Object.entries(groups).map(([id, group]) => ({
-        id: parseInt(id),
-        name: group.name,
-        count: group.count,
+export function getProgulCategories(data: ProgulData[]): ProgulCategory[] {
+    return data.map((item) => ({
+        id: item.id,
+        name: item.nama,
+        // Count total indicators (kinerja) in all activasi
+        count: item.activasi.reduce((acc, act) => acc + act.kinerja.length, 0),
     })).sort((a, b) => a.id - b.id);
 }
 
 /**
  * Mendapatkan daftar sub-progul (activasi) untuk progul tertentu.
  */
-export function getActivasiByProgul(data: ProgulItem[], progulId: number): ActivasiCategory[] {
-    const groups: Record<number, { name: string; count: number }> = {};
+export function getActivasiByProgul(data: ProgulData[], progulId: number): ActivasiCategory[] {
+    const progul = data.find(p => p.id === progulId);
+    if (!progul) return [];
 
-    data.filter(item => item.id_progul === progulId).forEach((item) => {
-        if (!groups[item.id_sub_progul]) {
-            groups[item.id_sub_progul] = { name: item.sub_progul, count: 0 };
-        }
-        groups[item.id_sub_progul].count++;
-    });
-
-    return Object.entries(groups).map(([id, group]) => ({
-        id: parseInt(id),
-        name: group.name,
+    return progul.activasi.map((act) => ({
+        id: act.id,
+        name: act.nama,
         progul_id: progulId,
-        count: group.count,
+        count: act.kinerja.length,
     })).sort((a, b) => a.id - b.id);
 }
+

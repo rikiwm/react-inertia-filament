@@ -60,7 +60,8 @@ final class AdminPanelProvider extends PanelProvider
             ->favicon(fn () => $this->settings->favicon ? '/storage/'.$this->settings->favicon : null)
             ->login()
             ->colors([
-                'primary' => Color::hex('#fc6a3e'),
+                'primary' => Color::hex('#00cbc4'),
+
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

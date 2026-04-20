@@ -1,15 +1,22 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { ReactNode } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import FrontWrapper from '@/Wrappers/FrontWrapper';
 import { useProgulData } from '@/Hooks/useProgulData';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
     ChevronLeft,
     Table as TableIcon,
     Calendar,
     Building2,
     CheckCircle2,
-    BarChart
+    BarChart,
+    Target as TargetIcon,
+    TrendingUp,
+    CheckCircle,
+    Search,
+    Filter,
+    XCircle
 } from 'lucide-react';
 import { cn } from '@/Lib/Utils';
 
@@ -19,12 +26,33 @@ interface Props {
 
 const KinerjaDetailPage = ({ id }: Props) => {
     const { getKinerjaList, getActivasiById, loading } = useProgulData();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [perangkatFilter, setPerangkatFilter] = useState('all');
 
     const activasi = useMemo(() => getActivasiById(id), [getActivasiById, id]);
     const kinerjaList = useMemo(() => getKinerjaList(id), [getKinerjaList, id]);
 
+    // Get unique perangkat daerah for the filter
+    const perangkatDaerahOptions = useMemo(() => {
+        const unique = new Set<string>();
+        kinerjaList.forEach(item => {
+            if (item.perangkat_daerah) unique.add(item.perangkat_daerah);
+        });
+        return Array.from(unique).sort();
+    }, [kinerjaList]);
+
+    // Filtered list based on search and select
+    const filteredKinerja = useMemo(() => {
+        return kinerjaList.filter(item => {
+            const matchesSearch = item.indikator.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                item.nama_kinerja.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesPerangkat = perangkatFilter === 'all' || item.perangkat_daerah === perangkatFilter;
+            return matchesSearch && matchesPerangkat;
+        });
+    }, [kinerjaList, searchQuery, perangkatFilter]);
+
     return (
-        <FrontWrapper title={activasi?.name || "Detail Kinerja"}>
+        <>
             <Head title={`${activasi?.name || 'Detail'} - Capaian Kinerja`} />
 
             <div className="min-h-screen bg-transparent pt-18 pb-20">
@@ -33,7 +61,7 @@ const KinerjaDetailPage = ({ id }: Props) => {
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="mb-8"
+                        className="mb-8 px-4 md:px-0"
                     >
                         <Link
                             href={activasi ? route('progul.detail', { id: activasi.progul_id }) : route('progul')}
@@ -45,7 +73,7 @@ const KinerjaDetailPage = ({ id }: Props) => {
                     </motion.div>
 
                     {/* Header */}
-                    <div className="mb-8">
+                    <div className="mb-8 px-4 md:px-0">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -56,7 +84,7 @@ const KinerjaDetailPage = ({ id }: Props) => {
                             <div className="flex flex-wrap gap-4">
                                 <span className="inline-flex items-center px-3 py-1 rounded-full bg-neutral-200 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs font-bold">
                                     <Calendar className="w-3 h-3 mr-1" />
-                                    Tahun 2025
+                                    Tahun 2025 - 2029
                                 </span>
                                 <span className="inline-flex items-center px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 text-xs font-bold">
                                     <CheckCircle2 className="w-3 h-3 mr-1" />
@@ -66,89 +94,168 @@ const KinerjaDetailPage = ({ id }: Props) => {
                         </motion.div>
                     </div>
 
-                    {/* Table Section */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.4 }}
-                        className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl shadow-neutral-200/50 dark:shadow-none overflow-hidden"
-                    >
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="bg-neutral-50 dark:bg-neutral-800/50 border-b border-neutral-200 dark:border-neutral-800">
-                                        <th className="px-6 py-5 text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">No</th>
-                                        <th className="px-6 py-5 text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">Kinerja & Indikator</th>
-                                        <th className="px-6 py-5 text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">Satuan</th>
-                                        <th className="px-6 py-5 text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">Perangkat Daerah</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                                    {loading ? (
-                                        [...Array(5)].map((_, i) => (
-                                            <tr key={i}>
-                                                <td colSpan={4} className="px-6 py-4">
-                                                    <div className="h-12 bg-neutral-100 dark:bg-neutral-800 animate-pulse rounded-xl" />
-                                                </td>
-                                            </tr>
-                                        ))
-                                    ) : kinerjaList.length > 0 ? (
+                    {/* Filters Section */}
+                    <div className="mb-4 px-3 md:px-0">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-neutral-900 p-2 rounded-2xl border border-neutral-200 dark:border-teal-800 shadow-xs">
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Search className="h-4 w-4 text-neutral-400" />
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder="Cari indikator atau kinerja..."
+                                    className="text-teal-900 block w-full pl-10 pr-3 py-2.5 border border-neutral-200 dark:border-teal-800 rounded-xl bg-neutral-50 dark:bg-neutral-800/50 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Filter className="h-4 w-4 text-neutral-400" />
+                                </div>
+                                <select
+                                    className="block w-full pl-10 pr-3 py-2.5 border border-neutral-200 dark:border-teal-800 rounded-xl bg-neutral-50 dark:bg-neutral-800/50 text-sm text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all appearance-none"
+                                    value={perangkatFilter}
+                                    onChange={(e) => setPerangkatFilter(e.target.value)}
+                                >
+                                    <option value="all">Semua Perangkat Daerah</option>
+                                    {perangkatDaerahOptions.map(option => (
+                                        <option key={option} value={option}>{option}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-                                        kinerjaList.map((item, index) => (
-                                            <tr key={index} className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-800/20 transition-colors">
-                                                <td className="px-6 py-6 text-sm font-medium text-neutral-400 tabular-nums">
-                                                    {(index + 1).toString().padStart(2, '0')}
-                                                </td>
-                                                <td className="px-6 py-6">
-                                                    <div className="mb-2">
-                                                        <p className="text-sm font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-teal-600 transition-colors">
+                    {/* Indicators List */}
+                    <div className="space-y-3 px-4 md:px-0">
+                        {loading ? (
+                            [...Array(3)].map((_, i) => (
+                                <div key={i} className="h-64 bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-teal-800 animate-pulse" />
+                            ))
+                        ) : filteredKinerja.length > 0 ? (
+                            <AnimatePresence mode="popLayout">
+                                {filteredKinerja.map((item, index) => (
+                                    <motion.div
+                                        key={item.id}
+                                        layout
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, scale: 0.95 }}
+                                        transition={{ duration: 0.3 }}
+                                        className="bg-teal-50 dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs overflow-hidden"
+                                    >
+                                        {/* Indicator Header */}
+                                        <div className="p-6 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-800/30">
+                                            <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-3 mb-2">
+                                                        <span className="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                                                            {(index + 1).toString().padStart(2, '0')}
+                                                        </span>
+                                                        <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
                                                             {item.indikator}
+                                                        </h3>
+                                                    </div>
+                                                    <div className="flex items-start md:ml-11">
+                                                        <BarChart className="w-4 h-4 mr-2 mt-0.5 text-teal-600 shrink-0" />
+                                                        <p className="text-sm text-neutral-600 dark:text-neutral-400 italic">
+                                                            {item.nama_kinerja}
                                                         </p>
                                                     </div>
-                                                    <div className="flex items-start">
-                                                        <BarChart className="w-3 h-3 mr-2 mt-0.5 text-teal-500" />
-                                                        <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed italic">
-                                                            {item.kinerja}
-                                                        </p>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-6">
-                                                    <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-[10px] font-black uppercase tracking-wider">
-                                                        {item.satuan}
+                                                </div>
+                                                <div className="flex flex-col items-end gap-2 shrink-0">
+                                                    <span className="inline-flex items-center px-3 py-1 rounded-lg bg-neutral-200 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-[10px] font-black uppercase tracking-wider">
+                                                        Satuan: {item.satuan}
                                                     </span>
-                                                </td>
-                                                <td className="px-6 py-6">
-                                                    <div className="flex items-center">
-                                                        <div className="w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-900/10 flex items-center justify-center mr-3 flex-shrink-0 group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                                                    <div className="flex items-center text-right">
+                                                        <div className="mr-3">
+                                                            <p className="text-[10px] font-bold text-neutral-800 dark:text-neutral-200 uppercase">
+                                                                {item.perangkat_daerah}
+                                                            </p>
+                                                        </div>
+                                                        <div className="w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-900/10 flex items-center justify-center text-teal-600">
                                                             <Building2 className="w-4 h-4" />
                                                         </div>
-                                                        <div>
-                                                            <p className="text-xs font-bold text-neutral-800 dark:text-neutral-200">
-                                                                {item.short_name || item.nama_satker}
-                                                            </p>
-                                                            <p className="text-[10px] text-neutral-500 dark:text-neutral-500 mt-0.5 tabular-nums">
-                                                                {item.kode_satker}
-                                                            </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Yearly Performance Section */}
+                                        <div className="p-6">
+                                            <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-4 flex items-center">
+                                                <TrendingUp className="w-3 h-3 mr-2" />
+                                                Kinerja Pertahun (2025 - 2029)
+                                            </h4>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                                                {item.years.map((yearData) => (
+                                                    <div
+                                                        key={yearData.tahun}
+                                                        className={cn(
+                                                            "p-4 rounded-xl border transition-all duration-300",
+                                                            yearData.capaian ? "bg-teal-50/30 border-teal-100 dark:bg-teal-900/10 dark:border-teal-900/30" : "bg-neutral-50 dark:bg-neutral-800/50 border-neutral-100 dark:border-neutral-800"
+                                                        )}
+                                                    >
+                                                        <div className="flex items-center justify-between mb-3">
+                                                            <span className="text-sm font-black text-neutral-900 dark:text-neutral-100">{yearData.tahun}</span>
+                                                            {yearData.capaian && <CheckCircle className="w-3 h-3 text-teal-600" />}
+                                                        </div>
+                                                        <div className="space-y-3">
+                                                            <div>
+                                                                <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-tighter">Target</p>
+                                                                <p className="text-sm font-bold text-neutral-800 dark:text-neutral-200">
+                                                                    {yearData.target || "-"}
+                                                                </p>
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-tighter">Capaian</p>
+                                                                <div className="flex items-baseline gap-2">
+                                                                    <p className="text-sm font-bold text-teal-600">
+                                                                        {yearData.capaian || "-"}
+                                                                    </p>
+                                                                    {yearData.persen && (
+                                                                        <span className="text-[10px] font-bold text-teal-500 bg-teal-50 dark:bg-teal-900/20 px-1.5 py-0.5 rounded">
+                                                                            {yearData.persen}%
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan={4} className="px-6 py-12 text-center text-neutral-500 dark:text-neutral-500 font-medium">
-                                                Tidak ada data kinerja untuk activasi ini.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </motion.div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
+                        ) : (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="text-center p-20 bg-white dark:bg-neutral-900 rounded-2xl border-2 border-dashed border-neutral-200 dark:border-neutral-800"
+                            >
+                                <XCircle className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
+                                <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+                                    Tidak ada data yang cocok dengan filter pencarian Anda.
+                                </p>
+                                <button
+                                    onClick={() => { setSearchQuery(''); setPerangkatFilter('all'); }}
+                                    className="mt-4 text-teal-600 text-sm font-bold hover:underline"
+                                >
+                                    Reset Filter
+                                </button>
+                            </motion.div>
+                        )}
+                    </div>
                 </div>
             </div>
-        </FrontWrapper>
+        </>
     );
 };
 
+KinerjaDetailPage.layout = (page: ReactNode) => <FrontWrapper title={'Kinerja Program Unggulan Kota Padang'}>{page}</FrontWrapper>;
+
 export default KinerjaDetailPage;
+
+
