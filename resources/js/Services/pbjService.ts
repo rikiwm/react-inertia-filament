@@ -18,6 +18,10 @@ import type {
     PbjSummary,
     PbjTender,
 } from "@/Types/Pbj";
+import { cacheManager } from "@/Utils/cacheManager";
+
+const CACHE_KEY = "pbj_data";
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /** URL dasar API Dashboard Padang. */
 const PBJ_BASE_URL = "https://dashboard.padang.go.id/api/v1";
@@ -138,7 +142,19 @@ function transformResponse(raw: PbjApiResponse): PbjSummary {
 export async function fetchPbjData(
     tahun: number | string,
     signal: AbortSignal,
+    options: { skipCache?: boolean } = {},
 ): Promise<PbjSummary> {
+    const cacheKey = cacheManager.generateKey(CACHE_KEY, { tahun });
+
+    if (!options.skipCache) {
+        const cached = cacheManager.get<PbjSummary>(cacheKey);
+        if (cached) {
+            console.log(`[Cache HIT] PBJ Data ${tahun}`);
+            return cached;
+        }
+    }
+
+    console.log(`[Cache MISS] Fetching PBJ Data ${tahun} from API...`);
     const url = buildPbjUrl(tahun);
 
     const response = await fetch(url, { signal });
@@ -153,5 +169,10 @@ export async function fetchPbjData(
         throw new Error(`API PBJ mengembalikan kode error: ${json.code} — ${json.message}`);
     }
 
-    return transformResponse(json);
+    const result = transformResponse(json);
+
+    // Cache the result
+    cacheManager.set(cacheKey, result, CACHE_TTL);
+
+    return result;
 }

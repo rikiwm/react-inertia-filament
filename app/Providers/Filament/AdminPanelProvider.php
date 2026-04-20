@@ -30,6 +30,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
+use NoteBrainsLab\FilamentMenuManager\FilamentMenuManagerPlugin;
 use pxlrbt\FilamentEnvironmentIndicator\EnvironmentIndicatorPlugin;
 use Spatie\LaravelSettings\Settings;
 
@@ -105,6 +106,11 @@ final class AdminPanelProvider extends PanelProvider
                     ->shouldShowAvatarForm(false)
                     ->shouldShowDeleteAccountForm(true)
                     ->shouldShowEmailForm(false),
+                FilamentMenuManagerPlugin::make()
+                    ->locations([
+                        'primary' => 'Primary',
+                        'footer' => 'Footer',
+                    ]),
             ])
             ->userMenuItems([
                 'profile' => Action::make('profile')

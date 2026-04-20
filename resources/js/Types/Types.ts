@@ -7,9 +7,23 @@ export interface LayoutProps {
     title?: string;
 }
 
+export interface MenuItemData {
+    id: number;
+    title: string;
+    url: string | null;
+    resolved_url: string | null;
+    target: string;
+    icon: string | null;
+    type: string;
+    order: number;
+    enabled: boolean;
+    children: MenuItemData[];
+}
+
 export interface SharedData {
     socialMediaSettings: SocialMediaSetting;
     siteSettings: SiteSetting;
+    menus: MenuItemData[];
 
     [key: string]: unknown;
 }

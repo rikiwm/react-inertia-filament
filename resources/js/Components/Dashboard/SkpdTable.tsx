@@ -48,6 +48,8 @@ interface SkpdTableProps {
     loading?: boolean;
     /** Error message jika terjadi kesalahan saat fetch data. */
     error?: Error | null;
+    /** Tahun anggaran saat ini. */
+    tahun?: number;
 }
 
 /**
@@ -105,6 +107,7 @@ const SkpdTable = memo(function SkpdTable({
     type = "belanja",
     loading = false,
     error = null,
+    tahun = new Date().getFullYear(),
 }: SkpdTableProps) {
     const [sort, setSort] = useState<SortConfig>({ field: null, direction: null });
 
@@ -197,8 +200,8 @@ const SkpdTable = memo(function SkpdTable({
         const opdSlug = createOpdSlug(item.nama_opd);
         const routeType = type === "belanja" ? "belanja" : "pendapatan";
 
-        // Navigate ke halaman detail OPD dengan type dan slug
-        router.get(`/dashboard/${routeType}/${opdSlug}`);
+        // Navigate ke halaman detail OPD dengan type, slug, dan tahun
+        router.get(`/dashboard/${routeType}/${opdSlug}?tahun=${tahun}`);
     }
 
     return (

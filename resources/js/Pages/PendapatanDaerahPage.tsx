@@ -198,7 +198,7 @@ const PendapatanDaerahPage = () => {
                         Breakdown per SKPD (Satuan Kerja Perangkat Daerah)
                     </h2>
 
-                    {data && <SkpdTable data={data.data} type="pendapatan" loading={loading} error={error} />}
+                    {data && <SkpdTable data={data.data} type="pendapatan" loading={loading} error={error} tahun={selectedYear} />}
                 </div>
 
                 {/* ── Footer Info ─────────────────────────────────────────────── */}

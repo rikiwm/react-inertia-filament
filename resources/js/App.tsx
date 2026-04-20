@@ -6,7 +6,16 @@ export const appName = import.meta.env.VITE_APP_NAME || "PDG Kit";
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
-    resolve: (name) => resolvePageComponent(`./Pages/${name}.tsx`, import.meta.glob("./Pages/**/*.tsx")),
+    resolve: async (name) => {
+        const pages = import.meta.glob("./Pages/**/*.tsx");
+        try {
+            return await resolvePageComponent(`./Pages/${name}.tsx`, pages);
+        } catch (e) {
+            console.error(`Inertia: Error resolving page component "${name}"`, e);
+            // Fallback to Error page if component not found
+            return await resolvePageComponent(`./Pages/Error.tsx`, pages);
+        }
+    },
     setup({ el, App, props }) {
         const root = createRoot(el);
 

@@ -12,6 +12,10 @@
  */
 
 import type { ApbdApiResponse, ApbdItemNormalized, ApbdSummary } from "@/Types/Apbd";
+import { cacheManager } from "@/Utils/cacheManager";
+
+const CACHE_KEY = "apbd_data";
+const CACHE_TTL = 10 * 60 * 1000; // 10 minutes (APBD changes less frequently)
 
 /** URL dasar API Dashboard Padang. */
 const APBD_BASE_URL = "https://dashboard.padang.go.id/api/v1";
@@ -98,7 +102,19 @@ function transformResponse(raw: ApbdApiResponse): ApbdSummary {
 export async function fetchApbdData(
     tahun: number | string,
     signal: AbortSignal,
+    options: { skipCache?: boolean } = {},
 ): Promise<ApbdSummary> {
+    const cacheKey = cacheManager.generateKey(CACHE_KEY, { tahun });
+
+    if (!options.skipCache) {
+        const cached = cacheManager.get<ApbdSummary>(cacheKey);
+        if (cached) {
+            console.log(`[Cache HIT] APBD Data ${tahun}`);
+            return cached;
+        }
+    }
+
+    console.log(`[Cache MISS] Fetching APBD Data ${tahun} from API...`);
     const url = buildApbdUrl(tahun);
 
     const response = await fetch(url, { signal });
@@ -113,5 +129,10 @@ export async function fetchApbdData(
         throw new Error(`API APBD mengembalikan message: "${json.message}"`);
     }
 
-    return transformResponse(json);
+    const result = transformResponse(json);
+
+    // Cache the result
+    cacheManager.set(cacheKey, result, CACHE_TTL);
+
+    return result;
 }

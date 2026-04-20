@@ -60,7 +60,7 @@ export function usePendapatanSkpd(tahun: number): UsePendapatanSkpdReturn {
      *
      * @param year - Tahun yang akan di-fetch
      */
-    const doFetch = useCallback(async (year: number) => {
+    const doFetch = useCallback(async (year: number, skipCache: boolean = false) => {
         abortRef.current?.abort();
         abortRef.current = new AbortController();
 
@@ -68,7 +68,7 @@ export function usePendapatanSkpd(tahun: number): UsePendapatanSkpdReturn {
         setError(null);
 
         try {
-            const result = await fetchPendapatanSkpd(year, abortRef.current.signal);
+            const result = await fetchPendapatanSkpd(year, abortRef.current.signal, { skipCache });
             setData(result);
             setStatus("success");
         } catch (err) {
@@ -83,7 +83,7 @@ export function usePendapatanSkpd(tahun: number): UsePendapatanSkpdReturn {
      * Berguna setelah gagal karena jaringan sementara.
      */
     const retry = useCallback(() => {
-        doFetch(tahun);
+        doFetch(tahun, true);
     }, [tahun, doFetch]);
 
     /**

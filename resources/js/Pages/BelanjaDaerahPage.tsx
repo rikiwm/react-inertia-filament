@@ -130,9 +130,9 @@ const BelanjaDaerahPage = () => {
                 {!loading && data && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                         {/* Anggaran */}
-                        <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20 p-4 border border-blue-200 dark:border-blue-800">
-                            <p className="text-sm font-medium text-blue-600 dark:text-blue-300 mb-2">Anggaran</p>
-                            <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                        <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/30 dark:to-teal-800/20 p-4 border border-teal-200 dark:border-teal-800">
+                            <p className="text-sm font-medium text-teal-600 dark:text-teal-300 mb-2">Anggaran</p>
+                            <p className="text-2xl font-bold text-teal-900 dark:text-teal-100">
                                 {formatRupiahCompact(data.total_pagu)}
                             </p>
                         </div>
@@ -154,8 +154,8 @@ const BelanjaDaerahPage = () => {
                         </div>
 
                         {/* Persentase */}
-                        <div className={`rounded-lg lg:rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/30 dark:to-amber-800/20 p-4 border border-amber-200 dark:border-amber-800`}>
-                            <p className="text-sm font-medium text-amber-600 dark:text-amber-300 mb-2">Persentase</p>
+                        <div className={`rounded-lg lg:rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-600`}>
+                            <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Persentase</p>
                             <div>
                                 <p className={`text-2xl font-bold ${percentageColor}`}>
                                     {data.total_persentase.toFixed(1)}%
@@ -200,7 +200,7 @@ const BelanjaDaerahPage = () => {
                         Breakdown per SKPD (Satuan Kerja Perangkat Daerah)
                     </h2>
 
-                    {data && <SkpdTable data={data.data} type="belanja" loading={loading} error={error} />}
+                    {data && <SkpdTable data={data.data} type="belanja" loading={loading} error={error} tahun={selectedYear} />}
                 </div>
 
                 {/* ── Footer Info ─────────────────────────────────────────────── */}

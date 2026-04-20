@@ -21,6 +21,7 @@ import { cn } from "@/Lib/Utils";
 import FrontWrapper from "@/Wrappers/FrontWrapper";
 import { PendapatanSkpdPanel, PendapatanSkpdTable } from "@/Components/Dashboard/PendapatanSkpdPanel";
 import { usePendapatanSkpd } from "@/Hooks/usePendapatanSkpd";
+import type { PendapatanSkpdNormalized } from "@/Types/PendapatanSkpd";
 import {
     Area,
     AreaChart,
@@ -59,56 +60,38 @@ const fmtUSD = (v: number) =>
     new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(v);
 
 
-// ─── Ticker (Simulasi Harga) ──────────────────────────────────────────────────
-
-interface TickerItem { symbol: string; price: number; change: number }
-
-const BASE_TICKERS: TickerItem[] = [
-    { symbol: "BTC/USD", price: 43_250, change: +3.21 },
-    { symbol: "ETH/USD", price: 2_840, change: -1.82 },
-    { symbol: "SOL/USD", price: 148.3, change: +7.54 },
-    { symbol: "BNB/USD", price: 612.1, change: +0.43 },
-    { symbol: "AVX/USD", price: 38.2, change: -4.21 },
-    { symbol: "MAT/USD", price: 0.891, change: +2.91 },
-    { symbol: "LNK/USD", price: 14.21, change: +5.14 },
-    { symbol: "DOT/USD", price: 8.92, change: -0.87 },
-    { symbol: "ADA/USD", price: 0.441, change: +1.23 },
-    { symbol: "XRP/USD", price: 0.623, change: -2.14 },
-];
+// ─── Ticker (SKPD Pendapatan) ────────────────────────────────────────────────
 
 /**
- * Baris ticker harga yang bergerak horizontal (marquee).
- * Mensimulasikan fluktuasi harga kecil setiap 2,5 detik.
+ * Baris ticker pendapatan SKPD yang bergerak horizontal (marquee).
+ * Menampilkan label SKPD, persentase realisasi, dan sisa anggaran.
  */
-const PriceTicker = memo(function PriceTicker() {
-    const [tickers, setTickers] = useState<TickerItem[]>(BASE_TICKERS);
+const PriceTicker = memo(function PriceTicker({ data }: { data: PendapatanSkpdNormalized[] | null }) {
+    if (!data || data.length === 0) {
+        return (
+            <div className="overflow-hidden w-full border-b border-teal-300 dark:border-teal-800 bg-transparent dark:bg-neutral-950">
+                <div className="flex whitespace-nowrap py-2 px-6">
+                    <span className="text-xs text-neutral-400 animate-pulse">Memuat data pendapatan SKPD...</span>
+                </div>
+            </div>
+        );
+    }
 
-    useEffect(() => {
-        const id = setInterval(() => {
-            setTickers((prev) =>
-                prev.map((t) => ({
-                    ...t,
-                    price: t.price * (1 + (Math.random() - 0.499) * 0.002),
-                    change: t.change + (Math.random() - 0.5) * 0.05,
-                })),
-            );
-        }, 2500);
-        return () => clearInterval(id);
-    }, []);
-
-    const items = [...tickers, ...tickers]; // duplikasi untuk efek loop seamless
+    const items = [...data, ...data]; // duplikasi untuk efek loop seamless
 
     return (
         <div className="overflow-hidden w-full border-b border-teal-300 dark:border-teal-800 bg-transparent dark:bg-neutral-950">
             <div className="flex animate-[marquee_60s_linear_infinite] whitespace-nowrap py-2">
                 {items.map((t, i) => (
                     <span key={i} className="inline-flex items-center gap-2 px-6 text-xs border-r border-neutral-100 dark:border-neutral-800">
-                        <span className="font-semibold text-neutral-700 dark:text-neutral-300">{t.symbol}</span>
+                        <span className="font-semibold text-neutral-700 dark:text-neutral-300">{t.label}</span>
                         <span className="font-mono text-neutral-900 dark:text-neutral-100">
-                            {t.price.toFixed(t.price > 100 ? 0 : 3)}
+                            {t.persen.toFixed(1)}%
                         </span>
-                        <span className={cn("font-medium", t.change >= 0 ? "text-emerald-500" : "text-amber-500")}>
-                            {t.change >= 0 ? "+" : ""}{t.change.toFixed(2)}%
+                        <span className={cn("font-medium text-emerald-600 dark:text-emerald-400")}>
+                            {
+                                t.persen >= 100 ? "Tercapai" : "Sisa : " + fmtRupiah(t.sisa)
+                            }
                         </span>
                     </span>
                 ))}
@@ -503,88 +486,88 @@ const ApbdDonutChart = memo(function ApbdDonutChart({ item, title, onClick }: Ap
  * dan dua donut chart berdampingan saat data berhasil dimuat.
  */
 const
-ApbdDonutPanel = memo(function ApbdDonutPanel({ tahun, }: { tahun: number; }) {
-    const { data, isLoading, error, retry } = useApbdData(tahun);
+    ApbdDonutPanel = memo(function ApbdDonutPanel({ tahun, }: { tahun: number; }) {
+        const { data, isLoading, error, retry } = useApbdData(tahun);
 
-    return (
-        <div className="lg:col-span-1 bg-white dark:bg-neutral-950 rounded-2xl border border-teal-200 dark:border-teal-900 p-3 lg:p-6">
-            {/* Header panel */}
-            <div className="flex items-start justify-between mb-4">
-                <div>
-                    <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">Anggaran Pendapatan & Belanja Daerah <b className="text-teal-800 dark:text-teal-400">{tahun}</b></h2>
-                    <p className="text-xs text-neutral-500 mt-0.5">Anggaran, Realisasi, Target &amp; Selisih</p>
-                </div>
-                {isLoading && (
-                    <svg className="w-4 h-4 text-teal-500 animate-spin flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3a9 9 0 1 0 9 9" />
-                    </svg>
-                )}
-            </div>
-
-            {/* Error state */}
-            {error && (
-                <div className="flex flex-col items-center gap-3 py-8 text-center">
-                    <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                    <p className="text-sm text-red-600 dark:text-red-400 font-medium">{error}</p>
-                    <button
-                        onClick={retry}
-                        className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors"
-                    >
-                        Coba Lagi
-                    </button>
-                </div>
-            )}
-
-            {/* Loading state */}
-            {isLoading && !data && (
-                <div className="grid grid-cols-2 gap-6">
-                    <ApbdDonutSkeleton />
-                    <ApbdDonutSkeleton />
-                </div>
-            )}
-
-            {/* Success — 2 donut chart berdampingan */}
-            {data && (
-                <>
-                    <div className="grid grid-cols-2 gap-3 py-2">
-                        <ApbdDonutChart
-                            item={data.belanjaDaerah}
-                            title="Belanja Daerah"
-                            onClick={() => router.visit(`${route("belanja-daerah")}?tahun=${tahun}`)}
-                        />
-                        <ApbdDonutChart
-                            item={data.pendapatanDaerah}
-                            title="Pendapatan Daerah"
-                            onClick={() => router.visit(`${route("pendapatan-daerah")}?tahun=${tahun}`)}
-                        />
+        return (
+            <div className="lg:col-span-1 bg-white dark:bg-neutral-950 rounded-2xl border border-teal-200 dark:border-teal-900 p-3 lg:p-6">
+                {/* Header panel */}
+                <div className="flex items-start justify-between mb-4">
+                    <div>
+                        <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">Anggaran Pendapatan & Belanja Daerah <b className="text-teal-800 dark:text-teal-400">{tahun}</b></h2>
+                        <p className="text-xs text-neutral-500 mt-0.5">Anggaran, Realisasi, Target &amp; Selisih</p>
                     </div>
+                    {isLoading && (
+                        <svg className="w-4 h-4 text-teal-500 animate-spin flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3a9 9 0 1 0 9 9" />
+                        </svg>
+                    )}
+                </div>
 
-                    {/* Sumber data */}
+                {/* Error state */}
+                {error && (
+                    <div className="flex flex-col items-center gap-3 py-8 text-center">
+                        <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <p className="text-sm text-red-600 dark:text-red-400 font-medium">{error}</p>
+                        <button
+                            onClick={retry}
+                            className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors"
+                        >
+                            Coba Lagi
+                        </button>
+                    </div>
+                )}
 
-                    <div className="flex flex-col dark:bg-neutral-900 dark:border-neutral-800 justify-between  lg:flex-row items-start gap-3 p-2 border rounded-md bg-teal-50">
-                        <div className="bg-white dark:bg-neutral-900 dark:border-neutral-800 border p-4 rounded-md w-full">
-                            <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{fmtRupiah(data.belanjaDaerah.realisasi)}</h2>
-                            <p className="text-xs text-neutral-500 mt-0.5"> REALISASI BElANJA DAERAH</p>
+                {/* Loading state */}
+                {isLoading && !data && (
+                    <div className="grid grid-cols-2 gap-6">
+                        <ApbdDonutSkeleton />
+                        <ApbdDonutSkeleton />
+                    </div>
+                )}
+
+                {/* Success — 2 donut chart berdampingan */}
+                {data && (
+                    <>
+                        <div className="grid grid-cols-2 gap-3 py-2">
+                            <ApbdDonutChart
+                                item={data.belanjaDaerah}
+                                title="Belanja Daerah"
+                                onClick={() => router.visit(`${route("belanja-daerah")}?tahun=${tahun}`)}
+                            />
+                            <ApbdDonutChart
+                                item={data.pendapatanDaerah}
+                                title="Pendapatan Daerah"
+                                onClick={() => router.visit(`${route("pendapatan-daerah")}?tahun=${tahun}`)}
+                            />
                         </div>
-                        <div className="bg-white dark:bg-neutral-900 dark:border-neutral-800 border p-4 rounded-md w-full">
-                            <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{fmtRupiah(data.pendapatanDaerah.realisasi)}</h2>
-                            <p className="text-xs text-neutral-500 mt-0.5"> CAPAIAN PENDAPATAN DAERAH</p>
-                        </div>
 
-                        {/* <p className="text-sm text-neutral-600 dark:text-neutral-400 font-medium">{data.belanjaDaerah.realisasi}</p>
+                        {/* Sumber data */}
+
+                        <div className="flex flex-col dark:bg-neutral-900 dark:border-neutral-800 justify-between  lg:flex-row items-start gap-3 p-2 border rounded-md bg-teal-50">
+                            <div className="bg-white dark:bg-neutral-900 dark:border-neutral-800 border p-4 rounded-md w-full">
+                                <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{fmtRupiah(data.belanjaDaerah.realisasi)}</h2>
+                                <p className="text-xs text-neutral-500 mt-0.5"> REALISASI BElANJA DAERAH</p>
+                            </div>
+                            <div className="bg-white dark:bg-neutral-900 dark:border-neutral-800 border p-4 rounded-md w-full">
+                                <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{fmtRupiah(data.pendapatanDaerah.realisasi)}</h2>
+                                <p className="text-xs text-neutral-500 mt-0.5"> CAPAIAN PENDAPATAN DAERAH</p>
+                            </div>
+
+                            {/* <p className="text-sm text-neutral-600 dark:text-neutral-400 font-medium">{data.belanjaDaerah.realisasi}</p>
                         <p className="text-sm text-neutral-600 dark:text-neutral-400 font-medium">{data.pendapatanDaerah.realisasi}</p> */}
 
-                    </div>
-                    <p className="text-[10px] text-neutral-300 dark:text-neutral-700 mt-4 text-right">
-                        Sumber: dashboard.padang.go.id · {data.tahun}
-                    </p>
-                </>
-            )}
-        </div>
-    );
-});
+                        </div>
+                        <p className="text-[10px] text-neutral-300 dark:text-neutral-700 mt-4 text-right">
+                            Sumber: dashboard.padang.go.id · {data.tahun}
+                        </p>
+                    </>
+                )}
+            </div>
+        );
+    });
 
 // ─── Section Heading ──────────────────────────────────────────────────────────
 
@@ -637,7 +620,7 @@ const DashboardPage = () => {
         <div className="min-h-screen w-full max-w-screen">
             {/* ── Ticker Marquee ── */}
             <div className="pt-18">
-                <PriceTicker />
+                <PriceTicker data={skpdData} />
             </div>
 
             <div className="max-w-screen-2xl mx-auto px-8 lg:px-6 py-8 space-y-8">

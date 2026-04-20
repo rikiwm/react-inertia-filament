@@ -15,6 +15,10 @@ import type {
     PendapatanSkpdApiResponse,
     PendapatanSkpdNormalized,
 } from "@/Types/PendapatanSkpd";
+import { cacheManager } from "@/Utils/cacheManager";
+
+const CACHE_KEY = "pendapatan_skpd";
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /** URL dasar API Dashboard Padang. */
 const BASE_URL = "https://dashboard.padang.go.id/api/v1";
@@ -79,7 +83,7 @@ function shortenSkpd(name: string): string {
  * @returns Item yang sudah dinormalisasi
  */
 function normalizeItem(raw: PendapatanSkpdApiResponse[0]): PendapatanSkpdNormalized {
-    const sorted = [...raw.item].sort((a, b) => b.realisasi - a.realisasi);
+    const sorted = [...raw.item].sort((a, b) => a.kode_rekening.localeCompare(b.kode_rekening));
 
     return {
         skpd: raw.skpd,
@@ -88,7 +92,7 @@ function normalizeItem(raw: PendapatanSkpdApiResponse[0]): PendapatanSkpdNormali
         anggaran: raw.total_anggaran,
         persen: raw.persen,
         sisa: raw.total_anggaran - raw.total_realisasi,
-        topRekening: sorted.slice(0, 3),
+        topRekening: sorted,
     };
 }
 
@@ -109,7 +113,19 @@ function normalizeItem(raw: PendapatanSkpdApiResponse[0]): PendapatanSkpdNormali
 export async function fetchPendapatanSkpd(
     tahun: number | string,
     signal: AbortSignal,
+    options: { skipCache?: boolean } = {},
 ): Promise<PendapatanSkpdNormalized[]> {
+    const cacheKey = cacheManager.generateKey(CACHE_KEY, { tahun });
+
+    if (!options.skipCache) {
+        const cached = cacheManager.get<PendapatanSkpdNormalized[]>(cacheKey);
+        if (cached) {
+            console.log(`[Cache HIT] Pendapatan SKPD ${tahun}`);
+            return cached;
+        }
+    }
+
+    console.log(`[Cache MISS] Fetching Pendapatan SKPD ${tahun} from API...`);
     const url = buildUrl(tahun);
 
     const response = await fetch(url, { signal });
@@ -128,5 +144,10 @@ export async function fetchPendapatanSkpd(
 
     const raw = data as PendapatanSkpdApiResponse;
 
-    return raw.map(normalizeItem).sort((a, b) => b.persen - a.persen); // descending: SKPD dengan realisasi terbesar di atas
+    const result = raw.map(normalizeItem).sort((a, b) => b.persen - a.persen); // descending: SKPD dengan realisasi terbesar di atas
+
+    // Cache the result
+    cacheManager.set(cacheKey, result, CACHE_TTL);
+
+    return result;
 }

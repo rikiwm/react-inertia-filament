@@ -67,6 +67,8 @@ export async function fetchOpdBelanjaDetail(
     signal?: AbortSignal,
 ): Promise<OpdBelanjaDetail> {
     // Fetch full belanja data
+    console.log('fetchBelanjaDaerahBySkpd', tahun);
+
     const belanjaResponse: BelanjaDaerahResponse = await fetchBelanjaDaerahBySkpd(tahun, signal);
 
     // Find matching OPD

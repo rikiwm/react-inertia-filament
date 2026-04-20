@@ -64,7 +64,7 @@ export function useApbdData(tahun: number): UseApbdDataReturn {
      *
      * @param year - Tahun yang akan di-fetch
      */
-    const doFetch = useCallback(async (year: number) => {
+    const doFetch = useCallback(async (year: number, skipCache: boolean = false) => {
         // Batalkan request sebelumnya yang mungkin masih berjalan
         abortRef.current?.abort();
         abortRef.current = new AbortController();
@@ -73,7 +73,7 @@ export function useApbdData(tahun: number): UseApbdDataReturn {
         setError(null);
 
         try {
-            const result = await fetchApbdData(year, abortRef.current.signal);
+            const result = await fetchApbdData(year, abortRef.current.signal, { skipCache });
             setData(result);
             setStatus("success");
         } catch (err) {
@@ -90,7 +90,7 @@ export function useApbdData(tahun: number): UseApbdDataReturn {
      * Berguna setelah koneksi internet terganggu sementara.
      */
     const retry = useCallback(() => {
-        doFetch(tahun);
+        doFetch(tahun, true);
     }, [tahun, doFetch]);
 
     /**

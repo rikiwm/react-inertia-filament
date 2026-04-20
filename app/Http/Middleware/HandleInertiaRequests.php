@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use App\Settings\SiteSettings;
 use App\Settings\SocialMediaSettings;
+use App\Models\MenuLocation;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Override;
@@ -35,9 +36,13 @@ final class HandleInertiaRequests extends Middleware
         $siteSettings = app(SiteSettings::class);
         $socialMediaSettings = app(SocialMediaSettings::class);
 
+        $primaryMenu = MenuLocation::where('handle', 'primary')->first()?->activeMenu();
+        $menuTree = $primaryMenu ? $primaryMenu->getTree() : [];
+
         return array_merge(parent::share($request), [
             'socialMediaSettings' => $socialMediaSettings,
             'siteSettings' => $siteSettings,
+            'menus' => $menuTree,
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

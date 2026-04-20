@@ -33,7 +33,7 @@ import { route } from "ziggy-js";
  * - Animate: background blur muncul, bergerak ke posisi (y: 0)
  */
 const Navbar = () => {
-    const { siteSettings } = usePage<SharedData>().props;
+    const { siteSettings, menus } = usePage<SharedData>().props;
 
     /** Nama aplikasi dari variabel lingkungan, dengan fallback ke "FLIRT Kit". */
     const appName = import.meta.env.VITE_APP_NAME || "PDG Kit";
@@ -78,7 +78,7 @@ const Navbar = () => {
                         WebkitBackdropFilter: "blur(4px)",
                     }
             }
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.2 }}
         >
             {/* Logo / nama aplikasi — mengarah ke halaman utama */}
             <Link href={route("landing-page")} className="flex items-center gap-3" prefetch cacheFor={60}>
@@ -101,37 +101,19 @@ const Navbar = () => {
 
             {/* Grup tautan navigasi kanan */}
             <div className="flex flex-row items-center justify-end gap-2 lg:gap-5">
-                {/* Tautan ke halaman daftar berita */}
-                <Link
-                    href={route("news")}
-                    className="text-black dark:text-teal-400/60 hover:text-teal-600 dark:hover:text-teal-400 transition-colors duration-200"
-                    prefetch
-                    cacheFor={60}
-                >
-                    Berita
-                </Link>
-
-                {/* Tautan ke halaman dashboard statistik */}
-                <Link
-                    href={route("dashboard")}
-                    className="text-black dark:text-teal-400/60 hover:text-teal-600 dark:hover:text-teal-400 transition-colors duration-200"
-                    prefetch
-                    cacheFor={60}
-                >
-                    Dashboard
-                </Link>
-
-                {/* Tautan ke halaman kontak */}
-                <Link
-                    href={route("contact.form")}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-black dark:text-teal-400/60 hover:text-teal-600 dark:hover:text-teal-400 transition-colors duration-200"
-                    prefetch
-                    cacheFor={60}
-                >
-                    Contact Us
-                </Link>
+                {/* Tautan Menu Dinamis */}
+                {menus.map((item) => (
+                    <Link
+                        key={item.id}
+                        href={item.resolved_url || item.url || "#"}
+                        target={item.target}
+                        className="text-black dark:text-teal-400/60 hover:text-teal-600 dark:hover:text-teal-400 transition-colors duration-200"
+                        prefetch
+                        cacheFor={60}
+                    >
+                        {item.title}
+                    </Link>
+                ))}
 
                 {/* Tautan GitHub eksternal */}
                 {/* <a href={githubLink} target="_blank" rel="noopener noreferrer" className="ml-8">

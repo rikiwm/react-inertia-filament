@@ -48,6 +48,7 @@ export function useOpdDetail(
                 setError(null);
 
                 const result = await fetchOpdDetail(type, namaOpd, tahun, signal);
+
                 setData(result);
             } catch (err) {
                 if (err instanceof Error && err.name !== "AbortError") {
@@ -68,7 +69,7 @@ export function useOpdDetail(
     }, [fetchData]);
 
     const refetch = useCallback(
-        (skipCache: boolean = true) => {
+        (skipCache: boolean = false) => {
             fetchData();
         },
         [fetchData],

@@ -70,7 +70,7 @@ export function usePbjData(initialTahun?: number): UsePbjDataReturn {
      *
      * @param year - Tahun yang akan di-fetch
      */
-    const doFetch = useCallback(async (year: number) => {
+    const doFetch = useCallback(async (year: number, skipCache: boolean = false) => {
         // Batalkan request sebelumnya jika masih berjalan
         abortRef.current?.abort();
         abortRef.current = new AbortController();
@@ -79,7 +79,7 @@ export function usePbjData(initialTahun?: number): UsePbjDataReturn {
         setError(null);
 
         try {
-            const result = await fetchPbjData(year, abortRef.current.signal);
+            const result = await fetchPbjData(year, abortRef.current.signal, { skipCache });
             setData(result);
             setStatus("success");
         } catch (err) {
@@ -106,7 +106,7 @@ export function usePbjData(initialTahun?: number): UsePbjDataReturn {
      * Berguna setelah error jaringan sementara.
      */
     const retry = useCallback(() => {
-        doFetch(tahun);
+        doFetch(tahun, true);
     }, [tahun, doFetch]);
 
     /** Fetch otomatis saat `tahun` berubah. */
