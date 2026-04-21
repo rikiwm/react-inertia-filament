@@ -24,14 +24,14 @@ interface Employee {
 }
 
 const DEMO_DATA: Employee[] = [
-    { id: 1,  name: "Budi Santoso",    email: "budi@example.com",    department: "Engineering",  role: "Senior Dev",    status: "active",   salary: 18_000_000, joinDate: "2021-03-15" },
-    { id: 2,  name: "Siti Rahayu",     email: "siti@example.com",    department: "Design",       role: "UI/UX Lead",    status: "active",   salary: 15_000_000, joinDate: "2022-01-08" },
-    { id: 3,  name: "Ahmad Fauzi",     email: "ahmad@example.com",   department: "Engineering",  role: "Backend Dev",   status: "pending",  salary: 12_000_000, joinDate: "2023-06-20" },
-    { id: 4,  name: "Maya Putri",      email: "maya@example.com",    department: "Marketing",    role: "Content Lead",  status: "active",   salary: 11_500_000, joinDate: "2022-09-01" },
-    { id: 5,  name: "Rizki Pratama",   email: "rizki@example.com",   department: "Engineering",  role: "DevOps",        status: "inactive", salary: 14_000_000, joinDate: "2020-11-30" },
-    { id: 6,  name: "Dewi Anggraini",  email: "dewi@example.com",    department: "HR",           role: "HR Manager",    status: "active",   salary: 13_000_000, joinDate: "2021-07-14" },
-    { id: 7,  name: "Fajar Nugraha",   email: "fajar@example.com",   department: "Finance",      role: "Analyst",       status: "active",   salary: 12_500_000, joinDate: "2022-04-22" },
-    { id: 8,  name: "Laila Nuraini",   email: "laila@example.com",   department: "Design",       role: "Graphic Design",status: "pending",  salary: 10_000_000, joinDate: "2024-01-03" },
+    { id: 1, name: "Budi Santoso", email: "budi@example.com", department: "Engineering", role: "Senior Dev", status: "active", salary: 18_000_000, joinDate: "2021-03-15" },
+    { id: 2, name: "Siti Rahayu", email: "siti@example.com", department: "Design", role: "UI/UX Lead", status: "active", salary: 15_000_000, joinDate: "2022-01-08" },
+    { id: 3, name: "Ahmad Fauzi", email: "ahmad@example.com", department: "Engineering", role: "Backend Dev", status: "pending", salary: 12_000_000, joinDate: "2023-06-20" },
+    { id: 4, name: "Maya Putri", email: "maya@example.com", department: "Marketing", role: "Content Lead", status: "active", salary: 11_500_000, joinDate: "2022-09-01" },
+    { id: 5, name: "Rizki Pratama", email: "rizki@example.com", department: "Engineering", role: "DevOps", status: "inactive", salary: 14_000_000, joinDate: "2020-11-30" },
+    { id: 6, name: "Dewi Anggraini", email: "dewi@example.com", department: "HR", role: "HR Manager", status: "active", salary: 13_000_000, joinDate: "2021-07-14" },
+    { id: 7, name: "Fajar Nugraha", email: "fajar@example.com", department: "Finance", role: "Analyst", status: "active", salary: 12_500_000, joinDate: "2022-04-22" },
+    { id: 8, name: "Laila Nuraini", email: "laila@example.com", department: "Design", role: "Graphic Design", status: "pending", salary: 10_000_000, joinDate: "2024-01-03" },
 ];
 
 type SortKey = keyof Employee;
@@ -48,24 +48,24 @@ const formatDate = (dateStr: string) =>
 // ─── Peta Status ke Variant Badge ────────────────────────────────────────────
 
 const STATUS_VARIANT = {
-    active:   "success",
+    active: "success",
     inactive: "danger",
-    pending:  "warning",
+    pending: "warning",
 } as const;
 
 const STATUS_LABEL = {
-    active:   "Aktif",
+    active: "Aktif",
     inactive: "Tidak Aktif",
-    pending:  "Menunggu",
+    pending: "Menunggu",
 } as const;
 
 // ─── Komponen Demo ────────────────────────────────────────────────────────────
 
 const TableDemo = () => {
-    const [sortKey, setSortKey]   = useState<SortKey | null>(null);
-    const [sortDir, setSortDir]   = useState<SortDir>(null);
+    const [sortKey, setSortKey] = useState<SortKey | null>(null);
+    const [sortDir, setSortDir] = useState<SortDir>(null);
     const [isLoading, setLoading] = useState(false);
-    const [search, setSearch]     = useState("");
+    const [search, setSearch] = useState("");
 
     /**
      * Mengubah kunci dan arah pengurutan saat header kolom diklik.
@@ -112,7 +112,7 @@ const TableDemo = () => {
 
                 {/* ── Judul ── */}
                 <div>
-                    <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white mb-2">
+                    <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
                         Table Component{" "}
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-sky-700">
                             Demo
@@ -283,8 +283,8 @@ const TableDemo = () => {
                                             default: "Teks standar",
                                             success: "Operasi berhasil",
                                             warning: "Perlu perhatian",
-                                            danger:  "Error / bahaya",
-                                            info:    "Informasi umum",
+                                            danger: "Error / bahaya",
+                                            info: "Informasi umum",
                                         }[v]}
                                     </Table.Td>
                                 </Table.Tr>

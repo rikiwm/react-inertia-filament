@@ -14,6 +14,8 @@
 
 import FloatingSocialMedia from "@/Components/Shared/FloatingSocialMedia";
 import Navbar from "@/Components/Shared/Navbar";
+import BottomNavigation from "@/Components/Shared/BottomNavigation";
+import Footer from "@/Components/Shared/Footer";
 import { cn } from "@/Lib/Utils";
 import { LayoutProps } from "@/Types/Types";
 import ThemeWrapper from "@/Wrappers/ThemeWrapper";
@@ -78,7 +80,7 @@ const FrontWrapper: FC<LayoutProps> = (props) => {
             {/* Wrapper konten dengan latar grid dekoratif */}
             <div
                 className={cn(
-                    "w-screen",
+                    "w-screen pb-32 lg:pb-0",
                     "[background-size:70px_70px]",
                     /* Mode terang: garis grid abu-abu muda */
                     "[background-image:linear-gradient(to_right,#f1f1f1_1px,transparent_1px),linear-gradient(to_bottom,#f1f1f1_1px,transparent_1px)]",
@@ -88,6 +90,12 @@ const FrontWrapper: FC<LayoutProps> = (props) => {
             >
                 <div className="mx-auto max-w-screen-4xl">{children}</div>
             </div>
+
+            {/* Navigasi utama fixed di bagian bawah untuk mobile */}
+            <BottomNavigation />
+
+            {/* Footer Modern Premium */}
+            <Footer />
 
             {/* Floating dock media sosial di pojok bawah */}
             <FloatingSocialMedia />

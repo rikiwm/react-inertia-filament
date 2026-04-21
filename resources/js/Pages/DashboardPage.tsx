@@ -161,25 +161,29 @@ const KpiCardSkeleton = memo(function KpiCardSkeleton() {
  * Menampilkan label, nilai utama, deskripsi sumber, dan mini sparkline
  * sederhana berbasis data yang diterima dari `usePbjData`.
  */
-const KpiCard = memo(function KpiCard({ config }: { config: KpiCardConfig }) {
+const KpiCard = memo(function KpiCard({ config, onClick }: { config: KpiCardConfig; onClick?: () => void }) {
     const colors = COLOR_MAP[config.color];
 
     // Sparkline statis visual per jenis kartu (proporsi dekoratif)
     const sparkPatterns: Record<KpiCardConfig["icon"], number[]> = {
-        pagu: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        paket: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        berlangsung: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        selesai: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        pagu: [0, 0],
+        paket: [0, 0],
+        berlangsung: [0, 0],
+        selesai: [0, 0],
     };
     const sparkData = sparkPatterns[config.icon].map((v, i) => ({ i, v }));
 
     return (
-        <div className={cn(
-            "relative rounded-2xl p-5 border border-teal-200 dark:border-teal-900",
-            "bg-teal-50 dark:bg-neutral-950",
-            "hover:shadow-xl transition-shadow duration-300",
-            "overflow-hidden group",
-        )}>
+        <button
+            onClick={onClick}
+            className={cn(
+                "relative text-left w-full rounded-2xl p-3 border border-teal-200 dark:border-teal-900",
+                "bg-teal-50 dark:bg-neutral-950",
+                "hover:shadow-xl transition-all duration-300",
+                "overflow-hidden group",
+                onClick && "cursor-pointer active:scale-[0.98]"
+            )}
+        >
             {/* Background accent glow */}
             <div className={cn(
                 "absolute -top-6 -right-6 w-28 h-28 rounded-full opacity-60 blur-2xl transition-opacity group-hover:opacity-90",
@@ -192,7 +196,7 @@ const KpiCard = memo(function KpiCard({ config }: { config: KpiCardConfig }) {
                     <p className="text-neutral-500 dark:text-neutral-400 text-xs font-medium uppercase tracking-wider">
                         {config.label}
                     </p>
-                    <p className="text-2xl font-extrabold text-neutral-900 dark:text-neutral-100 mt-1 tabular-nums leading-tight">
+                    <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-1 tabular-nums leading-tight">
                         {config.value}
                     </p>
                 </div>
@@ -202,7 +206,7 @@ const KpiCard = memo(function KpiCard({ config }: { config: KpiCardConfig }) {
             </div>
 
             {/* Sparkline mini dekoratif */}
-            <div className="relative h-12 -mx-1 mb-3">
+            <div className="relative h-8 -mx-1 mb-3">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={sparkData} margin={{ top: 2, right: 2, left: 2, bottom: 2 }}>
                         <defs>
@@ -221,7 +225,7 @@ const KpiCard = memo(function KpiCard({ config }: { config: KpiCardConfig }) {
                 <span className={cn("w-1.5 h-1.5 rounded-full flex-shrink-0 animate-pulse", colors.text.replace("text-", "bg-"))} />
                 <span className="text-neutral-400 dark:text-neutral-500 text-xs truncate">{config.sub}</span>
             </div>
-        </div>
+        </button>
     );
 });
 
@@ -339,7 +343,7 @@ const DonutTooltip = ({ active, payload }: any) => {
 /** Warna segmen untuk donut chart APBD. */
 const APBD_COLORS = {
     realisasi: { fill: "teal", label: "text-teal-600 dark:text-teal-400", bg: "bg-teal-500" },
-    sisa: { fill: "#e2e8f0", label: "text-neutral-400", bg: "bg-neutral-300 dark:bg-neutral-600" },
+    sisa: { fill: "#71d9c941", label: "text-neutral-400", bg: "bg-neutral-300 dark:bg-neutral-600" },
 } as const;
 
 /**
@@ -382,8 +386,8 @@ interface ApbdDonutChartProps {
 const ApbdDonutChart = memo(function ApbdDonutChart({ item, title, onClick }: ApbdDonutChartProps) {
     /** Data untuk PieChart: 2 segmen (realisasi + sisa). */
     const pieData = [
-        { name: "Realisasi", value: item.persenRealisasi, rupiah: item.realisasi },
-        { name: "Sisa", value: item.persenSisa, rupiah: item.sisa },
+        { name: "Realisasi / Capaian", value: item.persenRealisasi, rupiah: item.realisasi },
+        { name: "Sisa / Belum Terealisasi", value: item.persenSisa, rupiah: item.sisa },
     ];
 
     const isHealthy = item.persenRealisasi >= 50;
@@ -393,7 +397,7 @@ const ApbdDonutChart = memo(function ApbdDonutChart({ item, title, onClick }: Ap
             onClick={onClick}
             disabled={!onClick}
             className={cn(
-                "flex flex-col h-full rounded-lg lg:rounded-2xl bg-neutral-50 dark:bg-neutral-900 p-4 lg:p-6 text-left",
+                "flex flex-col h-full rounded-lg lg:rounded-2xl bg-neutral-50 dark:bg-neutral-900 p-3 lg:p-6 text-left",
                 onClick && "cursor-pointer hover:shadow-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all",
                 !onClick && "cursor-default",
             )}
@@ -402,19 +406,19 @@ const ApbdDonutChart = memo(function ApbdDonutChart({ item, title, onClick }: Ap
             {/* Judul */}
             <div className="mb-3">
                 <p className="text-sm font-bold text-neutral-800 dark:text-neutral-200">{title}</p>
-                <p className="text-xs text-neutral-400 mt-0.5">
-                    Anggaran: {fmtRupiah(item.anggaran)}
+                <p className="text-xs text-teal-700 dark:text-teal-400 mt-0.5">
+                    {title == "Belanja Daerah" ? `Pagu Anggaran: ${fmtRupiah(item.anggaran)}` : `Target Penerimaan: ${fmtRupiah(item.anggaran)}`}
                 </p>
             </div>
 
             {/* Donut Chart dengan label tengah */}
-            <div className="relative flex items-center justify-center">
-                <ResponsiveContainer width="100%" height={180}>
+            <div className="relative flex items-center justify-center max-w-full px-2">
+                <ResponsiveContainer width={190} height={190}>
                     <PieChart>
                         <Pie
                             data={pieData}
-                            innerRadius={50}
-                            outerRadius={90}
+                            innerRadius={60}
+                            outerRadius={95}
                             paddingAngle={2}
                             dataKey="value"
                             startAngle={90}
@@ -432,22 +436,22 @@ const ApbdDonutChart = memo(function ApbdDonutChart({ item, title, onClick }: Ap
                 {/* Label persentase di tengah donut - dengan pointer-events-none untuk tidak halangi tooltip */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                     <p className={cn(
-                        "text-2xl font-extrabold tabular-nums leading-none",
+                        "text-2xl font-bold tabular-nums leading-none",
                         isHealthy
                             ? "text-teal-600 dark:text-teal-400"
                             : "text-teal-900 dark:text-teal-900",
                     )}>
                         {item.persenRealisasi.toFixed(1)}%
                     </p>
-                    <p className="text-[10px] text-gray-400 mt-0.5 font-medium">Realisasi</p>
+                    <p className="text-[10px] text-teal-500 mt-0.5 font-medium">Persentase</p>
                 </div>
             </div>
 
             {/* Legenda + nilai rupiah */}
             <div className="space-y-2 mt-2">
                 {[
-                    { key: "realisasi" as const, label: "Realisasi", value: item.realisasi, pct: item.persenRealisasi },
-                    { key: "sisa" as const, label: "Sisa", value: item.sisa, pct: item.persenSisa },
+                    { key: "realisasi" as const, label: title == "Belanja Daerah" ? "Realisasi Pagu" : "Capaian", value: item.realisasi, pct: item.persenRealisasi },
+                    { key: "sisa" as const, label: title == "Belanja Daerah" ? "Sisa Pagu" : "Sisa Target", value: item.sisa, pct: item.persenSisa },
                 ].map((row) => (
                     <div key={row.key} className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-1.5 min-w-0">
@@ -458,7 +462,7 @@ const ApbdDonutChart = memo(function ApbdDonutChart({ item, title, onClick }: Ap
                             <span className="text-xs font-semibold text-neutral-800 dark:text-neutral-200 tabular-nums">
                                 {fmtRupiah(row.value)}
                             </span>
-                            <span className="text-[10px] text-neutral-400 ml-1 tabular-nums">
+                            <span className="text-[10px] text-teal-700 ml-1 tabular-nums">
                                 ({row.pct.toFixed(1)}%)
                             </span>
                         </div>
@@ -490,7 +494,7 @@ const
         const { data, isLoading, error, retry } = useApbdData(tahun);
 
         return (
-            <div className="lg:col-span-1 bg-white dark:bg-neutral-950 rounded-2xl border border-teal-200 dark:border-teal-900 p-3 lg:p-6">
+            <div className="lg:col-span-1 bg-white dark:bg-neutral-950 rounded-2xl border border-teal-200 dark:border-teal-900 p-2 lg:p-4">
                 {/* Header panel */}
                 <div className="flex items-start justify-between mb-4">
                     <div>
@@ -531,7 +535,7 @@ const
                 {/* Success — 2 donut chart berdampingan */}
                 {data && (
                     <>
-                        <div className="grid grid-cols-2 gap-3 py-2">
+                        <div className="grid grid-cols-2 gap-1.5 md:gap-3 py-2">
                             <ApbdDonutChart
                                 item={data.belanjaDaerah}
                                 title="Belanja Daerah"
@@ -619,11 +623,11 @@ const DashboardPage = () => {
     return (
         <div className="min-h-screen w-full max-w-screen">
             {/* ── Ticker Marquee ── */}
-            <div className="pt-18">
+            <div className="pt-14 lg:pt-18">
                 <PriceTicker data={skpdData} />
             </div>
 
-            <div className="max-w-screen-2xl mx-auto px-8 lg:px-6 py-8 space-y-8">
+            <div className="max-w-screen-2xl mx-auto px-4 lg:px-8 lg:px-6 py-2 lg:py-8 space-y-4">
 
                 {/* ── Header ── */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -634,18 +638,18 @@ const DashboardPage = () => {
                                 Live Data
                             </span>
                         </div> */}
-                        <h1 className="text-4xl font-extrabold uppercase text-neutral-900 dark:text-white">
+                        <h1 className="text-xl md:text-3xl font-bold uppercase text-neutral-900 dark:text-white">
                             Dashboard{" "}
                             <span className="text-transparent bg-clip-text bg-gradient-to-l from-zinc-900 to-teal-700 dark:from-zinc-100 dark:to-zinc-500">
                                 Pembangunan
                             </span>
                         </h1>
-                        <p className="text-neutral-500 dark:text-neutral-400 text-sm mt-1">
+                        <p className="text-neutral-500 dark:text-neutral-400 text-[11px] md:text-sm mt-1">
                             Data APBD dan Pengadaan Barang dan Jasa dari Kota Padang.
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 flex-col lg:flex-wrap">
                         {/* ── Filter Tahun PBJ ── */}
                         <div className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-900 p-1 rounded-xl border border-teal-200 dark:border-teal-800">
                             {AVAILABLE_YEARS.map((y) => (
@@ -689,11 +693,11 @@ const DashboardPage = () => {
                 </div>
 
                 {/* ── KPI Cards ── */}
-                <section aria-label="Ringkasan KPI Pengadaan">
+                <section aria-label="Ringkasan KPI Pengadaan" className="mb-3 mt-3">
                     {/* Label sumber data + status loading */}
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-2">
-                            <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+                            <p className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">
                                 Pengadaan Barang &amp; Jasa — Tahun {tahun}
                             </p>
                             {pbjLoading && (
@@ -705,7 +709,7 @@ const DashboardPage = () => {
                                 </span>
                             )}
                             {!pbjLoading && pbjData && (
-                                <span className="inline-flex items-center gap-1 text-xs text-teal-500">
+                                <span className="inline-flex items-center gap-1 text-[10px] md:text-xs text-teal-500">
                                     <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
                                     Berhasil dimuat
                                 </span>
@@ -740,14 +744,18 @@ const DashboardPage = () => {
 
                         {/* Success state — data nyata */}
                         {kpiConfigs?.map((cfg) => (
-                            <KpiCard key={cfg.id} config={cfg} />
+                            <KpiCard
+                                key={cfg.id}
+                                config={cfg}
+                                onClick={() => router.visit(`${route("pbj.list")}?tahun=${tahun}`)}
+                            />
                         ))}
                     </div>
 
 
 
                     {pbjData && !pbjLoading && (
-                        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 px-4">
+                        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 px-2 lg:px-4">
                             {[
                                 { label: "Hibah", value: fmtRupiah(pbjData.hibah.pagu) },
                                 { label: "E-Purchasing", value: fmtRupiah(pbjData.ePurchasing.pagu) },
@@ -763,7 +771,7 @@ const DashboardPage = () => {
                     )}
                     {/* Referensi sumber data */}
                     {pbjLoading && !pbjData && (
-                        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+                        <div className="mt-0 flex flex-wrap gap-x-4 gap-y-1">
                             <div className="flex items-center gap-1.5 text-xs text-neutral-500 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-950 animate-pulse">
                                 <div className="h-4 w-120 rounded-full bg-neutral-200 dark:bg-neutral-800" />
                             </div>
@@ -772,7 +780,7 @@ const DashboardPage = () => {
                 </section>
 
                 {/* ── Main Chart + Donut ── */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4">
 
                     {/* Area Chart Utama */}
                     {/* <div className="lg:col-span-2 bg-white dark:bg-neutral-950 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-6">

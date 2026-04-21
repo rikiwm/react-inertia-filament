@@ -95,7 +95,7 @@ const PendapatanDaerahPage = () => {
                 <div className="mb-4">
                     <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
                         <div>
-                            <h1 className="lg:text-4xl font-bold uppercase text-neutral-900 dark:text-neutral-100 mb-2">
+                            <h1 className="lg:text-4xl font-semibold uppercase text-neutral-900 dark:text-neutral-100 mb-2">
                                 Pendapatan Daerah {selectedYear}
                             </h1>
                             <p className="text-neutral-600 xs:text-xs dark:text-neutral-400 capitalize">
@@ -130,7 +130,7 @@ const PendapatanDaerahPage = () => {
                         {/* Target PAD */}
                         <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/30 dark:to-teal-800/20 p-4 border border-teal-200 dark:border-teal-700">
                             <p className="text-sm font-medium text-teal-600 dark:text-teal-300 mb-2">Target PAD</p>
-                            <p className="text-2xl font-bold text-teal-900 dark:text-teal-100">
+                            <p className="text-2xl font-semibold text-teal-900 dark:text-teal-100">
                                 {formatRupiahCompact(data.total_pagu_pads)}
                             </p>
                         </div>
@@ -138,7 +138,7 @@ const PendapatanDaerahPage = () => {
                         {/* Realisasi PAD */}
                         <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/30 dark:to-teal-800/20 p-4 border border-teal-200 dark:border-teal-700">
                             <p className="text-sm font-medium text-teal-600 dark:text-teal-300 mb-2">Realisasi PAD</p>
-                            <p className="text-2xl font-bold text-teal-900 dark:text-teal-100">
+                            <p className="text-2xl font-semibold text-teal-900 dark:text-teal-100">
                                 {formatRupiahCompact(data.total_realisasi_pad)}
                             </p>
                         </div>
@@ -146,7 +146,7 @@ const PendapatanDaerahPage = () => {
                         {/* Sisa */}
                         <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-700">
                             <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Sisa</p>
-                            <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+                            <p className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
                                 {formatRupiahCompact(data.total_sisa_pad)}
                             </p>
                         </div>
@@ -155,7 +155,7 @@ const PendapatanDaerahPage = () => {
                         <div className={`rounded-lg lg:rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-700`}>
                             <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Persentase</p>
                             <div>
-                                <p className={`text-2xl font-bold ${percentageColor}`}>
+                                <p className={`text-2xl font-semibold ${percentageColor}`}>
                                     {data.total_persentase_pad.toFixed(1)}%
                                 </p>
                                 <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
@@ -194,7 +194,7 @@ const PendapatanDaerahPage = () => {
 
                 {/* ── SKPD Table ──────────────────────────────────────────────── */}
                 <div className="rounded-lg lg:rounded-2xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-teal-800 p-6">
-                    <h2 className="text-md font-bold text-neutral-900 dark:text-neutral-100 mb-6">
+                    <h2 className="text-md font-semibold text-neutral-900 dark:text-neutral-100 mb-6">
                         Breakdown per SKPD (Satuan Kerja Perangkat Daerah)
                     </h2>
 

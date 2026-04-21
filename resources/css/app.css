@@ -8,8 +8,11 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-    --font-sans: "Josefin Sans", sans-serif;
-
+    --font-sans: "Outfit", sans-serif;
+    --font-optical-sizing: auto;
+    --font-weight: 400;
+    --font-style: normal;
+    --font-variation-settings: "GRAD" 0;
     /* Animasi marquee untuk price ticker */
     --animate-marquee: marquee 40s linear infinite;
 }
@@ -23,6 +26,11 @@
 
 /* Keyframe animasi marquee (ticker harga) */
 @keyframes marquee {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }

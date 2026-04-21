@@ -172,7 +172,7 @@ export const PendapatanSkpdPanel = memo(function PendapatanSkpdPanel({
     const chartHeight = Math.max(200, displayData.length * 44);
 
     return (
-        <div className="lg:col-span-1 bg-white dark:bg-neutral-950 rounded-2xl border border-teal-200 dark:border-teal-800 p-6">
+        <div className="lg:col-span-1 bg-white dark:bg-neutral-950 rounded-2xl border border-teal-200 dark:border-teal-800 p-4">
 
             {/* ── Header ── */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
@@ -339,19 +339,32 @@ export const PendapatanSkpdTable = memo(function PendapatanSkpdTable({
     if (!data) return null;
 
     return (
-        <div className="lg:col-span-3 overflow-y-scroll lg:h-[500px] space-y-4 bg-white dark:bg-neutral-950 rounded-2xl border border-neutral-200 dark:border-teal-800 p-6">
-            <div className="flex items-center justify-between mb-2 mx-auto">
-                <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-tight">
+        <div className="lg:col-span-3  space-y-4 bg-white dark:bg-neutral-950 rounded-2xl border border-neutral-200 dark:border-teal-800 p-3">
+            <div className="flex items-center justify-between mb-2 mx-auto px-2">
+                <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
                     Rincian Realisasi Pendapatan SKPD {tahun}
+                    <p className="text-[10px] text-neutral-500 mt-2">asd</p>
                 </h3>
-                <span className=" text-neutral-500">
-                    {data.length} SKPD Terdata
+                <span className="flex flex-row gap-x-2 mr-2">
+                    <div className="flex flex-row gap-x-2">
+                        <span className="w-2 h-2 rounded-sm bg-sky-700"></span>
+                        <span className="text-neutral-500 text-[10px]">lebih dari 75%</span>
+                    </div>
+                    <div className="flex flex-row gap-x-2">
+                        <span className="w-2 h-2 rounded-sm bg-yellow-500"></span>
+                        <span className="text-neutral-500 text-[10px]">antara 50% - 75%</span>
+                    </div>
+                    <div className="flex flex-row gap-x-2">
+                        <span className="w-2 h-2 rounded-sm bg-red-700"></span>
+                        <span className="text-neutral-500 text-[10px]">kurang dari 25%</span>
+                    </div>
+
                 </span>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto overflow-y-scroll lg:h-[500px]">
                 <Table className="rounded-md w-full">
-                    <Table.Head className="bg-neutral-50 border-0 dark:bg-teal-600">
+                    <Table.Head className="bg-teal-50 border-0 dark:bg-teal-600">
                         <Table.Tr>
                             <Table.Th>No.</Table.Th>
                             <Table.Th>SKPD</Table.Th>
@@ -364,14 +377,14 @@ export const PendapatanSkpdTable = memo(function PendapatanSkpdTable({
                     <Table.Body>
                         {data.map((skpd, i) => (
                             <Table.Tr key={skpd.skpd} isEven={i % 2 === 1}>
-                                <Table.Td align="center" className="" noWrap>
+                                <Table.Td align="center" className="w-5">
                                     {i + 1}
                                 </Table.Td>
                                 <Table.Td>
                                     <p className="text-neutral-900 uppercase dark:text-teal-400 text-xs mt-0.5 truncate font-semibold max-w-xs sm:max-w-md" title={skpd.label}>
                                         {skpd.label}
                                     </p>
-                                    <p className="text-neutral-400  dark:font-light text-xs mt-0.5 truncate max-w-xs sm:max-w-md" title={skpd.skpd}>
+                                    <p className="text-neutral-400  dark:font-light text-[10px] mt-0.5 truncate max-w-xs sm:max-w-md" title={skpd.skpd}>
                                         {skpd.skpd}
                                     </p>
 
@@ -381,7 +394,7 @@ export const PendapatanSkpdTable = memo(function PendapatanSkpdTable({
                                     {fmtR(skpd.anggaran)}
                                 </Table.Td>
 
-                                <Table.Td align="right" noWrap variant="info" className="p-0 tabular-nums text-xs font-semibold">
+                                <Table.Td align="right" noWrap variant={skpd.persen >= 100 ? "success" : skpd.persen >= 75 ? "warning" : skpd.persen >= 50 ? "info" : "danger"} className="p-0 tabular-nums text-xs font-semibold ">
                                     {fmtR(skpd.realisasi)}
                                 </Table.Td>
 
@@ -399,8 +412,8 @@ export const PendapatanSkpdTable = memo(function PendapatanSkpdTable({
                 </Table>
             </div>
 
-            <p className=" text-neutral-300 dark:text-neutral-700 text-right">
-                Sumber: dashboard.padang.go.id/api/v1/list-pendapatan-skpd/{tahun}
+            <p className=" text-neutral-300/90 dark:text-neutral-700 text-right">
+                Sumber: <span className="text-neutral-200 font-semibold text-xs">BADAN PENGELOLAAN KEUANGAN DAN ASET DAERAH KOTA PADANG</span>
             </p>
         </div>
     );

@@ -13,7 +13,8 @@ import {
     Smile,
     Lightbulb,
     TrendingUp,
-    Users
+    Users,
+    Package
 } from 'lucide-react';
 import { cn } from '@/Lib/Utils';
 
@@ -39,11 +40,27 @@ const ProgulPage = () => {
     return (
         <>
             <Head title="Kinerja Progul - Program Unggulan Kota Padang" />
+            <div className="min-h-screen w-full bg-slate-50/50 dark:bg-transparent pt-24 pb-20">
+                <div className="max-w-screen-2xl mx-auto px-4 lg:px-8 space-y-8">
 
-            <div className="min-h-screen bg-transparent pt-20 pb-20">
-                <div className="max-w-7xl mx-auto">
                     {/* Header Section */}
-                    <div className="mb-10">
+                    <div>
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="p-2 rounded-xl bg-teal-600 text-white shadow-lg shadow-teal-600/20">
+                                <Package className="w-5 h-5" />
+                            </div>
+                            <span className="text-xs font-bold text-teal-600 dark:text-teal-400 uppercase tracking-[0.2em]">
+                                Program Unggulan
+                            </span>
+                        </div>
+                        <h1 className="text-xl md:text-3xl font-bold text-slate-900 dark:text-white uppercase">
+                            Program Unggulan <span className="text-teal-600">Kota Padang</span>
+                        </h1>
+                        <p className="text-slate-500 dark:text-neutral-400 mt-2 max-w-2xl">
+                            Pantau kinerja dan capaian program unggulan pemerintah Kota Padang untuk mewujudkan masyarakat yang lebih sejahtera dan mandiri.
+                        </p>
+                    </div>
+                    {/* <div className="mb-10">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -56,13 +73,13 @@ const ProgulPage = () => {
                                 Pantau kinerja dan capaian program unggulan pemerintah Kota Padang untuk mewujudkan masyarakat yang lebih sejahtera dan mandiri.
                             </p>
                         </motion.div>
-                    </div>
+                    </div> */}
 
                     {/* Loading State */}
                     {loading && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[...Array(9)].map((_, i) => (
-                                <div key={i} className="h-48 rounded-3xl bg-neutral-200 dark:bg-neutral-800 animate-pulse" />
+                                <div key={i} className="h-36 rounded-2xl bg-neutral-200/80 dark:bg-neutral-800 animate-pulse" />
                             ))}
                         </div>
                     )}
@@ -98,11 +115,11 @@ const ProgulPage = () => {
                                     <motion.div
                                         key={category.id}
                                         variants={{
-                                            hidden: { opacity: 0, y: 20 },
+                                            hidden: { opacity: 0, y: 10 },
                                             visible: { opacity: 1, y: 0 }
                                         }}
-                                        whileHover={{ y: -5, scale: 1.02 }}
-                                        transition={{ duration: 0.3 }}
+                                        whileHover={{ y: -1, scale: 1.02 }}
+                                        transition={{ duration: 0.05 }}
                                     >
                                         <Link
                                             href={route('progul.detail', { id: category.id })}
@@ -120,21 +137,21 @@ const ProgulPage = () => {
                                                 <Icon className={cn("w-6 h-6", styles.color)} />
                                             </div> */}
 
-                                            <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-3 group-hover:text-teal-600 transition-colors">
+                                            <h3 className="text-xl font-medium text-neutral-900 dark:text-neutral-100 mb-2 group-hover:text-teal-600 transition-colors">
                                                 {category.name}
                                             </h3>
 
-                                            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6 font-medium">
+                                            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1 font-medium">
                                                 {category.count} Indikator Kinerja
                                             </p>
 
-                                            <div className="flex items-center text-teal-600 text-sm font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-10px] group-hover:translate-x-0">
+                                            <div className="flex items-e text-teal-600 text-xs font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-10px] group-hover:translate-x-0">
                                                 Lihat Detail
                                                 <Zap className="w-4 h-4 ml-2 fill-current" />
                                             </div>
 
                                             {/* Decorative Background Element */}
-                                            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                                            <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity">
                                                 <Icon className="w-24 h-24" />
                                             </div>
                                         </Link>

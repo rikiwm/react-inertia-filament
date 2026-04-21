@@ -53,7 +53,7 @@ const NewsPage = () => {
                         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                         Berita Terbaru &amp; Terpercaya
                     </div>
-                    <h1 className="text-4xl lg:text-6xl font-extrabold text-neutral-900 dark:text-white mb-4 leading-tight">
+                    <h1 className="text-4xl lg:text-6xl font-bold text-neutral-900 dark:text-white mb-4 leading-tight">
                         Portal{" "}
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-500">
                             Berita

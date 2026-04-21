@@ -7,6 +7,8 @@ use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\LandingPageRenderer;
 use App\Http\Controllers\NewsDetailRenderer;
 use App\Http\Controllers\NewsPageRenderer;
+use App\Http\Controllers\DynamicMenuController;
+use App\Http\Controllers\KebencanaanController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', LandingPageRenderer::class)->name('landing-page');
@@ -21,10 +23,20 @@ Route::inertia('/dashboard', 'DashboardPage')->name('dashboard');
 Route::inertia('/dashboard/belanja-daerah', 'BelanjaDaerahPage')->name('belanja-daerah');
 Route::inertia('/dashboard/pendapatan-daerah', 'PendapatanDaerahPage')->name('pendapatan-daerah');
 
+// Pengadaan Barang & Jasa (PBJ)
+Route::inertia('/dashboard/pbj', 'Pbj/PbjListPage')->name('pbj.list');
+Route::inertia('/dashboard/pbj/detail', 'Pbj/PbjShowPage')->name('pbj.show'); // Menggunakan placeholder detail
+
 // Program Unggulan (Progul)
 Route::inertia('/progul', 'Progul/ProgulPage')->name('progul');
 Route::get('/progul/{id}', fn ($id) => inertia('Progul/ActivasiPage', ['id' => (int) $id]))->name('progul.detail');
 Route::get('/progul/activasi/{id}', fn ($id) => inertia('Progul/KinerjaDetailPage', ['id' => (int) $id]))->name('progul.activasi');
+
+// PK WAKO
+Route::inertia('/pk-wako', 'PkWako/PkWakoPage')->name('pk-wako');
+
+// Kebencanaan
+Route::get('/kebencanaan', [KebencanaanController::class, 'index'])->name('kebencanaan');
 
 Route::get('/dashboard/{type}/{slug}', [OpdDetailController::class, 'show'])->name('dashboard.opd.detail');
 
@@ -36,3 +48,6 @@ Route::group([
     Route::get('/', 'create')->name('form');
     Route::post('/', 'store')->name('submit');
 });
+
+// CATCH-ALL ROUTE untuk Menu Dinamis (Placeholder)
+Route::get('/{any}', [DynamicMenuController::class, 'show'])->where('any', '.*');

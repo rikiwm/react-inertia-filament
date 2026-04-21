@@ -243,8 +243,8 @@ const SkpdTable = memo(function SkpdTable({
                                 <>
                                     <Table.Td className="text-neutral-800 dark:text-neutral-200 text-sm">
                                         <div>
-                                            <span className="font-semibold text-sm text-neutral-500 dark:text-neutral-400">{item.nama_opd}</span>
-                                            <p className="text-xs text-neutral-500 text-light dark:text-neutral-400">{item.kd_unit}</p>
+                                            <span className="font-semibold text-sm text-teal-950 dark:text-neutral-400">{item.nama_opd}</span>
+                                            <p className="text-xs text-teal-500 text-light dark:text-neutral-400">{item.kd_unit}</p>
                                         </div>
                                     </Table.Td>
                                     <Table.Td className="text-right text-neutral-700 dark:text-neutral-400 text-sm">

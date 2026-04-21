@@ -14,7 +14,7 @@ import type { PendapatanRekening } from "@/Types/PendapatanSkpd";
 import FrontWrapper from "@/Wrappers/FrontWrapper";
 import { Head, router } from "@inertiajs/react";
 import { ArrowLeft, Calendar } from "lucide-react";
-import { ReactNode, useMemo, useCallback } from "react";
+import React, { ReactNode, useMemo, useCallback } from "react";
 import { route } from "ziggy-js";
 
 interface OpdDetailPageProps {
@@ -28,12 +28,8 @@ interface OpdDetailPageProps {
  * Format Rupiah untuk display.
  */
 function formatRupiah(value: number): string {
-    return new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        maximumFractionDigits: 0,
-        minimumFractionDigits: 0,
-    }).format(value);
+    if (value === 0) return "Rp.0";
+    return `Rp.${new Intl.NumberFormat("id-ID").format(value)}`;
 }
 
 /**
@@ -59,10 +55,10 @@ function StatCard({
     return (
         <div className="mt-4 rounded-xl border border-teal-200 bg-teal-50/80 p-2 dark:border-teal-900 dark:bg-neutral-900/60">
             <div className="mb-2 flex flex-1 justify-between rounded-md border border-teal-200 bg-teal-100/80 p-1 dark:border-teal-950 dark:bg-teal-800/10">
-                <p className="text-xs font-semibold text-neutral-600 dark:text-teal-400">{label}</p>
-                <p className="text-xs font-semibold text-neutral-600 dark:text-lime-300">{tahun}</p>
+                <p className="text-xs font-semisemibold text-neutral-600 dark:text-teal-400">{label}</p>
+                <p className="text-xs font-semisemibold text-neutral-600 dark:text-lime-300">{tahun}</p>
             </div>
-            <p className="mb-2 px-2 text-2xl font-semibold text-neutral-900 dark:text-white">{value}</p>
+            <p className="mb-2 px-2 text-2xl font-semisemibold text-neutral-900 dark:text-white">{value}</p>
 
             {percentage !== undefined && (
                 <div className="mb-4">
@@ -74,8 +70,8 @@ function StatCard({
                             }}
                         />
                     </div>
-                    <p className="mt-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300">
-                        <span className="text-xs font-semibold text-neutral-600 dark:text-teal-400">{percentageLabel}</span> : {percentage.toFixed(1)}
+                    <p className="mt-2 text-sm font-semisemibold text-neutral-700 dark:text-neutral-300">
+                        <span className="text-xs font-semisemibold text-neutral-600 dark:text-teal-400">{percentageLabel}</span> : {percentage.toFixed(1)}
                         %
                     </p>
                 </div>
@@ -96,6 +92,198 @@ function StatCard({
  */
 function StatCardSkeleton() {
     return <div className="mt-4 h-40 animate-pulse rounded-2xl bg-neutral-200 dark:bg-neutral-700" />;
+}
+
+export interface BelanjaKegiatan {
+    nama: string;
+    pptk?: string;
+    pagu: number;
+    fisik: {
+        target: number;
+        realisasi: number;
+        dev: number;
+    };
+    keuangan: {
+        target: number;
+        realisasi: number;
+    };
+}
+
+export interface BelanjaProgram {
+    no: number;
+    nama: string;
+    kegiatan: BelanjaKegiatan[];
+}
+
+const DUMMY_BELANJA_DETAIL: BelanjaProgram[] = [
+    {
+        no: 1,
+        nama: "PROGRAM PENUNJANG URUSAN PEMERINTAHAN DAERAH KABUPATEN/KOTA",
+        kegiatan: [
+            {
+                nama: "Pemeliharaan Barang Milik Daerah Penunjang Urusan Pemerintahan Daerah",
+                pagu: 545725500,
+                fisik: { target: 0, realisasi: 0, dev: 0 },
+                keuangan: { target: 545725500, realisasi: 28860600 }
+            },
+            {
+                nama: "Perencanaan, Penganggaran, dan Evaluasi Kinerja Perangkat Daerah",
+                pagu: 46435800,
+                fisik: { target: 0, realisasi: 0, dev: 0 },
+                keuangan: { target: 46435800, realisasi: 5018738 }
+            },
+            {
+                nama: "Administrasi Keuangan Perangkat Daerah",
+                pagu: 14819633945,
+                fisik: { target: 0, realisasi: 0, dev: 0 },
+                keuangan: { target: 14819633945, realisasi: 4881151526 }
+            },
+            {
+                nama: "Administrasi Umum Perangkat Daerah",
+                pagu: 577013000,
+                fisik: { target: 0, realisasi: 0, dev: 0 },
+                keuangan: { target: 577013000, realisasi: 84107513 }
+            },
+            {
+                nama: "Administrasi Kepegawaian Perangkat Daerah",
+                pagu: 845569300,
+                fisik: { target: 0, realisasi: 0, dev: 0 },
+                keuangan: { target: 845569300, realisasi: 17604000 }
+            },
+            {
+                nama: "Pengadaan Barang Milik Daerah Penunjang Urusan Pemerintahan Daerah",
+                pagu: 61026600,
+                fisik: { target: 0, realisasi: 0, dev: 0 },
+                keuangan: { target: 61026600, realisasi: 49900000 }
+            },
+            {
+                nama: "Penyediaan Jasa Penunjang Urusan Pemerintahan Daerah",
+                pagu: 12780000,
+                fisik: { target: 0, realisasi: 0, dev: 0 },
+                keuangan: { target: 12780000, realisasi: 5311727 }
+            }
+        ]
+    },
+    {
+        no: 2,
+        nama: "PROGRAM PENYELENGGARAAN PENGAWASAN",
+        kegiatan: [
+            {
+                nama: "Penyelenggaraan Pengawasan Internal",
+                pagu: 541606500,
+                fisik: { target: 0, realisasi: 0, dev: 0 },
+                keuangan: { target: 541606500, realisasi: 96173151 }
+            },
+            {
+                nama: "Penyelenggaraan Pengawasan dengan Tujuan Tertentu",
+                pagu: 51088200,
+                fisik: { target: 0, realisasi: 0, dev: 0 },
+                keuangan: { target: 51088200, realisasi: 3400000 }
+            }
+        ]
+    },
+    {
+        no: 3,
+        nama: "PROGRAM PERUMUSAN KEBIJAKAN, PENDAMPINGAN DAN ASISTENSI",
+        kegiatan: [
+            {
+                nama: "Perumusan Kebijakan Teknis di Bidang Pengawasan dan Fasilitasi Pengawasan",
+                pagu: 11933900,
+                fisik: { target: 0, realisasi: 0, dev: 0 },
+                keuangan: { target: 11933900, realisasi: 0 }
+            },
+            {
+                nama: "Pendampingan dan Asistensi",
+                pagu: 129418700,
+                fisik: { target: 0, realisasi: 0, dev: 0 },
+                keuangan: { target: 129418700, realisasi: 11756718 }
+            }
+        ]
+    }
+];
+
+/**
+ * Komponen untuk menampilkan tabel realisasi belanja daerah.
+ * Meniru struktur laporan realisasi fisik & keuangan dari gambar.
+ */
+function BelanjaDetailTable({ programs }: { programs: BelanjaProgram[] }) {
+    return (
+        <div className="mb-6 overflow-hidden rounded-lg border border-slate-300 bg-white shadow-sm dark:border-slate-700 dark:bg-neutral-900/10">
+            <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-left text-[11px]">
+                    <thead>
+                        <tr className="border-b border-slate-300 bg-teal-50 dark:border-slate-700 dark:bg-teal-950/20">
+                            <th rowSpan={2} className="border-r border-slate-300 px-3 py-4 text-center font-semibold text-teal-900 dark:text-teal-600">No</th>
+                            <th rowSpan={2} className="border-r border-slate-300 px-4 py-4 text-center font-semibold text-teal-900 dark:text-teal-600">Program / Kegiatan</th>
+                            <th rowSpan={2} className="border-r border-slate-300 px-4 py-4 text-center font-semibold text-teal-900 dark:text-teal-600 uppercase">PPTK Kegiatan</th>
+                            <th rowSpan={2} className="border-r border-slate-300 px-4 py-4 text-center font-semibold text-teal-900 dark:text-teal-600 uppercase">PAGU</th>
+                            <th colSpan={3} className="border-b border-r border-slate-300 px-4 py-2 text-center font-semibold text-teal-900 dark:text-teal-600 uppercase">FISIK</th>
+                            <th colSpan={5} className="border-b border-slate-300 px-4 py-2 text-center font-semibold text-teal-900 dark:text-teal-600 uppercase">KEUANGAN</th>
+                        </tr>
+                        <tr className="border-b border-slate-300 bg-teal-50 dark:border-slate-700 dark:bg-teal-950/20">
+                            <th className="border-r border-slate-300 px-2 py-2 text-center font-semibold text-teal-900 dark:text-teal-600">TARGET</th>
+                            <th className="border-r border-slate-300 px-2 py-2 text-center font-semibold text-teal-900 dark:text-teal-600">REALISASI</th>
+                            <th className="border-r border-slate-300 px-2 py-2 text-center font-semibold text-teal-900 dark:text-teal-600">DEV</th>
+                            <th className="border-r border-slate-300 px-2 py-2 text-center font-semibold text-teal-900 dark:text-teal-600 whitespace-nowrap">TARGET (Rp)</th>
+                            <th className="border-r border-slate-300 px-2 py-2 text-center font-semibold text-teal-900 dark:text-teal-600">%</th>
+                            <th className="border-r border-slate-300 px-2 py-2 text-center font-semibold text-teal-900 dark:text-teal-600 whitespace-nowrap">REALISASI (Rp)</th>
+                            <th className="border-r border-slate-300 px-2 py-2 text-center font-semibold text-teal-900 dark:text-teal-600">%</th>
+                            <th className="px-2 py-2 text-center font-semibold text-teal-900 dark:text-teal-600 whitespace-nowrap">DEV(%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {programs.map((prog) => (
+                            <React.Fragment key={prog.no}>
+                                {/* Program Row */}
+                                <tr className="border border-teal-200 bg-teal-50/50 font-semibold dark:border-teal-800 dark:bg-teal-900/10">
+                                    <td className=" px-3 py-3 text-center text-teal-900 dark:text-teal-600">{prog.no}</td>
+                                    <td className=" px-4 py-3 text-teal-900 dark:text-teal-600 uppercase">{prog.nama}</td>
+                                    <td className=""></td>
+                                    <td className=""></td>
+                                    <td className=""></td>
+                                    <td className=""></td>
+                                    <td className=""></td>
+                                    <td className="border-r border-teal-200 dark:border-teal-800"></td>
+                                    <td className="border-r border-teal-200 dark:border-teal-800"></td>
+                                    <td className="border-r border-teal-200 dark:border-teal-800"></td>
+                                    <td className="border-r border-teal-200 dark:border-teal-800"></td>
+                                    <td className="dark:border-teal-800"></td>
+                                </tr>
+                                {/* Kegiatan Rows */}
+                                {prog.kegiatan.map((keg, kIdx) => {
+                                    const kPercentage = keg.keuangan.target > 0 ? (keg.keuangan.realisasi / keg.keuangan.target) * 100 : 0;
+                                    return (
+                                        <tr key={kIdx} className="border-b border-slate-100 transition-colors hover:bg-teal-100/50 dark:border-teal-900 dark:hover:bg-teal-800/40">
+                                            <td className="border-r border-slate-100 px-3 py-2.5 dark:border-teal-900"></td>
+                                            <td className="border-r border-slate-100 px-8 py-2.5 text-teal-950 dark:text-neutral-300">{keg.nama}</td>
+                                            <td className="border-r border-slate-100 px-4 py-2.5 text-center dark:border-teal-900"></td>
+                                            <td className="border-r border-slate-100 px-4 py-2.5 text-right text-teal-950 dark:text-neutral-400">
+                                                {formatRupiah(keg.pagu)}
+                                            </td>
+                                            <td className="border-r border-slate-100 px-2 py-2.5 text-center dark:border-slate-900"></td>
+                                            <td className="border-r border-slate-100 px-2 py-2.5 text-center dark:border-slate-900"></td>
+                                            <td className="border-r border-slate-100 px-2 py-2.5 text-center dark:border-slate-900"></td>
+                                            <td className="border-r border-slate-100 px-2 py-2.5 text-right text-teal-950 dark:text-neutral-400">
+                                                {formatRupiah(keg.keuangan.target)}
+                                            </td>
+                                            <td className="border-r border-slate-100 px-2 py-2.5 text-center dark:border-slate-900"></td>
+                                            <td className="border-r border-slate-100 px-2 py-2.5 text-right text-teal-950 dark:text-neutral-200">
+                                                {formatRupiah(keg.keuangan.realisasi)}
+                                            </td>
+                                            <td className="border-r border-slate-100 px-2 py-2.5 text-center font-medium text-teal-950 dark:text-neutral-400">
+                                                {Math.round(kPercentage)}%
+                                            </td>
+                                            <td className="px-2 py-2.5 text-center dark:border-slate-900"></td>
+                                        </tr>
+                                    );
+                                })}
+                            </React.Fragment>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
 }
 
 /**
@@ -136,7 +324,7 @@ function PendapatanList({ items, loading, error }: { items: PendapatanRekening[]
                     <table className="w-full">
                         <thead>
                             <tr className="border-b border-teal-200 bg-teal-50 dark:border-teal-700 dark:bg-teal-900/20">
-                                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 dark:text-neutral-300">Kode Rekening</th>
+                                <th className="px-4 py-3 text-left text-xs font-semisemibold text-neutral-700 dark:text-neutral-300">Kode Rekening</th>
                                 <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 dark:text-neutral-300">Nama Rekening</th>
                                 <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-700 dark:text-neutral-300">Target</th>
                                 <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-700 dark:text-neutral-300">Realisasi</th>
@@ -213,6 +401,7 @@ function OpdDetailContent({ type, namaOpd, tahun }: Omit<OpdDetailPageProps, "sl
     const { data, loading, error } = useOpdDetail(type, namaOpd, tahun);
 
     const pendapatanDetail = usePendapatanSkpdDetail(namaOpd, tahun);
+    // const belanjaDetail = useBelanjaSkpdDetail(namaOpd, tahun);
 
     // Fetch pendapatan detail SKPD jika type === "pendapatan"
 
@@ -247,21 +436,19 @@ function OpdDetailContent({ type, namaOpd, tahun }: Omit<OpdDetailPageProps, "sl
             <div className="mx-auto mb-8 max-w-screen-2xl px-8">
                 <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-6">
                     <div>
-                        <h1 className="mb-2 font-bold text-neutral-900 lg:text-3xl dark:text-neutral-100">{namaOpd}</h1>
+                        <h1 className="mb-2 font-semibold text-neutral-900 lg:text-3xl dark:text-neutral-100">{namaOpd}</h1>
                         <p className="xs:text-xs font-medium text-neutral-600 capitalize dark:text-neutral-400">
-                            {data?.kd_unit} - {labels.title.toLowerCase()} per satuan kerja perangkat daerah
+                            <span className="font-medium text-teal-600 dark:text-teal-400">{data?.kd_unit}</span> - {labels.title.toLowerCase()} per satuan kerja perangkat daerah
                         </p>
                     </div>
 
                     {/* ── Year Selector ───────────────────────────────────── */}
-                    <div className="flex items-center gap-3 bg-white dark:bg-neutral-900/50 p-2 rounded-xl border border-teal-100 dark:border-teal-900/50 shadow-sm">
-                        <div className="bg-teal-50 dark:bg-teal-900/20 p-2 rounded-lg text-teal-600 dark:text-teal-400">
+                    <div className="flex items-center gap-3 bg-white dark:bg-neutral-900/50 p-2 rounded-md border border-teal-100 dark:border-teal-900/50 shadow-xs">
+                        <div className="bg-teal-50 dark:bg-teal-900/20 pl-2  rounded-lg text-teal-600 dark:text-teal-400">
                             <Calendar className="w-4 h-4" />
                         </div>
                         <div className="flex flex-col">
-                            <label htmlFor="year-select" className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-500">
-                                Tahun Anggaran
-                            </label>
+
                             <select
                                 id="year-select"
                                 value={tahun}
@@ -272,7 +459,7 @@ function OpdDetailContent({ type, namaOpd, tahun }: Omit<OpdDetailPageProps, "sl
                                         preserveScroll: true,
                                     });
                                 }}
-                                className="bg-transparent border-none p-0 pr-8 text-sm font-bold text-neutral-900 dark:text-neutral-100 focus:ring-0 cursor-pointer"
+                                className="bg-transparent border-none p-0 pr-8 text-sm fontmedium text-neutral-900 dark:text-neutral-100 focus:ring-0 cursor-pointer"
                             >
                                 {(() => {
                                     const currentYear = new Date().getFullYear();
@@ -356,38 +543,42 @@ function OpdDetailContent({ type, namaOpd, tahun }: Omit<OpdDetailPageProps, "sl
                         </>
                     )}
 
-                    <h2 className="mb-4 text-2xl font-medium text-neutral-900 dark:text-teal-400">Detail {labels.title}</h2>
+                    <h2 className="mb-4 text-2xl font-medium text-neutral-900 dark:text-teal-400">Detail {labels.title} {tahun}</h2>
 
-                    <div className="my-2 grid grid-cols-1 gap-2 lg:grid-cols-2">
-                        <div className="col-span-1 rounded-lg border border-teal-200 p-2">
-                            <div className="flex items-center justify-between border-teal-200 pb-4 dark:border-teal-700">
-                                <span className="font-medium text-neutral-700 dark:text-neutral-300">Kode Unit</span>
-                                <span className="text-neutral-900 dark:text-white">{data.kd_unit}</span>
+                    {type === "belanja" ? (
+                        <>
+                            <div className="border border-teal-200 mx-auto p-2 py-2 rounded-lg ">
+                                <div className="mb-2 dark:bg-teal-950 text-center bg-neutral-50 p-2 rounded-md">
+                                    <h3 className="text-2xl font-medium text-slate-800 dark:text-neutral-100">
+                                        Realisasi Fisik & Keuangan
+                                    </h3>
+                                    <p className="text-xs font-medium uppercase text-teal-950 dark:text-neutral-400">
+                                        Terkait Tentang Laporan Realisasi Fisik & Keuangan <span className="font-medium text-teal-600 dark:text-teal-600">{namaOpd.toUpperCase()}</span>
+                                    </p>
+                                </div>
+                                <BelanjaDetailTable programs={DUMMY_BELANJA_DETAIL} />
                             </div>
-                        </div>
-                        <div className="col-span-1 rounded-lg border border-teal-200 p-2">
-                            <div className="flex items-center justify-between border-teal-200 pb-4 dark:border-teal-700">
-                                <span className="font-medium text-neutral-700 dark:text-neutral-300">Nama OPD</span>
-                                <span className="text-neutral-900 dark:text-white">{data.nama_opd}</span>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div className="mt-0 overflow-hidden rounded-lg border border-teal-200 bg-white p-4 dark:border-teal-950 dark:bg-neutral-900/10">
-                        <div className="space-y-3">
-                            {type === "belanja" ? (
-                                <>
-                                    <div className="flex items-center justify-between border-b border-teal-200 pb-4 dark:border-teal-700">
-                                        <span className="font-medium text-neutral-700 dark:text-neutral-300">Pagu Belanja</span>
-                                        <span className="text-neutral-900 dark:text-white">{formatRupiah((data as OpdBelanjaDetail).pagu)}</span>
+                        </>
+                    ) : (
+                        <>
+                            <div className="my-2 grid grid-cols-1 gap-2 lg:grid-cols-2">
+                                <div className="col-span-1 rounded-lg border border-teal-200 p-2">
+                                    <div className="flex items-center justify-between border-teal-200 pb-4 dark:border-teal-700">
+                                        <span className="font-medium text-neutral-700 dark:text-neutral-300">Kode Unit</span>
+                                        <span className="text-neutral-900 dark:text-white">{data.kd_unit}</span>
                                     </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="font-medium text-neutral-700 dark:text-neutral-300">Realisasi Belanja</span>
-                                        <span className="text-neutral-900 dark:text-white">{formatRupiah((data as OpdBelanjaDetail).realisasi)}</span>
+                                </div>
+                                <div className="col-span-1 rounded-lg border border-teal-200 p-2">
+                                    <div className="flex items-center justify-between border-teal-200 pb-4 dark:border-teal-700">
+                                        <span className="font-medium text-neutral-700 dark:text-neutral-300">Nama OPD</span>
+                                        <span className="text-neutral-900 dark:text-white">{data.nama_opd}</span>
                                     </div>
-                                </>
-                            ) : (
-                                <>
+                                </div>
+                            </div>
+
+                            <div className="mt-0 overflow-hidden rounded-lg border border-teal-200 bg-white p-4 dark:border-teal-950 dark:bg-neutral-900/10">
+                                <div className="space-y-3">
                                     <div className="flex items-center justify-between border-b border-teal-200 pb-4 dark:border-teal-700">
                                         <span className="font-medium text-neutral-700 dark:text-neutral-300">Target PAD</span>
                                         <span className="text-neutral-900 dark:text-white">
@@ -400,10 +591,10 @@ function OpdDetailContent({ type, namaOpd, tahun }: Omit<OpdDetailPageProps, "sl
                                             {formatRupiah((data as OpdPendapatanDetail).realisasi_pad)}
                                         </span>
                                     </div>
-                                </>
-                            )}
-                        </div>
-                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             )}
         </>

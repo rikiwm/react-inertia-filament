@@ -195,7 +195,7 @@ const Tr = memo(function Tr({ children, className, isEven = false, onClick }: Tr
             onClick={onClick}
             className={cn(
                 "transition-colors duration-150",
-                "hover:bg-sky-50/60 dark:hover:bg-sky-950/20",
+                "hover:bg-teal-50/60 dark:hover:bg-teal-950/20",
                 striped && isEven && "bg-neutral-50/70 dark:bg-neutral-900/40",
                 onClick && "cursor-pointer",
                 className,
@@ -311,8 +311,8 @@ const TD_VARIANT_CLASSES: Record<NonNullable<TdProps["variant"]>, string> = {
     default: "text-neutral-700 dark:text-neutral-300",
     success: "text-emerald-600 dark:text-emerald-400 font-medium",
     warning: "text-amber-600 dark:text-amber-400 font-medium",
-    danger:  "text-red-600 dark:text-red-400 font-medium",
-    info:    "text-sky-600 dark:text-sky-400 font-medium",
+    danger: "text-red-600 dark:text-red-400 font-medium",
+    info: "text-sky-600 dark:text-sky-400 font-medium",
 };
 
 /**
@@ -384,7 +384,7 @@ const Skeleton = memo(function TableSkeleton({ rows = 5, cols = 4 }: SkeletonPro
                         {Array.from({ length: cols }).map((_, i) => (
                             <th key={i} className="px-4 py-3.5">
                                 <div className="h-3 rounded-full bg-neutral-200 dark:bg-neutral-700"
-                                     style={{ width: `${50 + Math.random() * 40}%` }} />
+                                    style={{ width: `${50 + Math.random() * 40}%` }} />
                             </th>
                         ))}
                     </tr>
@@ -396,7 +396,7 @@ const Skeleton = memo(function TableSkeleton({ rows = 5, cols = 4 }: SkeletonPro
                             {Array.from({ length: cols }).map((_, ci) => (
                                 <td key={ci} className="px-4 py-3.5">
                                     <div className="h-3 rounded-full bg-neutral-100 dark:bg-neutral-800"
-                                         style={{ width: `${40 + Math.random() * 50}%` }} />
+                                        style={{ width: `${40 + Math.random() * 50}%` }} />
                                 </td>
                             ))}
                         </tr>
@@ -465,8 +465,8 @@ const BADGE_VARIANT_CLASSES: Record<NonNullable<BadgeProps["variant"]>, string> 
     default: "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300",
     success: "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800",
     warning: "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-800",
-    danger:  "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-800",
-    info:    "bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400 border border-sky-100 dark:border-sky-800",
+    danger: "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-800",
+    info: "bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400 border border-sky-100 dark:border-sky-800",
 };
 
 /**
@@ -509,14 +509,14 @@ const Badge = memo(function TableBadge({ children, variant = "default" }: BadgeP
  * - `Table.Badge`   — Badge status untuk di dalam sel
  */
 export const Table = Object.assign(Root, {
-    Head:     Head,
-    Body:     Body,
-    Tr:       Tr,
-    Th:       Th,
-    Td:       Td,
+    Head: Head,
+    Body: Body,
+    Tr: Tr,
+    Th: Th,
+    Td: Td,
     Skeleton: Skeleton,
-    Empty:    Empty,
-    Badge:    Badge,
+    Empty: Empty,
+    Badge: Badge,
 });
 
 export default Table;

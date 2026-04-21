@@ -20,6 +20,8 @@ import { router } from "@inertiajs/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { route } from "ziggy-js";
 import { ReactNode } from "react";
+import { motion, AnimatePresence } from 'motion/react';
+
 
 // ─── Page Component ───────────────────────────────────────────────────────────
 
@@ -193,15 +195,20 @@ const BelanjaDaerahPage = () => {
                         </p>
                     </div>
                 )}
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                >
+                    {/* ── SKPD Table ──────────────────────────────────────────────── */}
+                    <div className="rounded-lg lg:rounded-2xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6">
+                        <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-6">
+                            Breakdown per SKPD (Satuan Kerja Perangkat Daerah)
+                        </h2>
 
-                {/* ── SKPD Table ──────────────────────────────────────────────── */}
-                <div className="rounded-lg lg:rounded-2xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6">
-                    <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">
-                        Breakdown per SKPD (Satuan Kerja Perangkat Daerah)
-                    </h2>
-
-                    {data && <SkpdTable data={data.data} type="belanja" loading={loading} error={error} tahun={selectedYear} />}
-                </div>
+                        {data && <SkpdTable data={data.data} type="belanja" loading={loading} error={error} tahun={selectedYear} />}
+                    </div>
+                </motion.div>
 
                 {/* ── Footer Info ─────────────────────────────────────────────── */}
                 <div className="mt-8 text-center text-xs text-neutral-500 dark:text-neutral-500">
