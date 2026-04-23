@@ -42,9 +42,9 @@ const KebencanaanPage = ({ weather, ispu, disasterMap }: KebencanaanPageProps) =
                     {/* Weather Column */}
                     <div className="lg:col-span-4 flex flex-col">
                         <motion.div
-                            initial={{ opacity: 0, x: -20 }}
+                            initial={{ opacity: 0, x: -40 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
+                            transition={{ duration: 0.1, delay: 0.30 }}
                             className="h-full"
                         >
                             <WeatherWidget data={weather} />
@@ -54,9 +54,9 @@ const KebencanaanPage = ({ weather, ispu, disasterMap }: KebencanaanPageProps) =
                     {/* Map Column */}
                     <div className="lg:col-span-8">
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.5, delay: 0.4 }}
+                            initial={{ opacity: 0, x: 40 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.1, delay: 0.30 }}
                         >
                             <div className="bg-white/5 dark:bg-black/40 rounded-2xl border border-teal-500/20 p-2 h-full shadow-2xl relative">
                                 <div className="absolute top-6 left-6 z-10 pointer-events-none">

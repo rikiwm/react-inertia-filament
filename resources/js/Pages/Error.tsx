@@ -51,7 +51,7 @@ export default function Error({ status }: Props) {
                         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                             <Link
                                 href="/"
-                                className="inline-flex items-center justify-center rounded-full bg-teal-600 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-500/25 transition-all hover:bg-teal-500 hover:shadow-teal-500/40 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:bg-teal-500 dark:hover:bg-teal-400 sm:w-auto"
+                                className="inline-flex items-center justify-center rounded-full bg-teal-600 px-3 py-2 text-sm font-semibold text-white shadow-lg shadow-teal-500/25 transition-all hover:bg-teal-500 hover:shadow-teal-500/40 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:bg-teal-500 dark:hover:bg-teal-400 sm:w-auto"
                             >
                                 Back to Home
                             </Link>

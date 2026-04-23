@@ -8,12 +8,12 @@ import { pbjDetailService, PbjDetailItem, PbjJenisTransaksi } from '@/Services/p
 export const usePbjDetail = (initialTahun: number = 2026) => {
     const [tahun, setTahun] = useState(initialTahun);
     const [searchQuery, setSearchQuery] = useState('');
-    
+
     // Filter baru
     const [selectedSatker, setSelectedSatker] = useState<string>('all');
     const [selectedStatus, setSelectedStatus] = useState<string>('all');
     const [selectedJenis, setSelectedJenis] = useState<PbjJenisTransaksi | 'all'>('all');
-    
+
     // Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5); // Default 5 items per page for demo
@@ -45,7 +45,7 @@ export const usePbjDetail = (initialTahun: number = 2026) => {
         const satkers = Array.from(new Set(data.map(d => d.nama_satker))).sort();
         const statuses = Array.from(new Set(data.map(d => d.status))).sort();
         const jenisTransaksis: PbjJenisTransaksi[] = ["CATALOG", "TENDER", "NON-TENDER"];
-        
+
         return {
             satkers,
             statuses,
@@ -56,10 +56,10 @@ export const usePbjDetail = (initialTahun: number = 2026) => {
     /** Logika pemfilteran data */
     const filteredData = useMemo(() => {
         return data.filter(item => {
-            const matchSearch = !searchQuery || 
+            const matchSearch = !searchQuery ||
                 [item.rup_name, item.nama_satker, item.order_id, item.nama_penyedia]
                     .some(field => field?.toLowerCase().includes(searchQuery.toLowerCase()));
-            
+
             const matchSatker = selectedSatker === 'all' || item.nama_satker === selectedSatker;
             const matchStatus = selectedStatus === 'all' || item.status === selectedStatus;
             const matchJenis = selectedJenis === 'all' || item.jenis_transaksi === selectedJenis;

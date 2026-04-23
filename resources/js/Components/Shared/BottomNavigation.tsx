@@ -42,7 +42,7 @@ const BottomNavigation = () => {
     ];
 
     return (
-        <div className="lg:hidden w-full fixed bottom-4 left-0 right-0 z-50 flex justify-center px-0 pointer-events-none">
+        <div className="lg:hidden w-full fixed bottom-2 left-0 right-0 z-50 flex justify-center px-3 pointer-events-none">
             <motion.div
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}

@@ -9,6 +9,7 @@
  */
 import { useOpdDetail } from "@/Hooks/useOpdDetail";
 import { usePendapatanSkpdDetail } from "@/Hooks/usePendapatanSkpdDetail";
+import { useRealisasiProgram } from "@/Hooks/useRealisasiProgram";
 import type { OpdBelanjaDetail, OpdDetailType, OpdPendapatanDetail } from "@/Services/opdDetailService";
 import type { PendapatanRekening } from "@/Types/PendapatanSkpd";
 import FrontWrapper from "@/Wrappers/FrontWrapper";
@@ -16,6 +17,7 @@ import { Head, router } from "@inertiajs/react";
 import { ArrowLeft, Calendar } from "lucide-react";
 import React, { ReactNode, useMemo, useCallback } from "react";
 import { route } from "ziggy-js";
+import { motion, AnimatePresence } from 'motion/react';
 
 interface OpdDetailPageProps {
     type: OpdDetailType;
@@ -115,98 +117,20 @@ export interface BelanjaProgram {
     kegiatan: BelanjaKegiatan[];
 }
 
-const DUMMY_BELANJA_DETAIL: BelanjaProgram[] = [
-    {
-        no: 1,
-        nama: "PROGRAM PENUNJANG URUSAN PEMERINTAHAN DAERAH KABUPATEN/KOTA",
-        kegiatan: [
-            {
-                nama: "Pemeliharaan Barang Milik Daerah Penunjang Urusan Pemerintahan Daerah",
-                pagu: 545725500,
-                fisik: { target: 0, realisasi: 0, dev: 0 },
-                keuangan: { target: 545725500, realisasi: 28860600 }
-            },
-            {
-                nama: "Perencanaan, Penganggaran, dan Evaluasi Kinerja Perangkat Daerah",
-                pagu: 46435800,
-                fisik: { target: 0, realisasi: 0, dev: 0 },
-                keuangan: { target: 46435800, realisasi: 5018738 }
-            },
-            {
-                nama: "Administrasi Keuangan Perangkat Daerah",
-                pagu: 14819633945,
-                fisik: { target: 0, realisasi: 0, dev: 0 },
-                keuangan: { target: 14819633945, realisasi: 4881151526 }
-            },
-            {
-                nama: "Administrasi Umum Perangkat Daerah",
-                pagu: 577013000,
-                fisik: { target: 0, realisasi: 0, dev: 0 },
-                keuangan: { target: 577013000, realisasi: 84107513 }
-            },
-            {
-                nama: "Administrasi Kepegawaian Perangkat Daerah",
-                pagu: 845569300,
-                fisik: { target: 0, realisasi: 0, dev: 0 },
-                keuangan: { target: 845569300, realisasi: 17604000 }
-            },
-            {
-                nama: "Pengadaan Barang Milik Daerah Penunjang Urusan Pemerintahan Daerah",
-                pagu: 61026600,
-                fisik: { target: 0, realisasi: 0, dev: 0 },
-                keuangan: { target: 61026600, realisasi: 49900000 }
-            },
-            {
-                nama: "Penyediaan Jasa Penunjang Urusan Pemerintahan Daerah",
-                pagu: 12780000,
-                fisik: { target: 0, realisasi: 0, dev: 0 },
-                keuangan: { target: 12780000, realisasi: 5311727 }
-            }
-        ]
-    },
-    {
-        no: 2,
-        nama: "PROGRAM PENYELENGGARAAN PENGAWASAN",
-        kegiatan: [
-            {
-                nama: "Penyelenggaraan Pengawasan Internal",
-                pagu: 541606500,
-                fisik: { target: 0, realisasi: 0, dev: 0 },
-                keuangan: { target: 541606500, realisasi: 96173151 }
-            },
-            {
-                nama: "Penyelenggaraan Pengawasan dengan Tujuan Tertentu",
-                pagu: 51088200,
-                fisik: { target: 0, realisasi: 0, dev: 0 },
-                keuangan: { target: 51088200, realisasi: 3400000 }
-            }
-        ]
-    },
-    {
-        no: 3,
-        nama: "PROGRAM PERUMUSAN KEBIJAKAN, PENDAMPINGAN DAN ASISTENSI",
-        kegiatan: [
-            {
-                nama: "Perumusan Kebijakan Teknis di Bidang Pengawasan dan Fasilitasi Pengawasan",
-                pagu: 11933900,
-                fisik: { target: 0, realisasi: 0, dev: 0 },
-                keuangan: { target: 11933900, realisasi: 0 }
-            },
-            {
-                nama: "Pendampingan dan Asistensi",
-                pagu: 129418700,
-                fisik: { target: 0, realisasi: 0, dev: 0 },
-                keuangan: { target: 129418700, realisasi: 11756718 }
-            }
-        ]
-    }
-];
 
 /**
  * Komponen untuk menampilkan tabel realisasi belanja daerah.
  * Meniru struktur laporan realisasi fisik & keuangan dari gambar.
  */
 function BelanjaDetailTable({ programs }: { programs: BelanjaProgram[] }) {
+    if (programs.length === 0) {
+        return (
+            <div className="mb-6 rounded-lg border border-neutral-200 bg-neutral-50 p-8 text-center dark:border-neutral-700 dark:bg-neutral-900">
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">Tidak ada data realisasi belanja tersedia</p>
+            </div>
+        );
+    }
+
     return (
         <div className="mb-6 overflow-hidden rounded-lg border border-slate-300 bg-white shadow-sm dark:border-slate-700 dark:bg-neutral-900/10">
             <div className="overflow-x-auto">
@@ -256,7 +180,7 @@ function BelanjaDetailTable({ programs }: { programs: BelanjaProgram[] }) {
                                         <tr key={kIdx} className="border-b border-slate-100 transition-colors hover:bg-teal-100/50 dark:border-teal-900 dark:hover:bg-teal-800/40">
                                             <td className="border-r border-slate-100 px-3 py-2.5 dark:border-teal-900"></td>
                                             <td className="border-r border-slate-100 px-8 py-2.5 text-teal-950 dark:text-neutral-300">{keg.nama}</td>
-                                            <td className="border-r border-slate-100 px-4 py-2.5 text-center dark:border-teal-900"></td>
+                                            <td className="border-r border-slate-100 px-4 py-2.5 text-center text-xs text-teal-950 dark:border-teal-900 dark:text-neutral-400">{keg.pptk || "-"}</td>
                                             <td className="border-r border-slate-100 px-4 py-2.5 text-right text-teal-950 dark:text-neutral-400">
                                                 {formatRupiah(keg.pagu)}
                                             </td>
@@ -337,9 +261,12 @@ function PendapatanList({ items, loading, error }: { items: PendapatanRekening[]
                                 const percentage = item.anggaran > 0 ? Math.round((item.realisasi / item.anggaran) * 100 * 10) / 10 : 0;
                                 const profit = item.realisasi - item.anggaran;
                                 return (
-                                    <tr
+                                    <motion.tr
                                         key={idx}
                                         className="border-b border-teal-100 transition-colors hover:bg-teal-50 dark:border-teal-900 dark:hover:bg-teal-950/20"
+                                        initial={{ opacity: 0, y: 0 }}
+                                        animate={{ opacity: 1, y: 5 }}
+                                        transition={{ duration: 0.2, delay: idx * 0.1 }}
                                     >
                                         <td className="px-4 py-3 font-mono text-xs text-neutral-700 dark:text-neutral-300">{item.kode_rekening}</td>
                                         <td className="px-4 py-3 text-xs font-medium text-neutral-900 dark:text-white">{item.nama_rekening}</td>
@@ -359,7 +286,7 @@ function PendapatanList({ items, loading, error }: { items: PendapatanRekening[]
                                         >
                                             {formatRupiah(profit)}
                                         </td>
-                                    </tr>
+                                    </motion.tr>
                                 );
                             })}
                         </tbody>
@@ -396,12 +323,39 @@ function getSummaryData(data: OpdBelanjaDetail | OpdPendapatanDetail, type: OpdD
 /**
  * Main component untuk halaman detail OPD.
  */
-function OpdDetailContent({ type, namaOpd, tahun }: Omit<OpdDetailPageProps, "slug">) {
+function OpdDetailContent({ type, namaOpd, tahun, slug }: OpdDetailPageProps) {
     // Fetch data OPD dari layanan utama
     const { data, loading, error } = useOpdDetail(type, namaOpd, tahun);
 
     const pendapatanDetail = usePendapatanSkpdDetail(namaOpd, tahun);
-    // const belanjaDetail = useBelanjaSkpdDetail(namaOpd, tahun);
+
+    // Fetch realisasi program untuk type belanja
+    const {
+        data: realisasiData,
+        loading: realisasiLoading,
+        error: realisasiError
+    } = useRealisasiProgram(type === "belanja" ? slug : "", tahun);
+
+    const belanjaPrograms: BelanjaProgram[] = useMemo(() => {
+        if (!realisasiData || Array.isArray(realisasiData)) return [];
+        return Object.keys(realisasiData).map((progName, index) => {
+            const kegiatans = realisasiData[progName];
+            return {
+                no: index + 1,
+                nama: progName,
+                kegiatan: Object.keys(kegiatans).map(kegName => {
+                    const keg = kegiatans[kegName];
+                    return {
+                        nama: kegName,
+                        pptk: keg.pptk || "",
+                        pagu: keg.total_anggaran,
+                        fisik: { target: 0, realisasi: 0, dev: 0 },
+                        keuangan: { target: keg.total_anggaran, realisasi: keg.total_realisasi }
+                    };
+                })
+            };
+        });
+    }, [realisasiData]);
 
     // Fetch pendapatan detail SKPD jika type === "pendapatan"
 
@@ -433,21 +387,21 @@ function OpdDetailContent({ type, namaOpd, tahun }: Omit<OpdDetailPageProps, "sl
     return (
         <>
             {/* Header dengan title */}
-            <div className="mx-auto mb-8 max-w-screen-2xl px-8">
+            <div className="mx-auto mb-8 max-w-screen-2xl px-6 lg:px-0">
                 <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-6">
                     <div>
-                        <h1 className="mb-2 font-semibold text-neutral-900 lg:text-3xl dark:text-neutral-100">{namaOpd}</h1>
+                        <h1 className="mb-2 font-semibold text-neutral-900 text-2xl lg:text-3xl dark:text-neutral-100">{namaOpd}</h1>
                         <p className="xs:text-xs font-medium text-neutral-600 capitalize dark:text-neutral-400">
                             <span className="font-medium text-teal-600 dark:text-teal-400">{data?.kd_unit}</span> - {labels.title.toLowerCase()} per satuan kerja perangkat daerah
                         </p>
                     </div>
 
                     {/* ── Year Selector ───────────────────────────────────── */}
-                    <div className="flex items-center gap-3 bg-white dark:bg-neutral-900/50 p-2 rounded-md border border-teal-100 dark:border-teal-900/50 shadow-xs">
+                    <div className="flex items-center gap-3 bg-white dark:bg-neutral-900/50 p-2 rounded-md border border-teal-100 dark:border-teal-900/50 shadow-xs justify-end">
                         <div className="bg-teal-50 dark:bg-teal-900/20 pl-2  rounded-lg text-teal-600 dark:text-teal-400">
                             <Calendar className="w-4 h-4" />
                         </div>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col ">
 
                             <select
                                 id="year-select"
@@ -479,52 +433,61 @@ function OpdDetailContent({ type, namaOpd, tahun }: Omit<OpdDetailPageProps, "sl
                 </div>
 
                 {/* Summary Cards */}
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    {loading ? (
-                        <>
-                            {Array.from({ length: 4 }).map((_, i) => (
-                                <StatCardSkeleton key={i} />
-                            ))}
-                        </>
-                    ) : summary ? (
-                        <>
-                            <StatCard
-                                label={labels.paguLabel}
-                                value={formatRupiah(summary.pagu)}
-                                subLabel="Tahun Anggaran"
-                                subValue={String(tahun)}
-                                tahun={String(tahun)}
-                            />
-                            <StatCard
-                                label={labels.realizationLabel}
-                                value={summary.realisasi ? formatRupiah(summary.realisasi) : "-"}
-                                percentageLabel="Persentase Realisasi"
-                                percentage={(summary.realisasi / summary.pagu) * 100}
-                            />
-                            <StatCard
-                                label={labels.sisaLabel}
-                                value={formatRupiah(summary.pagu - summary.realisasi)}
-                                subLabel={
-                                    summary.pagu >= summary.realisasi
-                                        ? "Sisa Target"
-                                        : `Realisasi Melebihi Target ${formatRupiah(summary.realisasi - summary.pagu)}`
-                                }
-                                subValue={`${(((summary.pagu - summary.realisasi) / summary.pagu) * 100).toFixed(1)}%`}
-                            />
-                            <StatCard
-                                label={labels.percentageLabel}
-                                value={`${new Date(tahun + "-12").toLocaleString("id-ID", { month: "long", year: "numeric" })}`}
-                                subLabel="Status"
-                                subValue={summary.percentage >= 75 ? "Sangat Baik" : summary.percentage >= 50 ? "Cukup" : "Perlu Ditingkatkan"}
-                            />
-                        </>
-                    ) : null}
-                </div>
+
+                {loading ? (
+
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <StatCardSkeleton key={i} />
+                        ))}
+                    </div>
+                ) : summary ? (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="grid grid-cols-1 gap-2 lg:gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        <StatCard
+                            label={labels.paguLabel}
+                            value={formatRupiah(summary.pagu)}
+                            subLabel="Tahun Anggaran"
+                            subValue={String(tahun)}
+                            tahun={String(tahun)}
+                        />
+                        <StatCard
+                            label={labels.realizationLabel}
+                            value={summary.realisasi ? formatRupiah(summary.realisasi) : "-"}
+                            percentageLabel="Persentase Realisasi"
+                            percentage={(summary.realisasi / summary.pagu) * 100}
+                        />
+                        <StatCard
+                            label={labels.sisaLabel}
+                            value={formatRupiah(summary.pagu - summary.realisasi)}
+                            subLabel={
+                                summary.pagu >= summary.realisasi
+                                    ? "Sisa Target"
+                                    : `Realisasi Melebihi Target ${formatRupiah(summary.realisasi - summary.pagu)}`
+                            }
+                            subValue={`${(((summary.pagu - summary.realisasi) / summary.pagu) * 100).toFixed(1)}%`}
+                        />
+                        <StatCard
+                            label={labels.percentageLabel}
+                            value={`${new Date(tahun + "-12").toLocaleString("id-ID", { month: "long", year: "numeric" })}`}
+                            subLabel="Status"
+                            subValue={summary.percentage >= 75 ? "Sangat Baik" : summary.percentage >= 50 ? "Cukup" : "Perlu Ditingkatkan"}
+                        />
+                    </motion.div>
+
+                ) : null}
             </div>
 
             {/* Data Detail */}
             {data && (
-                <div className="mx-auto max-w-screen-2xl lg:px-8">
+                <motion.div
+                    initial={{ opacity: 0, y: 0 }}
+                    animate={{ opacity: 1, y: 5 }}
+                    transition={{ duration: 0.2 }}
+                    className="mx-auto max-w-screen-2xl px-4 lg:px-8">
                     {/* Pendapatan List - Show only when type === "pendapatan" */}
                     {type === "pendapatan" && (
                         <>
@@ -534,6 +497,7 @@ function OpdDetailContent({ type, namaOpd, tahun }: Omit<OpdDetailPageProps, "sl
                                     <span className="text-sm text-neutral-600 dark:text-neutral-400">{namaOpd}</span>
                                 </div>
                             </div>
+
 
                             <PendapatanList
                                 items={pendapatanDetail.data?.topRekening}
@@ -556,7 +520,20 @@ function OpdDetailContent({ type, namaOpd, tahun }: Omit<OpdDetailPageProps, "sl
                                         Terkait Tentang Laporan Realisasi Fisik & Keuangan <span className="font-medium text-teal-600 dark:text-teal-600">{namaOpd.toUpperCase()}</span>
                                     </p>
                                 </div>
-                                <BelanjaDetailTable programs={DUMMY_BELANJA_DETAIL} />
+                                {realisasiLoading ? (
+                                    <div className="space-y-3 py-6">
+                                        {Array.from({ length: 10 }).map((_, i) => (
+                                            <div key={i} className="h-16 animate-pulse rounded-lg bg-neutral-200 dark:bg-neutral-700" />
+                                        ))}
+                                    </div>
+                                ) : realisasiError ? (
+                                    <div className="rounded-lg border border-red-200 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950">
+                                        <p className="mb-2 text-sm font-medium text-red-800 dark:text-red-200">Gagal memuat data realisasi program</p>
+                                        <p className="text-xs text-red-700 dark:text-red-300">{realisasiError.message}</p>
+                                    </div>
+                                ) : (
+                                    <BelanjaDetailTable programs={belanjaPrograms} />
+                                )}
                             </div>
 
                         </>
@@ -595,8 +572,7 @@ function OpdDetailContent({ type, namaOpd, tahun }: Omit<OpdDetailPageProps, "sl
                             </div>
                         </>
                     )}
-                </div>
-            )}
+                </motion.div>)}
         </>
     );
 }
@@ -610,6 +586,11 @@ export default function OpdDetail(props: OpdDetailPageProps) {
             <Head title={`Detail ${props.namaOpd}`} />
 
             <div className="min-h-screen bg-transparent pt-18 pb-20">
+                <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-teal-500/10 rounded-full blur-[120px]" />
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
+                </div>
+
                 <div className="mx-auto max-w-screen-2xl px-6 lg:px-8">
                     {/* Back Button */}
                     <button

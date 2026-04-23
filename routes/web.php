@@ -3,12 +3,13 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Dashboard\OpdDetailController;
+use App\Http\Controllers\DynamicMenuController;
 use App\Http\Controllers\InquiryController;
+use App\Http\Controllers\KebencanaanController;
 use App\Http\Controllers\LandingPageRenderer;
 use App\Http\Controllers\NewsDetailRenderer;
 use App\Http\Controllers\NewsPageRenderer;
-use App\Http\Controllers\DynamicMenuController;
-use App\Http\Controllers\KebencanaanController;
+use App\Http\Controllers\PbjInaprocController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', LandingPageRenderer::class)->name('landing-page');
@@ -25,7 +26,15 @@ Route::inertia('/dashboard/pendapatan-daerah', 'PendapatanDaerahPage')->name('pe
 
 // Pengadaan Barang & Jasa (PBJ)
 Route::inertia('/dashboard/pbj', 'Pbj/PbjListPage')->name('pbj.list');
-Route::inertia('/dashboard/pbj/detail', 'Pbj/PbjShowPage')->name('pbj.show'); // Menggunakan placeholder detail
+Route::inertia('/dashboard/pbj/detail', 'Pbj/PbjShowPage')->name('pbj.show');
+Route::get('/satker', [PbjInaprocController::class, 'satker'])->name('api.pbj.satker');
+
+Route::prefix('api/pbj-inaproc')->group(function () {
+    Route::get('/catalog', [PbjInaprocController::class, 'catalog'])->name('api.pbj.catalog');
+    Route::get('/tender', [PbjInaprocController::class, 'tender'])->name('api.pbj.tender');
+    Route::get('/non-tender', [PbjInaprocController::class, 'nonTender'])->name('api.pbj.nontender');
+    Route::get('/summary', [PbjInaprocController::class, 'summary'])->name('api.pbj.summary');
+});
 
 // Program Unggulan (Progul)
 Route::inertia('/progul', 'Progul/ProgulPage')->name('progul');

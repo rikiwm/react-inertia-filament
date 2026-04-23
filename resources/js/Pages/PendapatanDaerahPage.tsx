@@ -82,6 +82,12 @@ const PendapatanDaerahPage = () => {
 
     return (
         <div className="min-h-screen bg-transparent pt-18 pb-20">
+            {/* Background blur */}
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
+            </div>
+
+
             <div className="max-w-screen-2xl mx-auto px-6 lg:px-8">
                 {/* ── Back Button ─────────────────────────────────────────────── */}
                 <button
@@ -95,7 +101,7 @@ const PendapatanDaerahPage = () => {
                 <div className="mb-4">
                     <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
                         <div>
-                            <h1 className="lg:text-4xl font-semibold uppercase text-neutral-900 dark:text-neutral-100 mb-2">
+                            <h1 className="lg:text-4xl text-xl font-semibold uppercase text-neutral-900 dark:text-neutral-100 mb-2">
                                 Pendapatan Daerah {selectedYear}
                             </h1>
                             <p className="text-neutral-600 xs:text-xs dark:text-neutral-400 capitalize">
@@ -126,7 +132,7 @@ const PendapatanDaerahPage = () => {
 
                 {/* ── Summary Cards ───────────────────────────────────────────── */}
                 {!loading && data && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                         {/* Target PAD */}
                         <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/30 dark:to-teal-800/20 p-4 border border-teal-200 dark:border-teal-700">
                             <p className="text-sm font-medium text-teal-600 dark:text-teal-300 mb-2">Target PAD</p>
@@ -193,12 +199,23 @@ const PendapatanDaerahPage = () => {
                 )}
 
                 {/* ── SKPD Table ──────────────────────────────────────────────── */}
-                <div className="rounded-lg lg:rounded-2xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-teal-800 p-6">
+                <div className="rounded-lg lg:rounded-2xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-teal-800 p-4 lg:p-6">
                     <h2 className="text-md font-semibold text-neutral-900 dark:text-neutral-100 mb-6">
-                        Breakdown per SKPD (Satuan Kerja Perangkat Daerah)
+                        {!loading && data && (
+                            <>
+                                Breakdown per SKPD (Satuan Kerja Perangkat Daerah)
+                            </>
+                        )}
+                        {loading && (
+                            <div className="flex flex-col gap-4">
+                                {Array.from({ length: 20 }).map((_, i) => (
+                                    <div key={i} className="animate-pulse mx-auto w-full h-8 bg-neutral-200 dark:bg-neutral-800 rounded" />
+                                ))}
+                            </div>
+                        )}
                     </h2>
 
-                    {data && <SkpdTable data={data.data} type="pendapatan" loading={loading} error={error} tahun={selectedYear} />}
+                    {!loading && data && <SkpdTable data={data.data} type="pendapatan" loading={loading} error={error} tahun={selectedYear} />}
                 </div>
 
                 {/* ── Footer Info ─────────────────────────────────────────────── */}

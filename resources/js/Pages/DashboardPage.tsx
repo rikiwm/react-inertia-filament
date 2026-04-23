@@ -141,16 +141,16 @@ const KpiIcon = memo(function KpiIcon({ type }: { type: KpiCardConfig["icon"] })
  */
 const KpiCardSkeleton = memo(function KpiCardSkeleton() {
     return (
-        <div className="relative rounded-2xl p-5 border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 overflow-hidden animate-pulse">
+        <div className="relative rounded-2xl p-3 border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 overflow-hidden animate-pulse">
             <div className="flex items-start justify-between mb-4">
-                <div className="space-y-2 flex-1">
-                    <div className="h-3 w-24 rounded-full bg-neutral-200 dark:bg-neutral-800" />
-                    <div className="h-7 w-32 rounded-full bg-neutral-200 dark:bg-neutral-800" />
+                <div className="space-y-1 flex-1">
+                    <div className="h-1 w-20 rounded-full bg-neutral-200 dark:bg-neutral-800" />
+                    <div className="h-4 w-32 rounded-full bg-neutral-200 dark:bg-neutral-800" />
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-neutral-200 dark:bg-neutral-800 flex-shrink-0" />
             </div>
-            <div className="h-12 rounded-lg bg-neutral-100 dark:bg-neutral-800/50 mb-3" />
-            <div className="h-4 w-28 rounded-full bg-neutral-200 dark:bg-neutral-800" />
+            <div className="h-8.5 rounded-lg bg-neutral-100 dark:bg-neutral-800/50 mb-3" />
+            <div className="h-4 w-24 rounded-full bg-neutral-200 dark:bg-neutral-800" />
         </div>
     );
 });
@@ -177,7 +177,7 @@ const KpiCard = memo(function KpiCard({ config, onClick }: { config: KpiCardConf
         <button
             onClick={onClick}
             className={cn(
-                "relative text-left w-full rounded-2xl p-3 border border-teal-200 dark:border-teal-900",
+                "relative text-left w-full rounded-xl lg:rounded-2xl p-3 border border-teal-200 dark:border-teal-900",
                 "bg-teal-50 dark:bg-neutral-950",
                 "hover:shadow-xl transition-all duration-300",
                 "overflow-hidden group",
@@ -526,7 +526,7 @@ const
 
                 {/* Loading state */}
                 {isLoading && !data && (
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-2 mt-4 gap-6 py-6">
                         <ApbdDonutSkeleton />
                         <ApbdDonutSkeleton />
                     </div>
@@ -622,6 +622,7 @@ const DashboardPage = () => {
 
     return (
         <div className="min-h-screen w-full max-w-screen">
+            {/* background */}
             {/* ── Ticker Marquee ── */}
             <div className="pt-14 lg:pt-18">
                 <PriceTicker data={skpdData} />
@@ -726,7 +727,7 @@ const DashboardPage = () => {
                         </a>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {/* Error state */}
                         {pbjError && (
                             <KpiErrorBanner error={pbjError} onRetry={retry} />
@@ -771,9 +772,9 @@ const DashboardPage = () => {
                     )}
                     {/* Referensi sumber data */}
                     {pbjLoading && !pbjData && (
-                        <div className="mt-0 flex flex-wrap gap-x-4 gap-y-1">
-                            <div className="flex items-center gap-1.5 text-xs text-neutral-500 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-950 animate-pulse">
-                                <div className="h-4 w-120 rounded-full bg-neutral-200 dark:bg-neutral-800" />
+                        <div className="mt-4 flex flex-wrap mx-2  gap-y-1">
+                            <div className="flex items-center text-xs text-neutral-500 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-950 animate-pulse">
+                                <div className="h-4 w-120 rounded-xl bg-neutral-200 dark:bg-neutral-800" />
                             </div>
                         </div>
                     )}

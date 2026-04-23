@@ -46,13 +46,15 @@ export function usePendapatanSkpdDetail(
             // Fetch full pendapatan SKPD data
             const allData = await fetchPendapatanSkpd(tahun, signal);
 
+
             // Find matching OPD by nama_opd (case-insensitive)
             const matchedData = allData.find(
                 (item: PendapatanSkpdNormalized) =>
-                    item.skpd.toLowerCase() === namaOpd.toLowerCase(),
+                    item.skpd.toUpperCase() === namaOpd.toUpperCase(),
             );
 
             if (!matchedData) {
+
                 throw new Error(
                     `OPD dengan nama "${namaOpd}" tidak ditemukan di data Pendapatan SKPD`,
                 );

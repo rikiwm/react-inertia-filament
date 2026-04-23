@@ -17,7 +17,8 @@ import {
     Search,
     Filter,
     XCircle,
-    Package
+    Package,
+    Hash
 } from 'lucide-react';
 import { cn } from '@/Lib/Utils';
 
@@ -145,7 +146,16 @@ const KinerjaDetailPage = ({ id }: Props) => {
                     <div className="space-y-3 px-4 md:px-0 max-w-8xl mx-auto">
                         {loading ? (
                             [...Array(3)].map((_, i) => (
-                                <div key={i} className="h-64 bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-teal-800 animate-pulse" />
+                                <div key={i} className="h-64 bg-neutral-100 dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-teal-800 animate-pulse">
+                                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 p-2">
+                                        <div className="flex-row flex justify-center items-center w-full">
+                                            <div className="flex items-center gap-2">
+                                                <span className="w-8 h-8 w-screen-md rounded-lg bg-neutral-600 text-white flex items-center justify-center text-xs font-bold shrink-0">  </span>
+                                                <span className="w-8 h-8 rounded-lg bg-neutral-600 text-white flex items-center justify-center text-xs font-bold shrink-0">  </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             ))
                         ) : filteredKinerja.length > 0 ? (
                             <AnimatePresence mode="popLayout">
@@ -154,9 +164,9 @@ const KinerjaDetailPage = ({ id }: Props) => {
                                         key={item.id}
                                         layout
                                         initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
+                                        animate={{ opacity: [0, 1], y: 0 }}
                                         exit={{ opacity: 0, scale: 0.95 }}
-                                        transition={{ duration: 0.3 }}
+                                        transition={{ duration: 0.2 }}
                                         className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs overflow-hidden"
                                     >
                                         {/* Indicator Header */}
@@ -202,7 +212,7 @@ const KinerjaDetailPage = ({ id }: Props) => {
                                                 <TrendingUp className="w-3 h-3 mr-2" />
                                                 Kinerja Pertahun (2025 - 2029)
                                             </h4>
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                                            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                                                 {item.years.map((yearData) => (
                                                     <div
                                                         key={yearData.tahun}

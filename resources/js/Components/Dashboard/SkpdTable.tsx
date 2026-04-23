@@ -18,6 +18,9 @@ import { cn } from "@/Lib/Utils";
 import { Table } from "@/Components/UI/Table";
 import { memo, useState, useMemo } from "react";
 import { router } from "@inertiajs/react";
+import { motion, AnimatePresence } from 'motion/react';
+
+
 export type SortField = "nama_opd" | "pagu" | "realisasi" | "persentase" | "pagu_pad" | "realisasi_pad" | "persentase_pad";
 export type SortDirection = "asc" | "desc" | null;
 
@@ -236,7 +239,11 @@ const SkpdTable = memo(function SkpdTable({
                 </Table.Head>
                 <Table.Body>
                     {sortedData.map((item, idx) => (
-                        <Table.Tr key={`${item.kd_unit}-${idx}`}
+                        <motion.tr
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.2, delay: idx * 0.02 }}
+                            key={`${item.kd_unit}-${idx}`}
                             onClick={() => handleRowClick(item)}
                             className="hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer">
                             {type === "belanja" ? (
@@ -303,7 +310,7 @@ const SkpdTable = memo(function SkpdTable({
                                     </Table.Td>
                                 </>
                             )}
-                        </Table.Tr>
+                        </motion.tr>
                     ))}
                 </Table.Body>
             </Table>
