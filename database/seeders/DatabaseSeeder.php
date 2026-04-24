@@ -17,9 +17,9 @@ final class DatabaseSeeder extends Seeder
     {
         User::query()->create([
             'name' => 'The Developer',
-            'email' => 'test@example.com',
+            'email' => 'xamp@example.com',
             'role' => UserRole::Developer,
-            'password' => bcrypt('password'),
+            'password' => bcrypt('xample'),
         ]);
     }
 }

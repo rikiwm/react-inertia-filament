@@ -13,7 +13,7 @@ import {
     Sparkles,
     Home
 } from 'lucide-react';
-import { Button } from '@/Components/ui/Button';
+import { Button } from '@/Components/UI/Button';
 
 interface DynamicMenuPageProps {
     title?: string;

@@ -25,6 +25,7 @@
         "laravel/pulse": "^1.4",
         "laravel/tinker": "^2.10.1",
         "notebrainslab/filament-menu-manager": "^1.0",
+        "predis/predis": "^3.4",
         "tightenco/ziggy": "^2.5"
     },
     "require-dev": {

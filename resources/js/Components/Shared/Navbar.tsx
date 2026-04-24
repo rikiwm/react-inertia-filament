@@ -12,7 +12,7 @@
  */
 
 import ThemeToggler from "@/Components/Components/ThemeToggler";
-import { Button } from "@/Components/ui/Button";
+import { Button } from "@/Components/UI/Button";
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -21,14 +21,14 @@ import {
     NavigationMenuList,
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
-} from "@/Components/ui/NavigationMenu";
+} from "@/Components/UI/NavigationMenu";
 import {
     Sheet,
     SheetContent,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
-} from "@/Components/ui/Sheet";
+} from "@/Components/UI/Sheet";
 import useTheme from "@/Hooks/useTheme";
 import { cn } from "@/Lib/Utils";
 import { SharedData } from "@/Types/Types";
