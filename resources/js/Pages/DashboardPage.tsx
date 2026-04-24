@@ -36,7 +36,30 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
-import { memo, type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+// ─── Reduced Motion Hook ──────────────────────────────────────────────────────
+
+/**
+ * Detects if the user prefers reduced motion (low-spec device or OS accessibility setting).
+ * Returns true when animations should be minimized.
+ */
+function useReducedMotion(): boolean {
+    const [reduced, setReduced] = useState(() => {
+        if (typeof window === "undefined") return false;
+        return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    });
+
+    useEffect(() => {
+        const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+        if (!mq) return;
+        const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
+        mq.addEventListener("change", handler);
+        return () => mq.removeEventListener("change", handler);
+    }, []);
+
+    return reduced;
+}
 import type { ApbdItemNormalized } from "@/Types/Apbd";
 import { router } from "@inertiajs/react";
 import { route } from "ziggy-js";
@@ -77,11 +100,11 @@ const PriceTicker = memo(function PriceTicker({ data }: { data: PendapatanSkpdNo
         );
     }
 
-    const items = [...data, ...data]; // duplikasi untuk efek loop seamless
+    const items = useMemo(() => [...data, ...data], [data]); // duplikasi untuk efek loop seamless
 
     return (
         <div className="overflow-hidden w-full border-b border-teal-300 dark:border-teal-800 bg-transparent dark:bg-neutral-950">
-            <div className="flex animate-[marquee_60s_linear_infinite] whitespace-nowrap py-2">
+            <div className="flex animate-[marquee_60s_linear_infinite] whitespace-nowrap py-2 gpu-accelerated">
                 {items.map((t, i) => (
                     <span key={i} className="inline-flex items-center gap-2 px-6 text-xs border-r border-neutral-100 dark:border-neutral-800">
                         <span className="font-semibold text-neutral-700 dark:text-neutral-300">{t.label}</span>
@@ -164,29 +187,20 @@ const KpiCardSkeleton = memo(function KpiCardSkeleton() {
 const KpiCard = memo(function KpiCard({ config, onClick }: { config: KpiCardConfig; onClick?: () => void }) {
     const colors = COLOR_MAP[config.color];
 
-    // Sparkline statis visual per jenis kartu (proporsi dekoratif)
-    const sparkPatterns: Record<KpiCardConfig["icon"], number[]> = {
-        pagu: [0, 0],
-        paket: [0, 0],
-        berlangsung: [0, 0],
-        selesai: [0, 0],
-    };
-    const sparkData = sparkPatterns[config.icon].map((v, i) => ({ i, v }));
-
     return (
         <button
             onClick={onClick}
             className={cn(
                 "relative text-left w-full rounded-xl lg:rounded-2xl p-3 border border-teal-200 dark:border-teal-900",
                 "bg-teal-50 dark:bg-neutral-950",
-                "hover:shadow-xl transition-all duration-300",
+                "hover:shadow-xl transition-shadow duration-200",
                 "overflow-hidden group",
                 onClick && "cursor-pointer active:scale-[0.98]"
             )}
         >
-            {/* Background accent glow */}
+            {/* Background accent glow — reduced blur for GPU performance */}
             <div className={cn(
-                "absolute -top-6 -right-6 w-28 h-28 rounded-full opacity-60 blur-2xl transition-opacity group-hover:opacity-90",
+                "absolute -top-6 -right-6 w-28 h-28 rounded-full opacity-60 blur-xl transition-opacity group-hover:opacity-90",
                 colors.bg,
             )} />
 
@@ -205,19 +219,18 @@ const KpiCard = memo(function KpiCard({ config, onClick }: { config: KpiCardConf
                 </div>
             </div>
 
-            {/* Sparkline mini dekoratif */}
-            <div className="relative h-8 -mx-1 mb-3">
-                <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={sparkData} margin={{ top: 2, right: 2, left: 2, bottom: 2 }}>
-                        <defs>
-                            <linearGradient id={`sg-${config.id}`} x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="10%" stopColor={colors.stroke} stopOpacity={0.3} />
-                                <stop offset="100%" stopColor={colors.stroke} stopOpacity={0.1} />
-                            </linearGradient>
-                        </defs>
-                        <Area type="monotone" dataKey="v" stroke={colors.stroke} strokeWidth={2} fill={`url(#sg-${config.id})`} dot={false} />
-                    </AreaChart>
-                </ResponsiveContainer>
+            {/* Decorative gradient bar — lightweight CSS replacement for empty Recharts sparkline */}
+            <div className="relative h-8 -mx-1 mb-3 rounded-lg overflow-hidden">
+                <div
+                    className="absolute inset-0 opacity-20"
+                    style={{
+                        background: `linear-gradient(90deg, transparent 0%, ${colors.stroke}33 30%, ${colors.stroke}55 60%, ${colors.stroke}22 100%)`,
+                    }}
+                />
+                <div
+                    className="absolute bottom-0 left-0 right-0 h-[2px]"
+                    style={{ background: `linear-gradient(90deg, transparent, ${colors.stroke}, transparent)` }}
+                />
             </div>
 
             {/* Footer: sumber data */}
@@ -385,12 +398,17 @@ interface ApbdDonutChartProps {
  */
 const ApbdDonutChart = memo(function ApbdDonutChart({ item, title, onClick }: ApbdDonutChartProps) {
     /** Data untuk PieChart: 2 segmen (realisasi + sisa). */
-    const pieData = [
+    const pieData = useMemo(() => [
         { name: "Realisasi / Capaian", value: item.persenRealisasi, rupiah: item.realisasi },
         { name: "Sisa / Belum Terealisasi", value: item.persenSisa, rupiah: item.sisa },
-    ];
+    ], [item.persenRealisasi, item.persenSisa, item.realisasi, item.sisa]);
 
     const isHealthy = item.persenRealisasi >= 50;
+
+    /** Track if chart already animated once to avoid re-animating on every render */
+    const hasAnimated = useRef(false);
+    const shouldAnimate = !hasAnimated.current;
+    useEffect(() => { hasAnimated.current = true; }, []);
 
     return (
         <button
@@ -398,7 +416,7 @@ const ApbdDonutChart = memo(function ApbdDonutChart({ item, title, onClick }: Ap
             disabled={!onClick}
             className={cn(
                 "flex flex-col h-full rounded-lg lg:rounded-2xl bg-neutral-50 dark:bg-neutral-900 p-3 lg:p-6 text-left",
-                onClick && "cursor-pointer hover:shadow-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all",
+                onClick && "cursor-pointer hover:shadow-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-shadow duration-200",
                 !onClick && "cursor-default",
             )}
             type="button"
@@ -424,7 +442,9 @@ const ApbdDonutChart = memo(function ApbdDonutChart({ item, title, onClick }: Ap
                             startAngle={90}
                             endAngle={-270}
                             strokeWidth={0}
-                            isAnimationActive={true}
+                            isAnimationActive={shouldAnimate}
+                            animationDuration={600}
+                            animationEasing="ease-out"
                         >
                             <Cell fill={APBD_COLORS.realisasi.fill} />
                             <Cell fill={APBD_COLORS.sisa.fill} className="dark:fill-neutral-700" />
@@ -474,7 +494,7 @@ const ApbdDonutChart = memo(function ApbdDonutChart({ item, title, onClick }: Ap
             <div className="mt-3">
                 <div className="w-full h-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
                     <div
-                        className="h-full rounded-full bg-teal-500 transition-all duration-700"
+                        className="h-full rounded-full bg-teal-500 transition-[width] duration-500 ease-out"
                         style={{ width: `${Math.min(100, item.persenRealisasi)}%` }}
                     />
                 </div>

@@ -17,7 +17,7 @@ import { Table } from "@/Components/UI/Table";
 import { usePendapatanSkpd } from "@/Hooks/usePendapatanSkpd";
 import { cn } from "@/Lib/Utils";
 import type { PendapatanSkpdNormalized } from "@/Types/PendapatanSkpd";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo, useEffect, useRef, useState } from "react";
 import { route } from "ziggy-js";
 import {
     Bar,
@@ -171,6 +171,11 @@ export const PendapatanSkpdPanel = memo(function PendapatanSkpdPanel({
     /** Tinggi bar chart dihitung dari jumlah SKPD (minimal 200px). */
     const chartHeight = Math.max(200, displayData.length * 44);
 
+    /** Track if chart already animated once — avoid re-animation on filter changes */
+    const hasAnimated = useRef(false);
+    const shouldAnimate = !hasAnimated.current;
+    useEffect(() => { hasAnimated.current = true; }, []);
+
     return (
         <div className="lg:col-span-1 bg-white dark:bg-neutral-950 rounded-2xl border border-teal-200 dark:border-teal-800 p-4">
 
@@ -278,12 +283,12 @@ export const PendapatanSkpdPanel = memo(function PendapatanSkpdPanel({
                                     </span>
                                 )}
                             />
-                            <Bar dataKey="anggaran" fill="#e2e8f0" radius={[0, 8, 8, 0]} name="anggaran">
+                            <Bar dataKey="anggaran" fill="#e2e8f0" radius={[0, 8, 8, 0]} name="anggaran" isAnimationActive={shouldAnimate} animationDuration={500} animationEasing="ease-out">
                                 {displayData.map((_, i) => (
                                     <Cell key={i} className="dark:fill-neutral-800" />
                                 ))}
                             </Bar>
-                            <Bar dataKey="realisasi" fill="#025d58" radius={[0, 8, 8, 0]} name="realisasi">
+                            <Bar dataKey="realisasi" fill="#025d58" radius={[0, 8, 8, 0]} name="realisasi" isAnimationActive={shouldAnimate} animationDuration={500} animationEasing="ease-out">
                                 {displayData.map((entry, i) => (
                                     <Cell
                                         key={i}

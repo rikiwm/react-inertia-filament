@@ -14,7 +14,7 @@
     --font-style: normal;
     --font-variation-settings: "GRAD" 0;
     /* Animasi marquee untuk price ticker */
-    --animate-marquee: marquee 40s linear infinite;
+    --animate-marquee: marquee 30s linear infinite;
 }
 
 @layer components {
@@ -24,13 +24,32 @@
     }
 }
 
-/* Keyframe animasi marquee (ticker harga) */
+/* Keyframe animasi marquee (ticker harga) — GPU-accelerated via translate3d */
 @keyframes marquee {
     0% {
-        transform: translateX(0);
+        transform: translate3d(0, 0, 0);
     }
 
     100% {
-        transform: translateX(-50%);
+        transform: translate3d(-50%, 0, 0);
+    }
+}
+
+/* GPU compositing hints for animated elements */
+.gpu-accelerated {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* Disable expensive animations & transitions on low-spec / reduce-motion devices */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }
