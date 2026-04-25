@@ -22,10 +22,10 @@ createInertiaApp({
         root.render(<App {...props} />);
     },
     progress: {
-        delay: 150,
-        color: 'rgba(190, 34, 221, 1)',
+        delay: 60,
+        color: 'rgba(0, 183, 165, 1)',
         includeCSS: true,
-        showSpinner: true, // <--- Sembunyikan spinner
+        showSpinner: false, // <--- Sembunyikan spinner
     },
 
 }).then();

@@ -10,15 +10,15 @@
  * - Target: ~130 lines.
  */
 
-import ReadingProgress from "@/Components/News/ReadingProgress";
-import RelatedCard from "@/Components/News/RelatedCard";
-import ShareBar from "@/Components/News/ShareBar";
-import { formatDate, estimateReadingTime, parseArticleContent } from "@/Components/News/helpers";
-import { fetchRelatedArticles, loadArticleFromStorage } from "@/Services/newsService";
-import { useReadingProgress } from "@/Hooks/useReadingProgress";
-import type { NewsArticle } from "@/Types/Types";
-import { cn } from "@/Lib/Utils";
-import FrontWrapper from "@/Wrappers/FrontWrapper";
+import ReadingProgress from "@/features/news/components/reading-progress";
+import RelatedCard from "@/features/news/components/related-card";
+import ShareBar from "@/features/news/components/share-bar";
+import { formatDate, estimateReadingTime, parseArticleContent } from "@/features/news/components/helpers";
+import { fetchRelatedArticles, loadArticleFromStorage } from "@/Services/news-service";
+import { useReadingProgress } from "@/features/news/hooks/use-reading-progress";
+import type { NewsArticle } from "@/Types/types";
+import { cn } from "@/Lib/utils";
+import FrontWrapper from "@/Wrappers/front-wrapper";
 import { router } from "@inertiajs/react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { route } from "ziggy-js";

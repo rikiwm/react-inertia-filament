@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { ReactNode } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import FrontWrapper from '@/Wrappers/FrontWrapper';
-import { useProgulData } from '@/Hooks/useProgulData';
+import FrontWrapper from '@/Wrappers/front-wrapper';
+import { useProgulData } from '@/features/progul/hooks/use-progul-data';
 import { motion, AnimatePresence } from 'motion/react';
 import {
     ChevronLeft,
@@ -20,7 +20,7 @@ import {
     Package,
     Hash
 } from 'lucide-react';
-import { cn } from '@/Lib/Utils';
+import { cn } from '@/Lib/utils';
 
 interface Props {
     id: number;
@@ -56,63 +56,37 @@ const KinerjaDetailPage = ({ id }: Props) => {
     return (
         <>
             <Head title={`${activasi?.name || 'Detail'} - Capaian Kinerja`} />
-            <div className="min-h-screen w-full bg-slate-50/50 dark:bg-transparent pt-24 pb-20">
-                <div className="max-w-screen-2xl mx-auto px-4 lg:px-8 space-y-8">
+            <div className="min-h-screen w-full bg-slate-50/50 dark:bg-transparent pt-4 pb-20">
+                <div className="max-w-screen-2xl mx-auto px-4 lg:px-0 space-y-6">
 
                     {/* Header Section */}
-                    <div>
-                        <Link
-                            href={activasi ? route('progul.detail', { id: activasi.progul_id }) : route('progul')}
-                            className="inline-flex items-center text-sm font-medium text-neutral-500 hover:text-teal-600 transition-colors mb-4"
-                        >
-                            <ChevronLeft className="w-4 h-4 mr-1" />
-                            Kembali ke Daftar Activasi
-                        </Link>
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 rounded-xl bg-teal-600 text-white shadow-lg shadow-teal-600/20">
-                                <Package className="w-6 h-6" />
-                            </div>
-                            <h1 className="text-xl md:text-3xl font-bold text-slate-900 dark:text-white uppercase">
-                                {activasi?.name}
-                                <span className="text-teal-600"></span>
-                            </h1>
+                    <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
+                            <Package className="w-6 h-6" />
                         </div>
-
-                        <div className="flex flex-wrap gap-4 mt-2">
-                            <span className="inline-flex items-center px-3 py-1 rounded-md bg-neutral-200 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs font-bold">
-                                <Calendar className="w-3 h-3 mr-1" />
-                                Tahun 2025 - 2029
-                            </span>
-                            <span className="inline-flex items-center px-3 py-1 rounded-md bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 text-xs font-bold">
-                                <CheckCircle2 className="w-3 h-3 mr-1" />
-                                {kinerjaList.length} Indikator Kinerja
-                            </span>
+                        <div>
+                            <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                                {activasi?.name}
+                            </h1>
+                            <div className="flex flex-wrap gap-4 mt-2">
+                                <span className="inline-flex items-center px-3 py-1 rounded-md bg-lime-200 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs font-bold">
+                                    <Calendar className="w-3 h-3 mr-1" />
+                                    Tahun 2025 - 2029
+                                </span>
+                                <span className="inline-flex items-center px-3 py-1 rounded-md bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 text-xs font-bold">
+                                    <CheckCircle2 className="w-3 h-3 mr-1" />
+                                    {kinerjaList.length} Indikator Kinerja
+                                </span>
+                            </div>
                         </div>
                     </div>
-                    {/* <div className="min-h-screen bg-transparent pt-18 pb-20">
-                <div className="max-w-7xl mx-auto">
-                    {/* Breadcrumbs */}
-                    {/* <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="mb-8 px-4 md:px-0"
-                    >
-                        <Link
-                            href={activasi ? route('progul.detail', { id: activasi.progul_id }) : route('progul')}
-                            className="inline-flex items-center text-sm font-medium text-neutral-500 hover:text-teal-600 transition-colors"
-                        >
-                            <ChevronLeft className="w-4 h-4 mr-1" />
-                            Kembali ke Daftar Activasi
-                        </Link>
-                    </motion.div>  */}
-
-                    {/* Header */}
-
-
+                    <p className="text-slate-500 dark:text-neutral-400">
+                        Pantau kinerja dan capaian program unggulan pemerintah Kota Padang untuk mewujudkan masyarakat yang lebih sejahtera dan mandiri.
+                    </p>
                     {/* Filters Section */}
-                    <div className="mb-2 px-3 md:px-0 max-w-7xl mx-auto">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-teal-950/10 p-2 rounded-2xl border border-neutral-200 dark:border-teal-950 shadow-xs">
-                            <div className="relative">
+                    <div className="mb-2 px-3 md:px-0 max-w-screen-2xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white dark:bg-teal-950/10 p-2 rounded-2xl border border-neutral-200 dark:border-teal-950 shadow-xs">
+                            <div className="relative col-span-2">
                                 <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                                     <Search className="h-4 w-4 text-neutral-400" />
                                 </div>
@@ -167,7 +141,7 @@ const KinerjaDetailPage = ({ id }: Props) => {
                                         animate={{ opacity: [0, 1], y: 0 }}
                                         exit={{ opacity: 0, scale: 0.95 }}
                                         transition={{ duration: 0.2 }}
-                                        className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs overflow-hidden"
+                                        className="bg-white dark:bg-zinc-950/50 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs overflow-hidden"
                                     >
                                         {/* Indicator Header */}
                                         <div className="p-6 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-800/30">
@@ -189,7 +163,7 @@ const KinerjaDetailPage = ({ id }: Props) => {
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-col items-end gap-2 shrink-0">
-                                                    <span className="inline-flex items-center px-3 py-1 rounded-lg bg-neutral-200 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-[10px] font-black uppercase tracking-wider">
+                                                    <span className="inline-flex items-center px-3 py-1 rounded-lg bg-amber-200 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-[10px] font-black uppercase tracking-wider">
                                                         Satuan: {item.satuan}
                                                     </span>
                                                     <div className="flex items-center text-right">
@@ -218,7 +192,7 @@ const KinerjaDetailPage = ({ id }: Props) => {
                                                         key={yearData.tahun}
                                                         className={cn(
                                                             "p-4 rounded-lg border transition-all duration-300",
-                                                            yearData.capaian ? "bg-teal-50/30 border-teal-100 dark:bg-teal-900/10 dark:border-teal-900/30" : "bg-neutral-50 dark:bg-neutral-800/50 border-neutral-100 dark:border-neutral-800"
+                                                            yearData.capaian ? "bg-teal-50/30 border-teal-100 dark:bg-teal-900/10 dark:border-teal-900/30" : "bg-neutral-50 dark:bg-zinc-950/50 border-neutral-100 dark:border-neutral-800"
                                                         )}
                                                     >
                                                         <div className="flex items-center justify-between mb-3">
@@ -272,8 +246,8 @@ const KinerjaDetailPage = ({ id }: Props) => {
                             </motion.div>
                         )}
                     </div>
-                </div>
-            </div>
+                </div >
+            </div >
         </>
     );
 };

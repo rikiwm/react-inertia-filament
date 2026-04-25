@@ -6,7 +6,7 @@
  * source of truth and makes it trivial to swap data sources.
  */
 
-import type { NewsArticle } from "@/Types/Types";
+import type { NewsArticle } from "@/Types/types";
 
 // ─── API Configuration ────────────────────────────────────────────────────────
 

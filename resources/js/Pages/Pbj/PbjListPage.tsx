@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
-import FrontWrapper from '@/Wrappers/FrontWrapper';
+import FrontWrapper from '@/Wrappers/front-wrapper';
 import {
     Search,
     Package,
@@ -8,11 +8,11 @@ import {
     LayoutGrid,
     Factory
 } from 'lucide-react';
-import { cn } from '@/Lib/Utils';
-import PbjSummaryBlocks from './Components/PbjSummaryBlocks';
-import CatalogTab from './Tabs/CatalogTab';
-import TenderTab from './Tabs/TenderTab';
-import NonTenderTab from './Tabs/NonTenderTab';
+import { cn } from '@/Lib/utils';
+import PbjSummaryBlocks from '@/features/pbj/components/pbj-summary-blocks';
+import CatalogTab from '@/features/pbj/tabs/catalog-tab';
+import TenderTab from '@/features/pbj/tabs/tender-tab';
+import NonTenderTab from '@/features/pbj/tabs/non-tender-tab';
 
 const AVAILABLE_YEARS = [2026, 2025, 2024, 2023];
 
@@ -51,13 +51,28 @@ const PbjListPage = () => {
         <>
             <Head title={`Daftar Paket Pengadaan ${tahun}`} />
 
-            <div className="min-h-screen w-full bg-slate-50/50 dark:bg-transparent pt-24 pb-20">
-                <div className="max-w-screen-2xl mx-auto px-4 lg:px-8 space-y-4">
+            <div className="min-h-screen bg-transparent pt-2 pb-20">
+                <div className="max-w-screen-2xl mx-auto px-4 lg:px-0 space-y-6">
 
                     {/* Header */}
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>
-                            <div className="flex items-center gap-2 mb-2">
+                            <div className="flex items-center gap-3">
+
+                                <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
+                                    <Package className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                                        Pengadaan Barang & Jasa
+
+                                    </h1>
+                                    <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+                                        Rincian Paket Terintegrasi Pemerintah Kota Padang
+                                    </p>
+                                </div>
+                            </div>
+                            {/* <div className="flex items-center gap-2 mb-2">
                                 <div className="p-2 rounded-xl bg-teal-600 text-white shadow-lg shadow-teal-600/20">
                                     <Package className="w-5 h-5" />
                                 </div>
@@ -70,7 +85,7 @@ const PbjListPage = () => {
                             </h1>
                             <p className="text-slate-500 dark:text-neutral-400 px-1 text-sm max-w-2xl">
                                 Data konsolidasi E-Katalog, Tender, dan Non-Tender Pemerintah Kota Padang.
-                            </p>
+                            </p> */}
                         </div>
 
                         {/* Year Selector */}
@@ -92,9 +107,13 @@ const PbjListPage = () => {
                                 </button>
                             ))}
                         </div>
+
                     </div>
 
                     {/* Summary Blocks Integration */}
+                    <p className="text-slate-500 dark:text-neutral-400 px-1 text-sm max-w-2xl">
+                        Data konsolidasi E-Katalog, Tender, dan Non-Tender Pemerintah Kota Padang.
+                    </p>
                     <PbjSummaryBlocks tahun={tahun} activeTab={activeTab} />
 
                     {/* Content Section */}
@@ -109,7 +128,7 @@ const PbjListPage = () => {
                                     <input
                                         type="text"
                                         placeholder="Cari nama paket, satker, atau penyedia..."
-                                        className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-neutral-900 border-none rounded-lg dark:border-teal-900 text-xs focus:ring-2 focus:ring-teal-500/20 transition-all dark:text-white"
+                                        className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-neutral-900 text-neutral-400 border-none rounded-lg dark:border-teal-900 text-xs focus:ring-2 focus:ring-teal-500/20 transition-all dark:text-white"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
@@ -119,9 +138,9 @@ const PbjListPage = () => {
                                 {isFilterActive && (
                                     <button
                                         onClick={resetFilters}
-                                        className="inline-flex items-center justify-center px-2 py-2 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 rounded-xl text-xs font-medium uppercase hover:bg-rose-100 transition-colors gap-1"
+                                        className="inline-flex items-center justify-center px-2 py-2 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 rounded-xl text-xs font-medium hover:bg-rose-100 transition-colors gap-1"
                                     >
-                                        <FilterX className="w-4 h-3" />
+                                        <FilterX className="w-4 h-2" />
                                         Hapus Filter
                                     </button>
                                 )}

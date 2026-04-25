@@ -13,7 +13,6 @@ createServer((page) =>
         title: (title) => (title ? `${title} - ${appName}` : appName),
         resolve: (name) => resolvePageComponent(`./Pages/${name}.tsx`, import.meta.glob("./Pages/**/*.tsx")),
         setup: ({ App, props }) => {
-            // @ts-expect-error - ziggy is shared from HandleInertiaRequests
             const ziggy = props.initialPage.props.ziggy;
 
             // Set global Ziggy for imported route() calls to work

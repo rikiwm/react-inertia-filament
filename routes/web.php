@@ -21,8 +21,9 @@ Route::inertia('/table-demo', 'TableDemo')->name('table.demo');
 
 // Dashboard statistik publik
 Route::inertia('/dashboard', 'DashboardPage')->name('dashboard');
-Route::inertia('/dashboard/belanja-daerah', 'BelanjaDaerahPage')->name('belanja-daerah');
-Route::inertia('/dashboard/pendapatan-daerah', 'PendapatanDaerahPage')->name('pendapatan-daerah');
+Route::inertia('/dashboard/analitik', 'AnalyticsPage')->name('analitik');
+Route::inertia('/dashboard/belanja', 'BelanjaDaerahPage')->name('belanja-daerah');
+Route::inertia('/dashboard/pendapatan', 'PendapatanDaerahPage')->name('pendapatan-daerah');
 
 // Pengadaan Barang & Jasa (PBJ)
 Route::inertia('/dashboard/pbj', 'Pbj/PbjListPage')->name('pbj.list');

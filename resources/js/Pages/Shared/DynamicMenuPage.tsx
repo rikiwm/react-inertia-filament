@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
-import FrontWrapper from '@/Wrappers/FrontWrapper';
+import FrontWrapper from '@/Wrappers/front-wrapper';
 import { motion } from 'motion/react';
 import {
     Construction,
@@ -13,7 +13,7 @@ import {
     Sparkles,
     Home
 } from 'lucide-react';
-import { Button } from '@/Components/UI/Button';
+import { Button } from '@/shared/components/ui/button';
 
 interface DynamicMenuPageProps {
     title?: string;
@@ -25,11 +25,10 @@ const DynamicMenuPage = ({ title, path }: DynamicMenuPageProps) => {
         <>
             <Head title={title ? `${title} - Sedang Dikembangkan` : "Halaman Sedang Dikembangkan"} />
 
-            <div className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center pt-20 pb-10">
+            <div className="min-h-screen bg-transparent pt-2 pb-20">
                 {/* Background decorative elements */}
                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-teal-500/10 rounded-full blur-[120px]" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
+                    <div className="absolute top-[40%] left-[30%] w-[40%] h-[50%] bg-teal-500/10 rounded-full blur-[120px]" />
                 </div>
 
                 <div className="max-w-3xl mx-auto px-6 text-center z-10">

@@ -8,13 +8,13 @@
  * This file should remain under ~120 lines.
  */
 
-import FeaturedCard from "@/Components/News/FeaturedCard";
-import NewsCard from "@/Components/News/NewsCard";
-import SkeletonCard from "@/Components/News/SkeletonCard";
+import FeaturedCard from "@/features/news/components/featured-card";
+import NewsCard from "@/features/news/components/news-card";
+import SkeletonCard from "@/features/news/components/skeleton-card";
 import { NEWS_CATEGORIES, type NewsCategory } from "@/Constants/news";
-import { useFetchNews } from "@/Hooks/useFetchNews";
-import { cn } from "@/Lib/Utils";
-import FrontWrapper from "@/Wrappers/FrontWrapper";
+import { useFetchNews } from "@/features/news/hooks/use-fetch-news";
+import { cn } from "@/Lib/utils";
+import FrontWrapper from "@/Wrappers/front-wrapper";
 import type { ReactNode } from "react";
 
 // ─── Page Component ───────────────────────────────────────────────────────────

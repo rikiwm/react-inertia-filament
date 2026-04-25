@@ -1,4 +1,4 @@
-import { SocialMedia } from "@/Types/Enums";
+import { SocialMedia } from "@/Types/enums";
 import { IconType } from "@icons-pack/react-simple-icons";
 import { type ReactNode } from "react";
 

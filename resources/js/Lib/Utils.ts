@@ -1,6 +1,6 @@
-import { SocialMediaIcons, SocialMediaLabels, SocialMediaPrefix } from "@/Lib/EnumConstants";
-import { SocialMedia } from "@/Types/Enums";
-import { FloatingDockItem, SocialMediaSetting } from "@/Types/Types";
+import { SocialMediaIcons, SocialMediaLabels, SocialMediaPrefix } from "@/Lib/enum-constants";
+import { SocialMedia } from "@/Types/enums";
+import { FloatingDockItem, SocialMediaSetting } from "@/Types/types";
 import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 

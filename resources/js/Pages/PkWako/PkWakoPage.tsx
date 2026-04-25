@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { ReactNode } from 'react';
 import { Head } from '@inertiajs/react';
-import FrontWrapper from '@/Wrappers/FrontWrapper';
-import { usePkWako } from '@/Hooks/usePkWako';
+import FrontWrapper from '@/Wrappers/front-wrapper';
+import { usePkWako } from '@/features/pk-wako/hooks/use-pk-wako';
 import { motion, AnimatePresence } from 'motion/react';
 import {
     Search,
@@ -15,7 +15,7 @@ import {
     FileText,
     Info
 } from 'lucide-react';
-import { cn } from '@/Lib/Utils';
+import { cn } from '@/Lib/utils';
 
 const PkWakoPage = () => {
     const { data, loading, error } = usePkWako();
@@ -34,8 +34,8 @@ const PkWakoPage = () => {
         <>
             <Head title="PK WAKO - Perjanjian Kinerja Wali Kota" />
 
-            <div className="min-h-screen bg-transparent pt-24 pb-20">
-                <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <div className="min-h-screen bg-transparent pt-4 pb-20">
+                <div className="max-w-screen-2xl mx-auto px-4 md:px-0">
                     {/* Header Section */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -102,7 +102,7 @@ const PkWakoPage = () => {
                         <div className="overflow-x-auto">
                             <table className="w-full border-collapse text-left">
                                 <thead>
-                                    <tr className="bg-[#f8fbff] dark:bg-teal-950/20 border-b border-neutral-200 dark:border-neutral-800">
+                                    <tr className="bg-teal-400/20 dark:bg-teal-950/20 border-b border-neutral-200 dark:border-neutral-800">
                                         <th className="px-6 py-4 text-xs font-bold text-teal-950 dark:text-teal-400 uppercase tracking-widest">Sasaran</th>
                                         <th className="px-6 py-4 text-xs font-bold text-teal-950 dark:text-teal-400 uppercase tracking-widest">Indikator</th>
                                         <th className="px-6 py-4 text-xs font-bold text-teal-950 dark:text-teal-400 uppercase tracking-widest text-center">Target</th>

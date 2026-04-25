@@ -1,4 +1,4 @@
-import { Theme } from "@/Types/Enums";
+import { Theme } from "@/Types/enums";
 
 export interface ThemeContextProps {
     theme: Theme;

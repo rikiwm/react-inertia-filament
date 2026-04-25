@@ -47,6 +47,7 @@ final class PbjInaprocController extends Controller
 
         // Disarankan cache khusus jika load summary juga sering
         $cacheKey = "inaproc_summary_{$tahun}_{$this->kodeKlpd}";
+        // Cache::forget($cacheKey);
         $data = Cache::remember($cacheKey, 60 * 60, function () use ($tahun, $summaryService) {
             return $summaryService->getSummary((int) $tahun);
         });
@@ -63,7 +64,7 @@ final class PbjInaprocController extends Controller
         $response = Http::withToken(env('INAPROC_API_TOKEN'))->get(env('INAPROC_BASE_URL').'rup/master-satker', [
             'kode_klpd' => 'D471',
             'tahun' => 2026,
-            'limit' => 100,
+            'limit' => 200,
         ])->json();
         Cache::put('satkers', $response, 60 * 60);
 

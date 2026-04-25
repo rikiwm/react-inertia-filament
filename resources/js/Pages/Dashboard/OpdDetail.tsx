@@ -7,15 +7,17 @@
  * - Data diambil dari halaman sebelumnya berdasarkan nama_opd
  * - List pendapatan detail jika type === "pendapatan"
  */
-import { useOpdDetail } from "@/Hooks/useOpdDetail";
-import { usePendapatanSkpdDetail } from "@/Hooks/usePendapatanSkpdDetail";
-import { useRealisasiProgram } from "@/Hooks/useRealisasiProgram";
-import type { OpdBelanjaDetail, OpdDetailType, OpdPendapatanDetail } from "@/Services/opdDetailService";
-import type { PendapatanRekening } from "@/Types/PendapatanSkpd";
-import FrontWrapper from "@/Wrappers/FrontWrapper";
+import { useOpdDetail } from "@/features/dashboard/hooks/use-opd-detail";
+import { usePendapatanSkpdDetail } from "@/features/pendapatan-daerah/hooks/use-pendapatan-skpd-detail";
+import { useRealisasiProgram } from "@/features/progul/hooks/use-realisasi-program";
+import { useOpdPbj } from "@/features/pbj/hooks/use-opd-pbj";
+import type { OpdBelanjaDetail, OpdDetailType, OpdPendapatanDetail } from "@/Services/opd-detail-service";
+import type { PendapatanRekening } from "@/Types/pendapatan-skpd";
+import type { PbjJenisTransaksi } from "@/Services/pbj-detail-service";
+import FrontWrapper from "@/Wrappers/front-wrapper";
 import { Head, router } from "@inertiajs/react";
-import { ArrowLeft, Calendar } from "lucide-react";
-import React, { ReactNode, useMemo, useCallback } from "react";
+import { BarChart3, Calendar, Package, ShoppingCart, ChevronDown, ChevronUp, Bookmark } from "lucide-react";
+import React, { ReactNode, useMemo, useCallback, useState } from "react";
 import { route } from "ziggy-js";
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -56,7 +58,7 @@ function StatCard({
 }) {
     return (
         <div className="mt-4 rounded-xl border border-teal-200 bg-teal-50/80 p-2 dark:border-teal-900 dark:bg-neutral-900/60">
-            <div className="mb-2 flex flex-1 justify-between rounded-md border border-teal-200 bg-teal-100/80 p-1 dark:border-teal-950 dark:bg-teal-800/10">
+            <div className="mb-2 flex flex-1 justify-between rounded-md border border-teal-200 bg-teal-200/80 p-1 dark:border-teal-950 dark:bg-teal-800/10">
                 <p className="text-xs font-semisemibold text-neutral-600 dark:text-teal-400">{label}</p>
                 <p className="text-xs font-semisemibold text-neutral-600 dark:text-lime-300">{tahun}</p>
             </div>
@@ -93,7 +95,11 @@ function StatCard({
  * Komponen loading skeleton untuk card.
  */
 function StatCardSkeleton() {
-    return <div className="mt-4 h-40 animate-pulse rounded-2xl bg-neutral-200 dark:bg-neutral-700" />;
+    return <div className="mt-4 h-36 animate-pulse rounded-2xl bg-neutral-200 dark:bg-neutral-700" />;
+}
+
+function TableSkeleton() {
+    return <div className="mt-6 h-10 w-full animate-pulse rounded-lg bg-neutral-100 dark:bg-neutral-700" />;
 }
 
 export interface BelanjaKegiatan {
@@ -210,6 +216,251 @@ function BelanjaDetailTable({ programs }: { programs: BelanjaProgram[] }) {
     );
 }
 
+// ─── STATUS BADGE COLOR ────────────────────────────────────────────────────────
+const STATUS_BADGE: Record<string, string> = {
+    ON_PROCESS: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+    COMPLETED: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
+    CANCELLED: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
+    CANCELLED_ON_REVIEW: "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300",
+    CANCELLED_ON_NEGOTIATION: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300",
+    WAITING_PPK_REVIEW: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300",
+    WAITING_SELLER_CONFIRMATION: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
+    ON_NEGOTIATION: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
+    ON_ADDENDUM: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300",
+    PAYMENT_OUTSIDE_SYSTEM: "bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300",
+    ESIGN_IN_PROGRESS: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300",
+};
+
+const JENIS_COLOR: Record<PbjJenisTransaksi, string> = {
+    CATALOG: "bg-teal-600 text-white",
+    TENDER: "bg-yellow-600 text-white",
+    "NON-TENDER": "bg-rose-600 text-white",
+};
+
+const JENIS_LABEL: Record<PbjJenisTransaksi, string> = {
+    CATALOG: "E-Katalog",
+    TENDER: "Tender",
+    "NON-TENDER": "Non-Tender",
+};
+
+function fmtRupiahShort(v: number) {
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        notation: "compact",
+        maximumFractionDigits: 1,
+    }).format(v);
+}
+
+/**
+ * Komponen section PBJ terkait untuk halaman detail OPD (type=belanja).
+ */
+function OpdPbjSection({ namaOpd, tahun }: { namaOpd: string; tahun: number }) {
+    const { data, summary, loading, error, retry } = useOpdPbj(namaOpd, tahun);
+    const [activeJenis, setActiveJenis] = useState<PbjJenisTransaksi | "ALL">("CATALOG");
+    const [showAll, setShowAll] = useState(false);
+    const PAGE_SIZE = 8;
+
+    const filtered = useMemo(() =>
+        activeJenis === "ALL" ? data : data.filter(i => i.jenis_transaksi === activeJenis),
+        [data, activeJenis]
+    );
+
+    const displayed = showAll ? filtered : filtered.slice(0, PAGE_SIZE);
+
+    const TABS = ["ALL", "CATALOG", "TENDER", "NON-TENDER"] as const;
+    const TAB_ACTIVE_CLS: Record<typeof TABS[number], string> = {
+        ALL: "bg-neutral-800 text-white border-neutral-800 dark:bg-neutral-200 dark:text-neutral-900",
+        CATALOG: "bg-teal-600 text-white border-teal-600 shadow-sm shadow-teal-500/20",
+        TENDER: "bg-yellow-500 text-white border-yellow-500 shadow-sm shadow-yellow-400/20",
+        "NON-TENDER": "bg-rose-500 text-white border-rose-500 shadow-sm shadow-rose-400/20",
+    };
+
+    return (
+        <div className="mb-6 rounded-xl border border-teal-200 dark:border-teal-900 bg-white dark:bg-neutral-900/20 overflow-hidden shadow-sm">
+
+            {/* ── Gradient Header ── */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-teal-100 dark:border-teal-900/70 bg-gradient-to-r from-teal-50 via-white to-white dark:from-teal-950/30 dark:via-transparent dark:to-transparent">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/25">
+                        <Package className="w-5 h-5" />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-base text-neutral-900 dark:text-neutral-100 leading-tight">
+                            Pengadaan Barang &amp; Jasa
+                        </h3>
+                        <p className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mt-0.5">
+                            Data PBJ Terkait — {tahun}
+                        </p>
+                    </div>
+                </div>
+                {summary && !loading && (
+                    <div className="flex items-center gap-5">
+                        <div className="text-right hidden sm:block">
+                            <p className="text-[10px] text-neutral-400 uppercase tracking-wider">Total Paket</p>
+                            <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 tabular-nums">{summary.total}</p>
+                        </div>
+                        <div className="text-right border-l border-teal-100 dark:border-teal-800 pl-5">
+                            <p className="text-[10px] text-neutral-400 uppercase tracking-wider">Total Nilai</p>
+                            <p className="text-base font-bold text-teal-700 dark:text-teal-400 tabular-nums">{fmtRupiahShort(summary.totalNilai)}</p>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* ── Filter Tabs ── */}
+            {summary && !loading && (
+                <div className="flex flex-wrap gap-2 px-4 py-3 border border-neutral-100 dark:border-neutral-800/60">
+                    {TABS.map(jenis => {
+                        const count = jenis === "ALL" ? summary.total : summary.byJenis[jenis]?.count ?? 0;
+                        const nilai = jenis === "ALL" ? summary.totalNilai : summary.byJenis[jenis]?.nilai ?? 0;
+                        const active = activeJenis === jenis;
+                        return (
+                            <button
+                                key={jenis}
+                                onClick={() => { setActiveJenis(jenis); setShowAll(false); }}
+                                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-[11px] font-bold transition-all duration-200 border ${active ? TAB_ACTIVE_CLS[jenis]
+                                    : "bg-neutral-50 dark:bg-neutral-800/60 border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 hover:border-teal-300 dark:hover:border-teal-700 hover:bg-teal-50/50 dark:hover:bg-teal-900/10"
+                                    }`}
+                            >
+                                <span>{jenis === "ALL" ? "Semua" : JENIS_LABEL[jenis as PbjJenisTransaksi]}</span>
+                                <span className={`min-w-[20px] text-center px-1.5 py-0.5 rounded-md text-[10px] font-black ${active ? "bg-white/25" : "bg-neutral-200 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400"
+                                    }`}>
+                                    {count}
+                                </span>
+                                {count > 0 && (
+                                    <span className={`text-[10px] font-medium hidden lg:inline ${active ? "opacity-75" : "text-neutral-400 dark:text-neutral-500"}`}>
+                                        {fmtRupiahShort(nilai)}
+                                    </span>
+                                )}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+
+            {/* ── Content ── */}
+            {loading ? (
+                <div className="space-y-2 p-4">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/40 animate-pulse">
+                            <div className="w-16 h-5 rounded-md bg-neutral-200 dark:bg-neutral-700 shrink-0" />
+                            <div className="flex-1 space-y-1.5">
+                                <div className="h-3 w-2/3 bg-neutral-200 dark:bg-neutral-700 rounded" />
+                                <div className="h-2.5 w-1/3 bg-neutral-100 dark:bg-neutral-800 rounded" />
+                            </div>
+                            <div className="w-16 h-4 bg-neutral-200 dark:bg-neutral-700 rounded shrink-0" />
+                            <div className="w-20 h-5 bg-neutral-100 dark:bg-neutral-800 rounded-full shrink-0" />
+                        </div>
+                    ))}
+                </div>
+            ) : error ? (
+                <div className="m-4 rounded-xl border border-orange-200 bg-orange-50 dark:border-orange-900/50 dark:bg-orange-950/20 p-4 flex items-start justify-between gap-3">
+                    <div>
+                        <p className="text-xs font-semibold text-orange-800 dark:text-orange-300">Gagal memuat data PBJ</p>
+                        <p className="text-[11px] text-orange-600 dark:text-orange-400 mt-0.5">{error.message}</p>
+                    </div>
+                    <button onClick={retry} className="shrink-0 px-3 py-1.5 text-xs font-bold text-orange-600 dark:text-orange-400 border border-orange-300 dark:border-orange-800 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/20 transition-colors">
+                        Retry
+                    </button>
+                </div>
+            ) : filtered.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-14 px-4 text-center">
+                    <div className="w-14 h-14 rounded-2xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mb-3">
+                        <ShoppingCart className="w-7 h-7 text-neutral-300 dark:text-neutral-600" />
+                    </div>
+                    <p className="text-sm font-semibold text-neutral-500 dark:text-neutral-400">Tidak ada data PBJ</p>
+                    <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1 max-w-xs">
+                        Tidak ditemukan paket pengadaan yang terkait dengan OPD ini
+                    </p>
+                </div>
+            ) : (
+                <>
+                    {/* Count bar */}
+                    <div className="px-5 py-2 bg-neutral-50/70 dark:bg-neutral-900/20 border-b border-neutral-100 dark:border-neutral-800/40">
+                        <p className="text-[10px] font-medium text-neutral-400 uppercase tracking-wider">
+                            Menampilkan {displayed.length} dari {filtered.length} paket
+                        </p>
+                    </div>
+
+                    <div className="divide-y divide-neutral-50 dark:divide-neutral-800/40">
+                        {displayed.map((item, idx) => {
+                            const namaPaket = item.nama_paket ?? item.nama_rup ?? item.rup_name ?? "-";
+                            const penyedia = item.nama_penyedia ?? "-";
+                            const mak = (item.mak ?? "") as string;
+                            const status = (item.status ?? item.status_paket ?? "") as string;
+                            const nilai = item.jenis_transaksi === "CATALOG"
+                                ? (item.total ?? item.total_harga ?? 0)
+                                : (item.pagu ?? item.nilai_kontrak ?? 0);
+                            const rowJenisStyle = item.jenis_transaksi === "CATALOG"
+                                ? "bg-teal-50/60 dark:bg-teal-900/5"
+                                : item.jenis_transaksi === "TENDER"
+                                    ? "bg-yellow-50/40 dark:bg-yellow-900/5"
+                                    : "bg-rose-50/30 dark:bg-rose-900/5";
+
+                            return (
+                                <motion.div
+                                    key={idx}
+                                    initial={{ opacity: 0, x: -6 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.16, delay: Math.min(idx * 0.025, 0.35) }}
+                                    className={`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-5 py-3.5 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 transition-colors ${rowJenisStyle}`}
+                                >
+                                    {/* Jenis badge + Name */}
+                                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                                        <span className={`shrink-0 mt-0.5 inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase ${JENIS_COLOR[item.jenis_transaksi]}`}>
+                                            {JENIS_LABEL[item.jenis_transaksi]}
+                                        </span>
+                                        <div className="min-w-0">
+                                            <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-100 leading-snug" title={namaPaket}>
+                                                {namaPaket}
+                                            </p>
+                                            {penyedia !== "-" && (
+                                                <p className="text-[10px] text-neutral-400 dark:text-neutral-500 mt-0.5 truncate" title={penyedia}>
+                                                    {penyedia}
+                                                </p>
+                                            )}
+                                            {/* MAK — hanya untuk E-Katalog */}
+
+                                        </div>
+                                    </div>
+
+                                    {/* Value + Status */}
+                                    <div className="flex items-center gap-2.5 shrink-0 ml-10 sm:ml-0">
+                                        <span className="text-xs font-bold text-teal-700 dark:text-teal-400 tabular-nums whitespace-nowrap">
+                                            {fmtRupiahShort(nilai)}
+                                        </span>
+                                        {status ? (
+                                            <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap ${STATUS_BADGE[status] ?? "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400"}`}>
+                                                {status.replace(/_/g, " ")}
+                                            </span>
+                                        ) : (
+                                            <span className="text-[10px] text-neutral-300 dark:text-neutral-700 w-20 text-center">—</span>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+
+                    {/* Show more/less */}
+                    {filtered.length > PAGE_SIZE && (
+                        <div className="flex justify-center py-3.5 border-t border-neutral-100 dark:border-neutral-800/60 bg-neutral-50/40 dark:bg-neutral-900/10">
+                            <button
+                                onClick={() => setShowAll(v => !v)}
+                                className="flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800 hover:bg-teal-100/60 dark:hover:bg-teal-900/20 transition-colors"
+                            >
+                                {showAll
+                                    ? <><ChevronUp className="w-3.5 h-3.5" /> Tampilkan lebih sedikit</>
+                                    : <><ChevronDown className="w-3.5 h-3.5" /> Lihat semua {filtered.length} paket</>}
+                            </button>
+                        </div>
+                    )}
+                </>
+            )}
+        </div>
+    );
+}
 /**
  * Komponen untuk menampilkan list pendapatan SKPD.
  */
@@ -247,7 +498,7 @@ function PendapatanList({ items, loading, error }: { items: PendapatanRekening[]
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-teal-200 bg-teal-50 dark:border-teal-700 dark:bg-teal-900/20">
+                            <tr className="border-b border-teal-200 bg-teal-100/80 dark:border-teal-700 dark:bg-teal-900/20">
                                 <th className="px-4 py-3 text-left text-xs font-semisemibold text-neutral-700 dark:text-neutral-300">Kode Rekening</th>
                                 <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-700 dark:text-neutral-300">Nama Rekening</th>
                                 <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-700 dark:text-neutral-300">Target</th>
@@ -388,59 +639,79 @@ function OpdDetailContent({ type, namaOpd, tahun, slug }: OpdDetailPageProps) {
         <>
             {/* Header dengan title */}
             <div className="mx-auto mb-8 max-w-screen-2xl px-6 lg:px-0">
-                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-6">
-                    <div>
-                        <h1 className="mb-2 font-semibold text-neutral-900 text-2xl lg:text-3xl dark:text-neutral-100">{namaOpd}</h1>
-                        <p className="xs:text-xs font-medium text-neutral-600 capitalize dark:text-neutral-400">
-                            <span className="font-medium text-teal-600 dark:text-teal-400">{data?.kd_unit}</span> - {labels.title.toLowerCase()} per satuan kerja perangkat daerah
-                        </p>
-                    </div>
+                <div className="flex flex-col md:justify-between gap-6 mb-4">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className=" text-left">
+                        <div className="flex items-end justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
+                                    <BarChart3 className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                                        {namaOpd}
+                                    </h1>
+                                    <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+                                        <span className="font-medium text-teal-600 dark:text-teal-400">{data?.kd_unit}</span> - {labels.title.toLowerCase()} per satuan kerja perangkat daerah
+                                    </p>
+                                </div>
+                            </div>
+                            {/* ── Year Selector ───────────────────────────────────── */}
+                            <div className="flex items-end gap-3 bg-white dark:bg-neutral-900/50 p-2 rounded-md border border-teal-100 dark:border-teal-900/50 shadow-xs justify-end">
+                                <div className="bg-teal-50 dark:bg-teal-900/20 pl-2  rounded-lg text-teal-600 dark:text-teal-400">
+                                    <Calendar className="w-4 h-4" />
+                                </div>
+                                <div className="flex flex-col ">
 
-                    {/* ── Year Selector ───────────────────────────────────── */}
-                    <div className="flex items-center gap-3 bg-white dark:bg-neutral-900/50 p-2 rounded-md border border-teal-100 dark:border-teal-900/50 shadow-xs justify-end">
-                        <div className="bg-teal-50 dark:bg-teal-900/20 pl-2  rounded-lg text-teal-600 dark:text-teal-400">
-                            <Calendar className="w-4 h-4" />
+                                    <select
+                                        id="year-select"
+                                        value={tahun}
+                                        onChange={(e) => {
+                                            const newYear = e.target.value;
+                                            router.get(window.location.pathname, { tahun: newYear }, {
+                                                preserveState: false,
+                                                preserveScroll: true,
+                                            });
+                                        }}
+                                        className="bg-transparent border-none p-0 pr-8 text-sm fontmedium text-neutral-900 dark:text-neutral-100 focus:ring-0 cursor-pointer"
+                                    >
+                                        {(() => {
+                                            const currentYear = new Date().getFullYear();
+                                            const years = [];
+                                            for (let i = currentYear; i >= currentYear - 4; i--) {
+                                                years.push(i);
+                                            }
+                                            return years.map((y) => (
+                                                <option key={y} value={y} className="bg-white dark:bg-neutral-900">
+                                                    {y}
+                                                </option>
+                                            ));
+                                        })()}
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex flex-col ">
+                    </motion.div>
 
-                            <select
-                                id="year-select"
-                                value={tahun}
-                                onChange={(e) => {
-                                    const newYear = e.target.value;
-                                    router.get(window.location.pathname, { tahun: newYear }, {
-                                        preserveState: false,
-                                        preserveScroll: true,
-                                    });
-                                }}
-                                className="bg-transparent border-none p-0 pr-8 text-sm fontmedium text-neutral-900 dark:text-neutral-100 focus:ring-0 cursor-pointer"
-                            >
-                                {(() => {
-                                    const currentYear = new Date().getFullYear();
-                                    const years = [];
-                                    for (let i = currentYear; i >= currentYear - 4; i--) {
-                                        years.push(i);
-                                    }
-                                    return years.map((y) => (
-                                        <option key={y} value={y} className="bg-white dark:bg-neutral-900">
-                                            {y}
-                                        </option>
-                                    ));
-                                })()}
-                            </select>
-                        </div>
-                    </div>
                 </div>
 
                 {/* Summary Cards */}
 
-                {loading ? (
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                        {Array.from({ length: 4 }).map((_, i) => (
-                            <StatCardSkeleton key={i} />
-                        ))}
-                    </div>
+                {loading || !data ? (
+                    <>
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                            {Array.from({ length: 4 }).map((_, i) => (
+                                <StatCardSkeleton key={i} />
+                            ))}
+                        </div>
+                        <div className="mt-4">
+                            {Array.from({ length: 10 }).map((_, i) => (
+                                <TableSkeleton key={i} />
+                            ))}
+                        </div>
+                    </>
                 ) : summary ? (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -456,13 +727,13 @@ function OpdDetailContent({ type, namaOpd, tahun, slug }: OpdDetailPageProps) {
                         />
                         <StatCard
                             label={labels.realizationLabel}
-                            value={summary.realisasi ? formatRupiah(summary.realisasi) : "-"}
+                            value={formatRupiah(summary.realisasi)}
                             percentageLabel="Persentase Realisasi"
                             percentage={(summary.realisasi / summary.pagu) * 100}
                         />
                         <StatCard
                             label={labels.sisaLabel}
-                            value={formatRupiah(summary.pagu - summary.realisasi)}
+                            value={formatRupiah(summary.realisasi >= summary.pagu ? 0 : summary.pagu - summary.realisasi)}
                             subLabel={
                                 summary.pagu >= summary.realisasi
                                     ? "Sisa Target"
@@ -474,10 +745,13 @@ function OpdDetailContent({ type, namaOpd, tahun, slug }: OpdDetailPageProps) {
                             label={labels.percentageLabel}
                             value={`${new Date(tahun + "-12").toLocaleString("id-ID", { month: "long", year: "numeric" })}`}
                             subLabel="Status"
-                            subValue={summary.percentage >= 75 ? "Sangat Baik" : summary.percentage >= 50 ? "Cukup" : "Perlu Ditingkatkan"}
+                            subValue={
+                                summary.pagu >= summary.realisasi
+                                    ? `Sisa Target ${formatRupiah(summary.pagu - summary.realisasi)}`
+                                    : ` Melebihi Target ${formatRupiah(summary.realisasi - summary.pagu)}`
+                            }
                         />
                     </motion.div>
-
                 ) : null}
             </div>
 
@@ -487,7 +761,7 @@ function OpdDetailContent({ type, namaOpd, tahun, slug }: OpdDetailPageProps) {
                     initial={{ opacity: 0, y: 0 }}
                     animate={{ opacity: 1, y: 5 }}
                     transition={{ duration: 0.2 }}
-                    className="mx-auto max-w-screen-2xl px-4 lg:px-8">
+                    className="mx-auto max-w-screen-2xl px-4 lg:px-0">
                     {/* Pendapatan List - Show only when type === "pendapatan" */}
                     {type === "pendapatan" && (
                         <>
@@ -497,8 +771,6 @@ function OpdDetailContent({ type, namaOpd, tahun, slug }: OpdDetailPageProps) {
                                     <span className="text-sm text-neutral-600 dark:text-neutral-400">{namaOpd}</span>
                                 </div>
                             </div>
-
-
                             <PendapatanList
                                 items={pendapatanDetail.data?.topRekening}
                                 loading={pendapatanDetail.loading}
@@ -508,16 +780,18 @@ function OpdDetailContent({ type, namaOpd, tahun, slug }: OpdDetailPageProps) {
                     )}
 
                     <h2 className="mb-4 text-2xl font-medium text-neutral-900 dark:text-teal-400">Detail {labels.title} {tahun}</h2>
-
                     {type === "belanja" ? (
                         <>
+                            {/* PBJ Section — data pengadaan terkait OPD */}
+                            <OpdPbjSection namaOpd={namaOpd} tahun={tahun} />
+
                             <div className="border border-teal-200 mx-auto p-2 py-2 rounded-lg ">
                                 <div className="mb-2 dark:bg-teal-950 text-center bg-neutral-50 p-2 rounded-md">
                                     <h3 className="text-2xl font-medium text-slate-800 dark:text-neutral-100">
-                                        Realisasi Fisik & Keuangan
+                                        Realisasi Fisik &amp; Keuangan
                                     </h3>
                                     <p className="text-xs font-medium uppercase text-teal-950 dark:text-neutral-400">
-                                        Terkait Tentang Laporan Realisasi Fisik & Keuangan <span className="font-medium text-teal-600 dark:text-teal-600">{namaOpd.toUpperCase()}</span>
+                                        Terkait Tentang Laporan Realisasi Fisik &amp; Keuangan <span className="font-medium text-teal-600 dark:text-teal-600">{namaOpd.toUpperCase()}</span>
                                     </p>
                                 </div>
                                 {realisasiLoading ? (
@@ -535,11 +809,10 @@ function OpdDetailContent({ type, namaOpd, tahun, slug }: OpdDetailPageProps) {
                                     <BelanjaDetailTable programs={belanjaPrograms} />
                                 )}
                             </div>
-
                         </>
                     ) : (
                         <>
-                            <div className="my-2 grid grid-cols-1 gap-2 lg:grid-cols-2">
+                            {/* <div className="my-2 grid grid-cols-1 gap-2 lg:grid-cols-2">
                                 <div className="col-span-1 rounded-lg border border-teal-200 p-2">
                                     <div className="flex items-center justify-between border-teal-200 pb-4 dark:border-teal-700">
                                         <span className="font-medium text-neutral-700 dark:text-neutral-300">Kode Unit</span>
@@ -569,7 +842,7 @@ function OpdDetailContent({ type, namaOpd, tahun, slug }: OpdDetailPageProps) {
                                         </span>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </>
                     )}
                 </motion.div>)}
@@ -584,24 +857,10 @@ export default function OpdDetail(props: OpdDetailPageProps) {
     return (
         <>
             <Head title={`Detail ${props.namaOpd}`} />
-
-            <div className="min-h-screen bg-transparent pt-18 pb-20">
+            <div className="min-h-screen bg-transparent pt-4 pb-20">
                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
                     <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-teal-500/10 rounded-full blur-[120px]" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
                 </div>
-
-                <div className="mx-auto max-w-screen-2xl px-6 lg:px-8">
-                    {/* Back Button */}
-                    <button
-                        onClick={() => window.history.back()}
-                        className="mb-6 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium text-neutral-700 transition-colors hover:bg-teal-100 dark:text-neutral-300 dark:hover:bg-neutral-900"
-                    >
-                        <ArrowLeft className="h-3 w-4" />
-                        Kembali
-                    </button>
-                </div>
-
                 <OpdDetailContent {...props} />
             </div>
         </>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
-import FrontWrapper from '@/Wrappers/FrontWrapper';
+import FrontWrapper from '@/Wrappers/front-wrapper';
 import { Package, ChevronLeft, Building2, Factory, Calendar, Info, ArrowRight } from 'lucide-react';
 
 const PbjShowPage = () => {

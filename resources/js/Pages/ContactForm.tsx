@@ -1,8 +1,8 @@
-import Button from "@/Components/Inputs/Button";
-import Input from "@/Components/Inputs/Input";
-import TextArea from "@/Components/Inputs/TextArea";
-import { cn } from "@/Lib/Utils";
-import FrontWrapper from "@/Wrappers/FrontWrapper";
+import Button from "@/shared/components/ui/custom-button";
+import Input from "@/shared/components/ui/input";
+import TextArea from "@/shared/components/ui/text-area";
+import { cn } from "@/Lib/utils";
+import FrontWrapper from "@/Wrappers/front-wrapper";
 import { Form } from "@inertiajs/react";
 import { ReactNode } from "react";
 import { toast } from "react-toastify";

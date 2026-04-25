@@ -1,8 +1,8 @@
 import React from 'react';
 import { ReactNode } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import FrontWrapper from '@/Wrappers/FrontWrapper';
-import { useProgulData } from '@/Hooks/useProgulData';
+import FrontWrapper from '@/Wrappers/front-wrapper';
+import { useProgulData } from '@/features/progul/hooks/use-progul-data';
 import { motion } from 'motion/react';
 import {
     LayoutDashboard,
@@ -16,7 +16,7 @@ import {
     Users,
     Package
 } from 'lucide-react';
-import { cn } from '@/Lib/Utils';
+import { cn } from '@/Lib/utils';
 
 // Helper to assign icons/colors to categories
 const getCategoryStyles = (id: number) => {
@@ -39,12 +39,28 @@ const ProgulPage = () => {
 
     return (
         <>
-            <Head title="Kinerja Progul - Program Unggulan Kota Padang" />
-            <div className="min-h-screen w-full bg-slate-50/50 dark:bg-transparent pt-24 pb-20">
-                <div className="max-w-screen-2xl mx-auto px-4 lg:px-8 space-y-8">
+            <Head title="Program Unggulan Kota Padang" />
+            <div className="min-h-screen w-full bg-slate-50/50 dark:bg-transparent pt-4 pb-20">
+                <div className="max-w-screen-2xl mx-auto px-4 lg:px-0 space-y-6">
 
                     {/* Header Section */}
-                    <div>
+                    <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
+                            <Package className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                                Program Unggulan Kota Padang
+                            </h1>
+                            <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+                                Satujuan Untuk Kejayaan Kota Padang
+                            </p>
+                        </div>
+                    </div>
+                    <p className="text-slate-500 dark:text-neutral-400">
+                        Pantau kinerja dan capaian program unggulan pemerintah Kota Padang untuk mewujudkan masyarakat yang lebih sejahtera dan mandiri.
+                    </p>
+                    {/* <div>
                         <div className="flex items-center gap-2 mb-4">
                             <div className="p-2 rounded-xl bg-teal-600 text-white shadow-lg shadow-teal-600/20">
                                 <Package className="w-5 h-5" />
@@ -59,7 +75,7 @@ const ProgulPage = () => {
                         <p className="text-slate-500 dark:text-neutral-400 mt-2 max-w-2xl">
                             Pantau kinerja dan capaian program unggulan pemerintah Kota Padang untuk mewujudkan masyarakat yang lebih sejahtera dan mandiri.
                         </p>
-                    </div>
+                    </div> */}
                     {/* <div className="mb-10">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -121,6 +137,7 @@ const ProgulPage = () => {
                                         whileHover={{ y: -1, scale: 1.02 }}
                                         transition={{ duration: 0.05 }}
                                     >
+
                                         <Link
                                             href={route('progul.detail', { id: category.id })}
                                             className={cn(

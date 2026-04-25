@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import FrontWrapper from '@/Wrappers/FrontWrapper';
-import { useProgulData } from '@/Hooks/useProgulData';
+import FrontWrapper from '@/Wrappers/front-wrapper';
+import { useProgulData } from '@/features/progul/hooks/use-progul-data';
 import { motion } from 'motion/react';
 import { ReactNode } from 'react';
 import {
@@ -12,7 +12,7 @@ import {
     ArrowRight,
     Package
 } from 'lucide-react';
-import { cn } from '@/Lib/Utils';
+import { cn } from '@/Lib/utils';
 
 interface Props {
     id: number;
@@ -27,35 +27,29 @@ const ActivasiPage = ({ id }: Props) => {
     return (
         <>
             <Head title={`${progul?.name || 'Progul'} - Detail Activasi`} />
-
-            <div className="min-h-screen w-full bg-slate-50/50 dark:bg-transparent pt-24 pb-20">
-                <div className="max-w-screen-2xl mx-auto px-4 lg:px-8 space-y-8">
+            <div className="min-h-screen w-full bg-slate-50/50 dark:bg-transparent pt-4 pb-20">
+                <div className="max-w-screen-2xl mx-auto px-4 lg:px-0 space-y-6">
 
                     {/* Header Section */}
-                    <div>
-                        <Link
-                            href={route('progul')}
-                            className="inline-flex items-center text-sm font-medium text-neutral-500 hover:text-teal-600 transition-colors mb-4"
-                        >
-                            <ChevronLeft className="w-4 h-4 mr-1 " />
-                            Kembali ke Daftar Program
-                        </Link>
-                        <div className="flex items-center flex-row gap-3 mb-4">
-                            <div className="p-2 rounded-xl bg-teal-600 text-white shadow-lg shadow-teal-600/20 ">
-                                <Package className="w-6 h-5" />
-                            </div>
-                            <h1 className="text-xl md:text-3xl font-bold text-slate-900 dark:text-white uppercase">
-                                {progul?.name} <span className="text-teal-600"></span>
-                            </h1>
+                    <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
+                            <Package className="w-6 h-6" />
                         </div>
-
-                        <p className="text-slate-500 dark:text-neutral-400 mt-2 max-w-2xl">
-                            Pilih salah satu activasi untuk melihat detail capaian kinerja.
-                        </p>
+                        <div>
+                            <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                                {progul?.name}
+                            </h1>
+                            <p className="text-neutral-500 dark:text-neutral-400 ms-2 font-medium">
+                                <span className="text-teal-600 dark:text-teal-400 me-2">
+                                    {activasiList.length}
+                                </span>
+                                Activasi
+                            </p>
+                        </div>
                     </div>
-
-
-
+                    <p className="text-slate-500 dark:text-neutral-400">
+                        Pantau kinerja dan capaian program unggulan pemerintah Kota Padang untuk mewujudkan masyarakat yang lebih sejahtera dan mandiri.
+                    </p>
 
                     {/* Loading State */}
                     {loading && (

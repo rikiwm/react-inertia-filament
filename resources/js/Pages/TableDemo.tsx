@@ -5,9 +5,9 @@
  * Hapus halaman ini (dan route-nya) setelah pengembangan selesai.
  */
 
-import { Table } from "@/Components/UI/Table";
-import { cn } from "@/Lib/Utils";
-import FrontWrapper from "@/Wrappers/FrontWrapper";
+import { Table } from "@/shared/components/ui/table";
+import { cn } from "@/Lib/utils";
+import FrontWrapper from "@/Wrappers/front-wrapper";
 import { type ReactNode, useState } from "react";
 
 // ─── Data Contoh ─────────────────────────────────────────────────────────────
