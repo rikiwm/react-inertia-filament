@@ -9,7 +9,7 @@ interface IspuWidgetProps {
 const IspuWidget: React.FC<IspuWidgetProps> = ({ data }) => {
     if (!data || !data.status_stasiun || data.status_stasiun.length === 0) {
         return (
-            <div className="p-8 bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 h-[600px] flex items-center justify-center text-neutral-500 italic shadow-xl">
+            <div className="p-4 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 h-[600px] flex items-center justify-center text-neutral-500 italic shadow-xl">
                 Data ISPU tidak tersedia
             </div>
         );
@@ -42,7 +42,7 @@ const IspuWidget: React.FC<IspuWidgetProps> = ({ data }) => {
     };
 
     return (
-        <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 shadow-2xl border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-neutral-100 font-sans">
+        <div className="bg-white dark:bg-neutral-900 rounded-lg p-4 shadow-2xl border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-neutral-100 font-sans">
             {/* Header */}
             <div className="flex justify-between items-start mb-4">
                 <div>

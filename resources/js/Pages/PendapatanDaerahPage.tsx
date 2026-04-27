@@ -126,31 +126,31 @@ const PendapatanDaerahPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-4 text-left"
                 >
-                    <div className="flex items-center justify-between gap-3">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
 
                             <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
                                 <BarChart3 className="w-6 h-6" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                                <h1 className="lg:text-3xl md:text-2xl text-xl font-bold text-neutral-900 dark:text-neutral-100">
                                     Pendapatan Daerah
                                 </h1>
-                                <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+                                <p className=" lg:text-sm md:text-xs text-xs text-neutral-500 dark:text-neutral-400 font-medium">
                                     Breakdown pendapatan daerah per satuan kerja perangkat daerah
                                 </p>
                             </div>
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <label htmlFor="year-select" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                            <label htmlFor="year-select" className="lg:text-sm md:text-xs text-xs text-neutral-700 dark:text-neutral-300">
                                 Tahun Anggaran:
                             </label>
                             <select
-                                 id="year-select"
-                                 value={selectedYear}
-                                 onChange={handleYearChange}
-                                 className="px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                id="year-select"
+                                value={selectedYear}
+                                onChange={handleYearChange}
+                                className="px-2 py-1 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500"
                             >
                                 {availableYears.map((year) => (
                                     <option key={year} value={year}>
@@ -173,7 +173,7 @@ const PendapatanDaerahPage = () => {
                 {!loading && data && (
                     <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                         {/* Target PAD */}
-                        <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/30 dark:to-teal-800/20 p-4 border border-teal-200 dark:border-teal-700">
+                        <div className="rounded-lg lg:rounded-2xl  bg-white/20 dark:bg-neutral-950/10 p-4 border border-teal-200 dark:border-teal-700">
                             <p className="text-sm font-medium text-teal-600 dark:text-teal-300 mb-2">Target PAD</p>
                             <p className="text-2xl font-semibold text-teal-900 dark:text-teal-100">
                                 {formatRupiahCompact(data.total_pagu_pads)}
@@ -189,7 +189,7 @@ const PendapatanDaerahPage = () => {
                         </div>
 
                         {/* Sisa */}
-                        <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-700">
+                        <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/30 dark:to-teal-800/20 p-4 border border-neutral-200 dark:border-neutral-700">
                             <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Sisa</p>
                             <p className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
                                 {formatRupiahCompact(data.total_sisa_pad)}
@@ -197,7 +197,7 @@ const PendapatanDaerahPage = () => {
                         </div>
 
                         {/* Persentase */}
-                        <div className={`rounded-lg lg:rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-700`}>
+                        <div className={`rounded-lg lg:rounded-2xl p-4 border border-neutral-200 dark:border-neutral-700`}>
                             <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Persentase</p>
                             <div>
                                 <p className={`text-2xl font-semibold ${percentageColor}`}>

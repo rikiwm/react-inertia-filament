@@ -644,17 +644,17 @@ function OpdDetailContent({ type, namaOpd, tahun, slug }: OpdDetailPageProps) {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className=" text-left">
-                        <div className="flex items-end justify-between gap-3">
+                        <div className="flex flex-col md:flex-row items-end justify-between gap-3">
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
                                     <BarChart3 className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                                    <h1 className="lg:text-3xl md:text-2xl text-xl font-bold text-neutral-900 dark:text-neutral-100">
                                         {namaOpd}
                                     </h1>
-                                    <p className="text-neutral-500 dark:text-neutral-400 font-medium">
-                                        <span className="font-medium text-teal-600 dark:text-teal-400">{data?.kd_unit}</span> - {labels.title.toLowerCase()} per satuan kerja perangkat daerah
+                                    <p className="lg:text-sm md:text-xs text-xs text-neutral-500 dark:text-neutral-400 font-medium">
+                                        <span className="lg:text-sm md:text-xs text-xs font-medium text-teal-600 dark:text-teal-400">{data?.kd_unit}</span> - {labels.title.toLowerCase()} per satuan kerja perangkat daerah
                                     </p>
                                 </div>
                             </div>

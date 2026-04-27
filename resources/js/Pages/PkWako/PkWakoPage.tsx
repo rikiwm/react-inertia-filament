@@ -40,17 +40,17 @@ const PkWakoPage = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="mb-4 text-left"
+                        className="mb-4"
                     >
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-row justify-start gap-3">
                             <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
                                 <BarChart3 className="w-6 h-6" />
                             </div>
-                            <div>
-                                <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                            <div className='text-left'>
+                                <h1 className=" lg:text-3xl md:text-2xl text-xl font-bold text-neutral-900 dark:text-neutral-100">
                                     Perjanjian Kinerja Wali Kota
                                 </h1>
-                                <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+                                <p className=" lg:text-sm md:text-xs text-xs text-neutral-500 dark:text-neutral-400 font-medium">
                                     Perjanjian Kinerja Wali Kota Padang
                                 </p>
                             </div>

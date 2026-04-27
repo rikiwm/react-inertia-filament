@@ -98,31 +98,31 @@ const BelanjaDaerahPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="mb-4 text-left"
                     >
-                        <div className="flex items-center justify-between gap-3">
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
                             <div className="flex items-center gap-3">
 
                                 <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
                                     <BarChart3 className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                                    <h1 className="lg:text-3xl md:text-2xl text-xl font-bold text-neutral-900 dark:text-neutral-100">
                                         Belanja Daerah
                                     </h1>
-                                    <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+                                    <p className=" lg:text-sm md:text-xs text-xs text-neutral-500 dark:text-neutral-400 font-medium">
                                         Breakdown belanja per satuan kerja perangkat daerah
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3">
-                                <label htmlFor="year-select" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                            <div className="flex  md:flex-row items-center gap-3">
+                                <label htmlFor="year-select" className="text-xs md:text-sm font-medium text-neutral-700 dark:text-neutral-300">
                                     Tahun Anggaran:
                                 </label>
                                 <select
                                     id="year-select"
                                     value={selectedYear}
                                     onChange={handleYearChange}
-                                    className="px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                    className="px-2 py-1 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500"
                                 >
                                     {availableYears.map((year) => (
                                         <option key={year} value={year}>

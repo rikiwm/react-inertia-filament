@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Services\NewsScraperService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
@@ -13,19 +14,22 @@ final class KebencanaanController extends Controller
     /**
      * Display the disaster information page.
      */
-    public function index()
+    public function index(NewsScraperService $newsScraper)
     {
+        // 0. Disaster News (Scraped)
+        $disasterNews = $newsScraper->scrapeByQuery('bencana kota padang', 8);
+
         // 1. Weather Data (Open-Meteo)
         $weather = Cache::remember('weather_padang_v3', 900, function () {
             $response = Http::withoutVerifying()
                 ->timeout(20)
                 ->get('https://api.open-meteo.com/v1/forecast', [
-                    'latitude' => -0.947,
-                    'longitude' => 100.417,
+                    'latitude' => -0.95247,
+                    'longitude' => 100.36182,
                     'current' => 'temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m',
                     'hourly' => 'temperature_2m,weather_code',
                     'daily' => 'weather_code,temperature_2m_max,temperature_2m_min,uv_index_max',
-                    'timezone' => 'Asia/Bangkok',
+                    'timezone' => 'Asia/Jakarta',
                     'forecast_days' => 7,
                 ]);
 
@@ -53,13 +57,14 @@ final class KebencanaanController extends Controller
 
             if ($response->successful()) {
                 $data = $response->json()['data'] ?? [];
-                
+
                 $filtered = array_values(array_filter($data, function ($item) {
                     $daerah = $item['nm_daerah'] ?? '';
+
                     return mb_stripos($daerah, 'kota padang') !== false;
                 }));
 
-                return array_map(function($item) {
+                return array_map(function ($item) {
                     return [
                         'id' => $item['id'] ?? uniqid(),
                         'lat' => $item['latitude'] ?? 0,
@@ -80,6 +85,7 @@ final class KebencanaanController extends Controller
             'weather' => $weather,
             'ispu' => $ispu,
             'disasterMap' => $disasterMap,
+            'disasterNews' => $disasterNews,
             'lastUpdate' => now()->format('Y-m-d H:i:s'),
         ]);
     }
