@@ -22,11 +22,12 @@ interface Props {
     id: number;
     progulName?: string;
     hashtagNews?: any[];
+    initialProgulData?: any[];
 }
 
-const ActivasiPage = ({ id, progulName, hashtagNews }: Props) => {
+const ActivasiPage = ({ id, progulName, hashtagNews, initialProgulData }: Props) => {
     const [activeTab, setActiveTab] = useState('overview');
-    const { getActivasiList, getProgulById, loading } = useProgulData();
+    const { getActivasiList, getProgulById, loading } = useProgulData(initialProgulData);
 
     const tabs = [
         { id: 'overview', label: 'Overview', icon: LayoutDashboard, desc: 'Data Activasi Progul' },

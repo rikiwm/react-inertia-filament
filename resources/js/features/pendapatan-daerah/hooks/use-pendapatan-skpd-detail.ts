@@ -5,7 +5,7 @@
  * Mengambil data dari API list-pendapatan-skpd dan memfilter berdasarkan nama OPD.
  */
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { fetchPendapatanSkpd } from "@/Services/pendapatan-skpd-service";
 import type { PendapatanSkpdNormalized } from "@/Types/pendapatan-skpd";
 
@@ -31,10 +31,12 @@ export interface UsePendapatanSkpdDetailResult {
 export function usePendapatanSkpdDetail(
     namaOpd: string,
     tahun: number | string,
+    initialData?: any,
 ): UsePendapatanSkpdDetailResult {
-    const [data, setData] = useState<PendapatanSkpdNormalized | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [data, setData] = useState<PendapatanSkpdNormalized | null>(initialData || null);
+    const [loading, setLoading] = useState(!initialData);
     const [error, setError] = useState<Error | null>(null);
+    const firstRenderRef = useRef(true);
 
     const fetchData = useCallback(async () => {
         try {
@@ -72,8 +74,13 @@ export function usePendapatanSkpdDetail(
     }, [namaOpd, tahun]);
 
     useEffect(() => {
+        if (firstRenderRef.current && initialData) {
+            firstRenderRef.current = false;
+            return;
+        }
         fetchData();
-    }, [fetchData]);
+        firstRenderRef.current = false;
+    }, [fetchData, initialData]);
 
     const refetch = useCallback(() => {
         fetchData();

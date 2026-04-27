@@ -15,10 +15,8 @@
  * Constants live in `features/dashboard/constants.ts`.
  */
 
-import { cn } from "@/Lib/utils";
+import { cn } from "@/Lib/";
 import { fmtRupiah } from "@/Lib/formatters";
-import { usePbjData } from "@/features/pbj/hooks/use-pbj-data";
-import { usePendapatanSkpd } from "@/features/pendapatan-daerah/hooks/use-pendapatan-skpd";
 import FrontWrapper from "@/Wrappers/front-wrapper";
 import {
     PriceTicker,
@@ -31,30 +29,66 @@ import {
 } from "@/features/dashboard/components";
 import { AVAILABLE_YEARS, buildKpiConfigs } from "@/features/dashboard/constants";
 import { type ReactNode, useMemo } from "react";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { route } from "ziggy-js";
 import { Activity } from "lucide-react";
+import { transformResponse as transformPbj } from "@/Services/pbj-service";
+import { transformResponse as transformApbd } from "@/Services/apbd-service";
+import { transformPendapatanResponse } from "@/Services/pendapatan-skpd-service";
+import type { PbjSummary } from "@/Types/pbj";
+import type { ApbdSummary } from "@/Types/apbd";
+import type { PendapatanSkpdNormalized } from "@/Types/pendapatan-skpd";
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+interface DashboardProps {
+    initialTahun: number;
+    initialPbjData: any;
+    initialApbdData: any;
+    initialSkpdData: any;
+}
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-const DashboardPage = () => {
-    /** Hook data PBJ — mengambil dari API Dashboard Padang. */
-    const {
-        data: pbjData,
-        isLoading: pbjLoading,
-        error: pbjError,
-        tahun,
-        setTahun,
-        retry,
-    } = usePbjData(2026);
+const DashboardPage = ({
+    initialTahun,
+    initialPbjData,
+    initialApbdData,
+    initialSkpdData,
+}: DashboardProps) => {
+    const tahun = initialTahun;
 
-    /** Hook data Pendapatan SKPD — di-share antara Ticker, Chart dan Tabel. */
-    const {
-        data: skpdData,
-        isLoading: skpdLoading,
-        error: skpdError,
-        retry: skpdRetry,
-    } = usePendapatanSkpd(tahun);
+    /** Normalisasi data dari props SSR menggunakan service logic yang ada. */
+    const pbjData = useMemo(
+        () => (initialPbjData ? transformPbj({ result: initialPbjData } as any) : null),
+        [initialPbjData],
+    );
+
+    const apbdData = useMemo(
+        () => (initialApbdData ? transformApbd({ result: initialApbdData } as any) : null),
+        [initialApbdData],
+    );
+
+    const skpdData = useMemo(
+        () => (initialSkpdData ? transformPendapatanResponse(initialSkpdData) : null),
+        [initialSkpdData],
+    );
+
+    /** Hook untuk mendeteksi navigasi Inertia (loading state) jika diperlukan. */
+    const { url } = usePage();
+
+    /** 
+     * Mengubah tahun via Inertia navigation.
+     * Ini memicu SSR flow: Request ke Controller -> Fetch Data -> Return New Props.
+     */
+    const setTahun = (newTahun: number) => {
+        if (newTahun === tahun) return;
+        router.get(route("dashboard"), { tahun: newTahun }, { 
+            preserveState: true,
+            preserveScroll: true,
+            only: ["initialTahun", "initialPbjData", "initialApbdData", "initialSkpdData"],
+        });
+    };
 
     /** Konfigurasi 4 kartu KPI — dihitung ulang setiap kali data API berubah. */
     const kpiConfigs = useMemo(
@@ -125,43 +159,16 @@ const DashboardPage = () => {
                             <p className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">
                                 Pengadaan Barang &amp; Jasa — Tahun {tahun}
                             </p>
-                            {pbjLoading && (
-                                <span className="inline-flex items-center gap-1 text-xs text-teal-500">
-                                    <svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3a9 9 0 1 0 9 9" />
-                                    </svg>
-                                    Memuat...
-                                </span>
-                            )}
-                            {!pbjLoading && pbjData && (
+                            {pbjData && (
                                 <span className="inline-flex items-center gap-1 text-[10px] md:text-xs text-teal-500">
                                     <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
                                     Berhasil dimuat
                                 </span>
                             )}
                         </div>
-                        <a
-                            href={`https://dashboard.padang.go.id/api/v1/pbj?tahun=${tahun}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-teal-500 hover:underline hidden sm:inline"
-                        >
-                            Lihat API ↗
-                        </a>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {pbjError && <KpiErrorBanner error={pbjError} onRetry={retry} />}
-
-                        {pbjLoading && !pbjData && (
-                            <>
-                                <KpiCardSkeleton />
-                                <KpiCardSkeleton />
-                                <KpiCardSkeleton />
-                                <KpiCardSkeleton />
-                            </>
-                        )}
-
                         {kpiConfigs?.map((cfg) => (
                             <KpiCard
                                 key={cfg.id}
@@ -172,7 +179,7 @@ const DashboardPage = () => {
                     </div>
 
                     {/* Rincian per jenis PBJ */}
-                    {pbjData && !pbjLoading && (
+                    {pbjData && (
                         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 px-2 lg:px-4">
                             {[
                                 { label: "Hibah", value: fmtRupiah(pbjData.hibah.pagu) },
@@ -188,30 +195,20 @@ const DashboardPage = () => {
                         </div>
                     )}
 
-                    {/* Loading skeleton untuk rincian */}
-                    {pbjLoading && !pbjData && (
-                        <div className="mt-4 flex flex-wrap mx-2 gap-y-1">
-                            <div className="flex items-center text-xs text-neutral-500 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-950 animate-pulse">
-                                <div className="h-4 w-120 rounded-xl bg-neutral-200 dark:bg-neutral-800" />
-                            </div>
-                        </div>
-                    )}
                 </section>
 
                 {/* ── Main Chart + Donut ── */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4">
-                    <ApbdDonutPanel tahun={tahun} />
+                    <ApbdDonutPanel tahun={tahun} initialData={apbdData} />
                     <PendapatanSkpdPanel
                         tahun={tahun}
                         data={skpdData}
-                        isLoading={skpdLoading}
-                        error={skpdError}
-                        retry={skpdRetry}
+                        isLoading={false}
                     />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <PendapatanSkpdTable tahun={tahun} data={skpdData} isLoading={skpdLoading} />
+                    <PendapatanSkpdTable tahun={tahun} data={skpdData} isLoading={false} />
                 </div>
 
                 {/* ── Footer ── */}

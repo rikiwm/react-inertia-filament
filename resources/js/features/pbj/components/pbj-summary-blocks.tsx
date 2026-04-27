@@ -12,21 +12,36 @@ const fmtInt = (v: number) =>
 interface PbjSummaryBlocksProps {
     tahun: number;
     activeTab: 'CATALOG' | 'TENDER' | 'NON-TENDER';
+    initialData?: any;
 }
 
-export default function PbjSummaryBlocks({ tahun, activeTab }: PbjSummaryBlocksProps) {
-    const [summary, setSummary] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+export default function PbjSummaryBlocks({ tahun, activeTab, initialData }: PbjSummaryBlocksProps) {
+    const [summary, setSummary] = useState<any>(initialData || null);
+    const [loading, setLoading] = useState(!initialData);
+
+    // Sync with initialData if it changes from Inertia props
+    useEffect(() => {
+        if (initialData) {
+            setSummary(initialData);
+            setLoading(false);
+        }
+    }, [initialData]);
 
     useEffect(() => {
+        // Jika sudah ada initialData untuk tahun ini, tidak perlu fetch ulang
+        if (initialData && summary === initialData) {
+            return;
+        }
+
         let isMounted = true;
         setLoading(true);
         pbjSummaryService.fetchSummary(tahun).then(res => {
-            console.log('summary : ', res);
             if (isMounted) {
                 setSummary(res);
                 setLoading(false);
             }
+        }).catch(() => {
+            if (isMounted) setLoading(false);
         });
 
         return () => { isMounted = false; };

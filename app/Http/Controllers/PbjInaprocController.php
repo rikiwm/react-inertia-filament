@@ -9,10 +9,69 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Inertia\Inertia;
+use Inertia\Response;
 
 final class PbjInaprocController extends Controller
 {
     private string $kodeKlpd = 'D471';
+
+    /**
+     * Menampilkan halaman daftar PBJ (SSR Pattern)
+     */
+    public function index(Request $request, SummaryService $summaryService): Response
+    {
+        $tahun = (int) $request->query('tahun', 2026);
+        // $refresh = $request->has('refresh');
+
+        // 1. Fetch Summary
+        $summaryCacheKey = "inaproc_summary_{$tahun}_{$this->kodeKlpd}";
+        // if ($refresh) {
+        //     Cache::forget($summaryCacheKey);
+        // }
+
+        $summary = Cache::remember($summaryCacheKey, 1800, function () use ($tahun, $summaryService) {
+            return $summaryService->getSummary($tahun);
+        });
+
+        // 2. Fetch Satkers
+        $satkers = Cache::remember('satkers', 3600, function () {
+            $response = Http::withToken(env('INAPROC_API_TOKEN'))->get(env('INAPROC_BASE_URL').'rup/master-satker', [
+                'kode_klpd' => 'D471',
+                'tahun' => 2026,
+                'limit' => 200,
+            ]);
+
+            return $response->successful() ? $response->json()['data'] : [];
+        });
+
+        // 3. Fetch Tab Data (from cache)
+        $catalog = Cache::get("inaproc_CATALOG_{$tahun}_{$this->kodeKlpd}", []);
+        $tenderSelesai = Cache::get("inaproc_TENDER_{$tahun}_{$this->kodeKlpd}", []);
+        $tenderPengumuman = Cache::get("inaproc_TENDER-PENGUMUMAN_{$tahun}_{$this->kodeKlpd}", []);
+        $tender = collect($tenderSelesai)->map(function ($item) use ($tenderPengumuman) {
+            $tenderPengumumanItem = collect($tenderPengumuman)->firstWhere('kd_tender', $item['kd_tender']);
+            $payload = [
+                'nama_paket' => $tenderPengumumanItem['nama_paket'] ?? ($item['nama_paket'] ?? '-'),
+                'lokasi_pekerjaan' => $tenderPengumumanItem['lokasi_pekerjaan'] ?? '-',
+                'mtd_evaluasi' => $tenderPengumumanItem['mtd_evaluasi'] ?? '-',
+                'mtd_kualifikasi' => $tenderPengumumanItem['mtd_kualifikasi'] ?? '-',
+                'mtd_pemilihan' => $tenderPengumumanItem['mtd_pemilihan'] ?? '-',
+            ];
+
+            return $item + $payload;
+        })->toArray();
+        $nonTender = Cache::get("inaproc_NON-TENDER_{$tahun}_{$this->kodeKlpd}", []);
+
+        return Inertia::render('Pbj/PbjListPage', [
+            'initialTahun' => $tahun,
+            'initialSummary' => $summary,
+            'initialSatkers' => $satkers,
+            'initialCatalog' => $catalog,
+            'initialTender' => $tender,
+            'initialNonTender' => $nonTender,
+        ]);
+    }
 
     /**
      * Endpoint untuk CATALOG (E-Purchasing)
@@ -43,13 +102,17 @@ final class PbjInaprocController extends Controller
      */
     public function summary(Request $request, SummaryService $summaryService): JsonResponse
     {
-        $tahun = $request->query('tahun', date('Y'));
+        $tahun = (int) $request->query('tahun', date('Y'));
+        $refresh = $request->has('refresh');
 
-        // Disarankan cache khusus jika load summary juga sering
         $cacheKey = "inaproc_summary_{$tahun}_{$this->kodeKlpd}";
-        // Cache::forget($cacheKey);
-        $data = Cache::remember($cacheKey, 60 * 60, function () use ($tahun, $summaryService) {
-            return $summaryService->getSummary((int) $tahun);
+
+        if ($refresh) {
+            Cache::forget($cacheKey);
+        }
+
+        $data = Cache::remember($cacheKey, 1800, function () use ($tahun, $summaryService) {
+            return $summaryService->getSummary($tahun);
         });
 
         return response()->json($data);

@@ -22,23 +22,16 @@ final class ProgulController extends Controller
 
         return Inertia::render('Progul/ProgulPage', [
             'initialCategories' => $this->formatCategories($progulData),
+            'initialProgulData' => $progulData,
         ]);
     }
 
     public function show($id, NewsScraperService $newsScraper)
     {
-        // 1. Fetch Progul data to get the name
-        $progulData = Cache::remember('progul_api_data', 3600, function () {
-            $response = Http::get('http://103.141.74.143/api/progul');
-
-            return $response->successful() ? $response->json()['data'] : [];
-        });
-
+        $progulData = $this->getProgulData();
         $progul = collect($progulData)->firstWhere('id', (int) $id);
         $name = $progul['nama'] ?? 'Program Unggulan Padang';
 
-        // 2. Scrape news specifically for this Progul name
-        // Use the name directly as hashtag search is often too restrictive for RSS
         $query = 'Program '.$name.' Kota Padang';
         $hashtagNews = $newsScraper->scrapeByQuery($query, 8);
 
@@ -46,7 +39,26 @@ final class ProgulController extends Controller
             'id' => (int) $id,
             'progulName' => $name,
             'hashtagNews' => $hashtagNews,
+            'initialProgulData' => $progulData,
         ]);
+    }
+
+    public function activasi($id)
+    {
+        $progulData = $this->getProgulData();
+
+        return Inertia::render('Progul/KinerjaDetailPage', [
+            'id' => (int) $id,
+            'initialProgulData' => $progulData,
+        ]);
+    }
+
+    private function getProgulData()
+    {
+        return Cache::remember('progul_api_data', 3600, function () {
+            $response = Http::get('http://103.141.74.143/api/progul');
+            return $response->successful() ? $response->json()['data'] : [];
+        });
     }
 
     private function formatCategories(array $data): array

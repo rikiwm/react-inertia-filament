@@ -124,7 +124,7 @@ const Navbar = () => {
                                     <>
                                         <NavigationMenuTrigger
                                             className={cn(
-                                                "bg-transparent hover:bg-teal-500/10 focus:bg-teal-500/10 transition-colors font-semibold",
+                                                "bg-transparent hover:bg-teal-500/10 pe-0 focus:bg-teal-500/10 transition-colors font-semibold",
                                                 "text-black dark:text-teal-400/60 hover:text-teal-600 dark:hover:text-teal-400"
                                             )}
                                         >
@@ -139,9 +139,9 @@ const Navbar = () => {
                                                                 href={child.resolved_url || child.url || "#"}
                                                                 target={child.target}
                                                                 className={cn(
-                                                                    "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors",
-                                                                    "hover:bg-teal-500/10 hover:text-teal-600 dark:hover:text-teal-400",
-                                                                    "text-md font-medium text-black dark:text-teal-400/80"
+                                                                    "block select-none space-y-2 rounded-md p-2 leading-none no-underline outline-none transition-colors",
+                                                                    "hover:bg-teal-500/20 hover:text-teal-600 dark:hover:text-teal-400",
+                                                                    "text-sm font-medium text-black dark:text-teal-400/80"
                                                                 )}
                                                                 prefetch
                                                                 cacheFor={60}
@@ -163,7 +163,7 @@ const Navbar = () => {
                                             cacheFor={60}
                                             className={cn(
                                                 navigationMenuTriggerStyle(),
-                                                "bg-transparent hover:bg-teal-500/10 focus:bg-teal-500/10 transition-colors ",
+                                                "bg-transparent hover:bg-teal-500/20 focus:bg-teal-500/10 transition-colors ",
                                                 "text-black dark:text-teal-400/60 hover:text-teal-600 dark:hover:text-teal-400"
                                             )}
                                         >

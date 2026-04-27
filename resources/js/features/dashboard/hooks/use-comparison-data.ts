@@ -1,12 +1,6 @@
-/**
- * @file Hooks/useComparisonData.ts
- *
- * Hook untuk mengambil data APBD multi-tahun guna keperluan analitik dan komparasi.
- */
-
 import { fetchApbdData } from "@/Services/apbd-service";
 import type { ApbdSummary } from "@/Types/apbd";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 
 export interface ComparisonDataPoint {
     tahun: number;
@@ -18,10 +12,11 @@ export interface ComparisonDataPoint {
     belanja_persen: number;
 }
 
-export function useComparisonData(years: number[]) {
-    const [data, setData] = useState<ComparisonDataPoint[]>([]);
-    const [loading, setLoading] = useState(true);
+export function useComparisonData(years: number[], initialData?: ComparisonDataPoint[]) {
+    const [data, setData] = useState<ComparisonDataPoint[]>(initialData || []);
+    const [loading, setLoading] = useState(!initialData);
     const [error, setError] = useState<string | null>(null);
+    const firstRenderRef = useRef(true);
 
     const fetchData = useCallback(async () => {
         setLoading(true);
@@ -57,8 +52,13 @@ export function useComparisonData(years: number[]) {
     }, [years]);
 
     useEffect(() => {
+        if (firstRenderRef.current && initialData && initialData.length > 0) {
+            firstRenderRef.current = false;
+            return;
+        }
         fetchData();
-    }, [fetchData]);
+        firstRenderRef.current = false;
+    }, [fetchData, initialData]);
 
     return { data, loading, error, refetch: fetchData };
 }

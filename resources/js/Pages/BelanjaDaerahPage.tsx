@@ -27,31 +27,19 @@ import { BarChart3, FileText, Target, Activity } from "lucide-react";
 
 // ─── Page Component ───────────────────────────────────────────────────────────
 
-const BelanjaDaerahPage = () => {
+const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: number, initialData?: BelanjaDaerahResponse }) => {
     const currentYear = new Date().getFullYear();
-    const [selectedYear, setSelectedYear] = useState(currentYear);
+    const [selectedYear, setSelectedYear] = useState(initialTahun || currentYear);
 
-
-
-    // Get tahun from URL query param if available
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const tahun = params.get("tahun");
-        if (tahun) {
-            setSelectedYear(parseInt(tahun));
-        }
-    }, []);
-
-    const { data, loading, error, setTahun } = useBelanjaDaerahData(selectedYear);
+    const { data, loading, error, setTahun } = useBelanjaDaerahData(selectedYear, initialData);
 
     const handleYearChange = useCallback(
         (e: React.ChangeEvent<HTMLSelectElement>) => {
             const year = parseInt(e.target.value);
-            setSelectedYear(year);
-
-            // Update URL without navigating
-            const newUrl = `${route("belanja-daerah")}?tahun=${year}`;
-            window.history.replaceState({}, "", newUrl);
+            router.get(route("belanja-daerah"), { tahun: year }, {
+                preserveState: true,
+                preserveScroll: true,
+            });
         },
         [],
     );
@@ -115,7 +103,7 @@ const BelanjaDaerahPage = () => {
                             </div>
 
                             <div className="flex  md:flex-row items-center gap-3">
-                                <label htmlFor="year-select" className="text-xs md:text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                {/* <label htmlFor="year-select" className="text-xs md:text-sm font-medium text-neutral-700 dark:text-neutral-300">
                                     Tahun Anggaran:
                                 </label>
                                 <select
@@ -129,7 +117,7 @@ const BelanjaDaerahPage = () => {
                                             {year}
                                         </option>
                                     ))}
-                                </select>
+                                </select> */}
                                 <button
                                     onClick={() => router.visit(route("analitik"))}
                                     className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-900 border border-teal-200 dark:border-teal-800 rounded-lg text-xs font-bold text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30 transition-all shadow-sm"

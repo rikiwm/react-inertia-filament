@@ -37,18 +37,9 @@ import { cn } from "@/Lib/utils";
 
 // ─── Page Component ───────────────────────────────────────────────────────────
 
-const PendapatanDaerahPage = () => {
+const PendapatanDaerahPage = ({ initialTahun, initialData, initialRealisasiDetail }: { initialTahun?: number, initialData?: any, initialRealisasiDetail?: any }) => {
     const currentYear = new Date().getFullYear();
-    const [selectedYear, setSelectedYear] = useState(currentYear);
-
-    // Get tahun from URL query param if available
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const tahun = params.get("tahun");
-        if (tahun) {
-            setSelectedYear(parseInt(tahun));
-        }
-    }, []);
+    const [selectedYear, setSelectedYear] = useState(initialTahun || currentYear);
 
     const [selectedCategory, setSelectedCategory] = useState<RealisasiPendapatanCategory | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,8 +53,8 @@ const PendapatanDaerahPage = () => {
         }
     };
 
-    const { data, loading, error, setTahun } = usePendapatanDaerahData(selectedYear);
-    const { data: realisasiDetail, loading: loadingDetail } = useRealisasiPendapatan(selectedYear);
+    const { data, loading, error, setTahun } = usePendapatanDaerahData(selectedYear, initialData);
+    const { data: realisasiDetail, loading: loadingDetail } = useRealisasiPendapatan(selectedYear, initialRealisasiDetail);
 
     const pajakDaerah = useMemo(() => realisasiDetail?.result?.find(r => r.code_rekening === "4.1.01"), [realisasiDetail]);
     const retribusiDaerah = useMemo(() => realisasiDetail?.result?.find(r => r.code_rekening === "4.1.02"), [realisasiDetail]);
@@ -77,11 +68,10 @@ const PendapatanDaerahPage = () => {
     const handleYearChange = useCallback(
         (e: React.ChangeEvent<HTMLSelectElement>) => {
             const year = parseInt(e.target.value);
-            setSelectedYear(year);
-            // Update URL without navigating
-            const newUrl = `${route("pendapatan-daerah")}?tahun=${year}`;
-            window.history.replaceState({}, "", newUrl);
-
+            router.get(route("pendapatan-daerah"), { tahun: year }, {
+                preserveState: true,
+                preserveScroll: true,
+            });
         },
         [],
     );
@@ -143,7 +133,7 @@ const PendapatanDaerahPage = () => {
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <label htmlFor="year-select" className="lg:text-sm md:text-xs text-xs text-neutral-700 dark:text-neutral-300">
+                            {/* <label htmlFor="year-select" className="lg:text-sm md:text-xs text-xs text-neutral-700 dark:text-neutral-300">
                                 Tahun Anggaran:
                             </label>
                             <select
@@ -157,7 +147,7 @@ const PendapatanDaerahPage = () => {
                                         {year}
                                     </option>
                                 ))}
-                            </select>
+                            </select> */}
                             <button
                                 onClick={() => router.visit(route("analitik"))}
                                 className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-900 border border-teal-200 dark:border-teal-800 rounded-lg text-xs font-bold text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30 transition-all shadow-sm"
@@ -201,7 +191,7 @@ const PendapatanDaerahPage = () => {
                             <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Persentase</p>
                             <div>
                                 <p className={`text-2xl font-semibold ${percentageColor}`}>
-                                    {data.total_persentase_pad.toFixed(1)}%
+                                    {(data?.total_persentase_pad ?? 0).toFixed(1)}%
                                 </p>
                                 <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
                                     {percentageStatus}

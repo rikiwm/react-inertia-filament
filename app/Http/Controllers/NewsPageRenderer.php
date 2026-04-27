@@ -22,6 +22,26 @@ final class NewsPageRenderer extends Controller
      */
     public function __invoke(): Response
     {
-        return Inertia::render('NewsPage');
+        $news = Cache::remember('initial_news_v2', 1800, function () {
+            try {
+                // Token dari konstanta frontend
+                $token = "a3fcb25cb5b5e258d98d09e4f8b47efc";
+                $response = \Illuminate\Support\Facades\Http::get("https://gnews.io/api/v4/search", [
+                    'q' => 'Indonesia',
+                    'lang' => 'id',
+                    'country' => 'id',
+                    'max' => 9,
+                    'token' => $token
+                ]);
+
+                return $response->successful() ? $response->json()['articles'] : [];
+            } catch (\Exception $e) {
+                return [];
+            }
+        });
+
+        return Inertia::render('NewsPage', [
+            'initialArticles' => $news
+        ]);
     }
 }

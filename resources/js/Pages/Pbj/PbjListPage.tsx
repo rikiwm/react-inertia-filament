@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Head } from '@inertiajs/react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Head, router } from '@inertiajs/react';
 import FrontWrapper from '@/Wrappers/front-wrapper';
+import { route } from 'ziggy-js';
 import {
     Search,
     Package,
@@ -18,27 +19,47 @@ const AVAILABLE_YEARS = [2026, 2025, 2024, 2023];
 
 type TabType = 'CATALOG' | 'TENDER' | 'NON-TENDER';
 
-const PbjListPage = () => {
-    const [tahun, setTahun] = useState(2026);
+interface PbjListProps {
+    initialTahun: number;
+    initialSummary: any;
+    initialSatkers: any[];
+    initialCatalog: any[];
+    initialTender: any[];
+    initialNonTender: any[];
+}
+
+const PbjListPage = ({ 
+    initialTahun, 
+    initialSummary, 
+    initialSatkers,
+    initialCatalog,
+    initialTender,
+    initialNonTender 
+}: PbjListProps) => {
+    const tahun = initialTahun;
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedSatker, setSelectedSatker] = useState('all');
     const [activeTab, setActiveTab] = useState<TabType>('CATALOG');
-    const [filterOptions, setFilterOptions] = useState<{ satkers: string[] }>({ satkers: [] });
 
-    useEffect(() => {
-        let isMounted = true;
-        fetch('/satker')
-            .then(res => res.json())
-            .then((data: any[]) => {
-                if (isMounted && Array.isArray(data)) {
-                    const uniqueSatkers = Array.from(new Set(data.map(d => d.nama_satker))).filter(Boolean).sort();
-                    setFilterOptions({ satkers: uniqueSatkers as string[] });
-                }
-            })
-            .catch(err => console.error("Error fetching satkers:", err));
+    // Satker list derived from initial props
+    const filterOptions = useMemo(() => {
+        if (!Array.isArray(initialSatkers)) return { satkers: [] };
+        const uniqueSatkers = Array.from(new Set(initialSatkers.map((d: any) => d.nama_satker)))
+            .filter(Boolean)
+            .sort();
+        return { satkers: uniqueSatkers as string[] };
+    }, [initialSatkers]);
 
-        return () => { isMounted = false; };
-    }, []);
+    /** 
+     * Mengubah tahun via Inertia navigation (SSR Pattern).
+     */
+    const setTahun = (newTahun: number) => {
+        if (newTahun === tahun) return;
+        router.get(route("pbj.list"), { tahun: newTahun }, { 
+            preserveState: true, 
+            preserveScroll: true 
+        });
+    };
 
     const resetFilters = () => {
         setSearchQuery('');
@@ -72,20 +93,6 @@ const PbjListPage = () => {
                                     </p>
                                 </div>
                             </div>
-                            {/* <div className="flex items-center gap-2 mb-2">
-                                <div className="p-2 rounded-xl bg-teal-600 text-white shadow-lg shadow-teal-600/20">
-                                    <Package className="w-5 h-5" />
-                                </div>
-                                <span className="text-xs font-semibold text-teal-600 dark:text-teal-400 uppercase tracking-[0.2em]">
-                                    Pengadaan Barang & Jasa
-                                </span>
-                            </div>
-                            <h1 className="text-3xl lg:text-3xl font-bold text-slate-900 dark:text-white uppercase">
-                                Rincian Paket <span className="text-teal-600">Terintegrasi</span>
-                            </h1>
-                            <p className="text-slate-500 dark:text-neutral-400 px-1 text-sm max-w-2xl">
-                                Data konsolidasi E-Katalog, Tender, dan Non-Tender Pemerintah Kota Padang.
-                            </p> */}
                         </div>
 
                         {/* Year Selector */}
@@ -114,7 +121,7 @@ const PbjListPage = () => {
                     <p className="text-slate-500 dark:text-neutral-400 px-1 text-sm max-w-2xl">
                         Data konsolidasi E-Katalog, Tender, dan Non-Tender Pemerintah Kota Padang.
                     </p>
-                    <PbjSummaryBlocks tahun={tahun} activeTab={activeTab} />
+                    <PbjSummaryBlocks tahun={tahun} activeTab={activeTab} initialData={initialSummary} />
 
                     {/* Content Section */}
                     <div className="bg-white dark:bg-neutral-950 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-sm overflow-hidden flex flex-col h-full">
@@ -168,7 +175,6 @@ const PbjListPage = () => {
                                 </button>
                                 <div className="flex-1">
                                     <div className=" space-y-1.5">
-                                        {/* <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Satuan Kerja (SKPD)</label> */}
                                         <div className="relative group">
                                             <Factory className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400 group-hover:text-indigo-500 transition-colors" />
                                             <select
@@ -185,18 +191,14 @@ const PbjListPage = () => {
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
-                        {/* Satker Filter */}
-
                     </div>
 
                     {/* Active Tab Rendering */}
                     <div className="flex-1 relative min-h-[300px] px-2">
-                        {activeTab === 'CATALOG' && <CatalogTab tahun={tahun} searchQuery={searchQuery} selectedSatker={selectedSatker} />}
-                        {activeTab === 'TENDER' && <TenderTab tahun={tahun} searchQuery={searchQuery} selectedSatker={selectedSatker} />}
-                        {activeTab === 'NON-TENDER' && <NonTenderTab tahun={tahun} searchQuery={searchQuery} selectedSatker={selectedSatker} />}
+                        {activeTab === 'CATALOG' && <CatalogTab tahun={tahun} searchQuery={searchQuery} selectedSatker={selectedSatker} initialData={initialCatalog} />}
+                        {activeTab === 'TENDER' && <TenderTab tahun={tahun} searchQuery={searchQuery} selectedSatker={selectedSatker} initialData={initialTender} />}
+                        {activeTab === 'NON-TENDER' && <NonTenderTab tahun={tahun} searchQuery={searchQuery} selectedSatker={selectedSatker} initialData={initialNonTender} />}
                     </div>
                 </div>
             </div>

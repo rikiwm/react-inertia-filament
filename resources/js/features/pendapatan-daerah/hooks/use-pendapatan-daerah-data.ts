@@ -5,7 +5,7 @@
  * Menangani loading state, error handling, dan caching.
  */
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
     fetchPendapatanDaerahBySkpd,
     type PendapatanDaerahResponse,
@@ -19,10 +19,11 @@ export interface UsePendapatanDaerahDataResult {
     refetch: (skipCache?: boolean) => void;
 }
 
-export function usePendapatanDaerahData(tahun: number | string): UsePendapatanDaerahDataResult {
-    const [data, setData] = useState<PendapatanDaerahResponse | null>(null);
-    const [loading, setLoading] = useState(true);
+export function usePendapatanDaerahData(tahun: number | string, initialData?: PendapatanDaerahResponse): UsePendapatanDaerahDataResult {
+    const [data, setData] = useState<PendapatanDaerahResponse | null>(initialData || null);
+    const [loading, setLoading] = useState(!initialData);
     const [error, setError] = useState<Error | null>(null);
+    const firstRenderRef = useRef(true);
 
     const fetchData = useCallback(
         async (signal?: AbortSignal, skipCache: boolean = false) => {
@@ -47,10 +48,16 @@ export function usePendapatanDaerahData(tahun: number | string): UsePendapatanDa
     );
 
     useEffect(() => {
+        if (firstRenderRef.current && initialData) {
+            firstRenderRef.current = false;
+            return;
+        }
+
         const controller = new AbortController();
         fetchData(controller.signal, false);
+        firstRenderRef.current = false;
         return () => controller.abort();
-    }, [fetchData]);
+    }, [fetchData, initialData]);
 
     const setTahun = useCallback((_newTahun: number) => {
         // This is now handled by the parent component passing a new 'tahun' prop

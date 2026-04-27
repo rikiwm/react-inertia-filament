@@ -24,13 +24,12 @@ Route::inertia('/table-demo', 'TableDemo')->name('table.demo');
 // Dashboard statistik publik
 Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard');
 
-// Route::inertia('/dashboard', 'DashboardPage')->name('dashboard');
-Route::inertia('/dashboard/analitik', 'AnalyticsPage')->name('analitik');
-Route::inertia('/dashboard/belanja', 'BelanjaDaerahPage')->name('belanja-daerah');
-Route::inertia('/dashboard/pendapatan', 'PendapatanDaerahPage')->name('pendapatan-daerah');
+Route::get('/dashboard/analitik', [DashboardController::class, 'analytics'])->name('analitik');
+Route::get('/dashboard/belanja', [DashboardController::class, 'belanjaDaerah'])->name('belanja-daerah');
+Route::get('/dashboard/pendapatan', [DashboardController::class, 'pendapatanDaerah'])->name('pendapatan-daerah');
 
 // Pengadaan Barang & Jasa (PBJ)
-Route::inertia('/dashboard/pbj', 'Pbj/PbjListPage')->name('pbj.list');
+Route::get('/dashboard/pbj', [PbjInaprocController::class, 'index'])->name('pbj.list');
 Route::inertia('/dashboard/pbj/detail', 'Pbj/PbjShowPage')->name('pbj.show');
 Route::get('/satker', [PbjInaprocController::class, 'satker'])->name('api.pbj.satker');
 
@@ -44,10 +43,10 @@ Route::prefix('api/pbj-inaproc')->group(function () {
 // Program Unggulan (Progul)
 Route::get('/progul', [ProgulController::class, 'index'])->name('progul');
 Route::get('/progul/{id}', [ProgulController::class, 'show'])->name('progul.detail');
-Route::get('/progul/activasi/{id}', fn ($id) => inertia('Progul/KinerjaDetailPage', ['id' => (int) $id]))->name('progul.activasi');
+Route::get('/progul/activasi/{id}', [ProgulController::class, 'activasi'])->name('progul.activasi');
 
 // PK WAKO
-Route::inertia('/pk-wako', 'PkWako/PkWakoPage')->name('pk-wako');
+Route::get('/pk-wako', [\App\Http\Controllers\PkWakoController::class, 'index'])->name('pk-wako');
 
 // Kebencanaan
 Route::get('/kebencanaan', [KebencanaanController::class, 'index'])->name('kebencanaan');

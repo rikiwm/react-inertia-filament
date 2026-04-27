@@ -35,24 +35,16 @@ export interface UseApbdDataReturn {
 /**
  * Mengelola seluruh lifecycle pengambilan data APBD.
  *
- * Alur eksekusi:
- * 1. Saat `tahun` berubah (prop dari parent), state di-reset ke "loading".
- * 2. AbortController baru dibuat; yang lama dibatalkan.
- * 3. `fetchApbdData` dipanggil dengan signal dari controller baru.
- * 4. Jika berhasil → status "success", data diperbarui.
- * 5. Jika gagal bukan AbortError → status "error", pesan disimpan.
- * 6. Cleanup unmount → request otomatis dibatalkan.
- *
- * @param tahun - Tahun anggaran yang ingin diambil (dikontrol oleh parent)
- * @returns State data, status, error, dan fungsi retry
- *
- * @example
- * const { data, isLoading, error, retry } = useApbdData(2026);
+ * @param tahun - Tahun anggaran yang ingin diambil
+ * @param initialData - Data awal dari server (SSR)
  */
-export function useApbdData(tahun: number): UseApbdDataReturn {
-    const [data, setData]     = useState<ApbdSummary | null>(null);
-    const [status, setStatus] = useState<FetchStatus>("idle");
+export function useApbdData(tahun: number, initialData?: ApbdSummary | null): UseApbdDataReturn {
+    const [data, setData]     = useState<ApbdSummary | null>(initialData ?? null);
+    const [status, setStatus] = useState<FetchStatus>(initialData ? "success" : "idle");
     const [error, setError]   = useState<string | null>(null);
+
+    /** Flag untuk menandai apakah ini render pertama (untuk skip fetch jika ada initialData) */
+    const isFirstRender = useRef(true);
 
     /** Referensi AbortController aktif untuk pembatalan request. */
     const abortRef = useRef<AbortController | null>(null);
@@ -98,11 +90,19 @@ export function useApbdData(tahun: number): UseApbdDataReturn {
      * Cleanup function membatalkan request yang masih berjalan saat unmount.
      */
     useEffect(() => {
+        // Skip fetch pada render pertama jika data sudah ada dari SSR
+        if (isFirstRender.current && data) {
+            isFirstRender.current = false;
+            return;
+        }
+
         doFetch(tahun);
+        isFirstRender.current = false;
+
         return () => {
             abortRef.current?.abort();
         };
-    }, [tahun, doFetch]);
+    }, [tahun, doFetch, data]);
 
     return {
         data,

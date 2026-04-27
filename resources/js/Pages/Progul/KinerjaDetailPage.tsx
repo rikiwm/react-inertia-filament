@@ -24,10 +24,11 @@ import { cn } from '@/Lib/utils';
 
 interface Props {
     id: number;
+    initialProgulData?: any[];
 }
 
-const KinerjaDetailPage = ({ id }: Props) => {
-    const { getKinerjaList, getActivasiById, loading } = useProgulData();
+const KinerjaDetailPage = ({ id, initialProgulData }: Props) => {
+    const { getKinerjaList, getActivasiById, loading } = useProgulData(initialProgulData);
     const [searchQuery, setSearchQuery] = useState('');
     const [perangkatFilter, setPerangkatFilter] = useState('all');
 

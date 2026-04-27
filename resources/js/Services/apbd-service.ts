@@ -58,14 +58,10 @@ function normalizeItem(raw: ApbdApiResponse["result"]["item"][0]): ApbdItemNorma
 /**
  * Mengubah respons mentah API APBD menjadi `ApbdSummary` terstruktur.
  *
- * Memetakan item berdasarkan `slug` sehingga urutan array dari server
- * tidak mempengaruhi hasil — lebih aman dari akses indeks [0] / [1].
- *
  * @param raw - Respons mentah dari API APBD
  * @returns Data APBD yang sudah dinormalisasi
- * @throws Error jika item "belanja-daerah" atau "pendapatan-daerah" tidak ditemukan
  */
-function transformResponse(raw: ApbdApiResponse): ApbdSummary {
+export function transformResponse(raw: any): ApbdSummary {
     const items = raw.result.item;
 
     const belanja    = items.find((i) => i.slug === "belanja-daerah");

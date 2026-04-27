@@ -17,8 +17,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/Lib/utils';
 
-const PkWakoPage = () => {
-    const { data, loading, error } = usePkWako();
+const PkWakoPage = ({ initialData }: { initialData?: any[] }) => {
+    const { data, loading, error } = usePkWako(initialData);
     const [searchQuery, setSearchQuery] = useState('');
 
     // Filtered data based on search

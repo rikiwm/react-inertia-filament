@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
     fetchRealisasiPendapatan,
     type RealisasiPendapatanResponse,
@@ -11,10 +11,11 @@ export interface UseRealisasiPendapatanResult {
     refetch: () => void;
 }
 
-export function useRealisasiPendapatan(tahun: number | string): UseRealisasiPendapatanResult {
-    const [data, setData] = useState<RealisasiPendapatanResponse | null>(null);
-    const [loading, setLoading] = useState(true);
+export function useRealisasiPendapatan(tahun: number | string, initialData?: RealisasiPendapatanResponse): UseRealisasiPendapatanResult {
+    const [data, setData] = useState<RealisasiPendapatanResponse | null>(initialData || null);
+    const [loading, setLoading] = useState(!initialData);
     const [error, setError] = useState<Error | null>(null);
+    const firstRenderRef = useRef(true);
 
     const fetchData = useCallback(
         async (signal?: AbortSignal) => {
@@ -37,10 +38,15 @@ export function useRealisasiPendapatan(tahun: number | string): UseRealisasiPend
     );
 
     useEffect(() => {
+        if (firstRenderRef.current && initialData) {
+            firstRenderRef.current = false;
+            return;
+        }
         const controller = new AbortController();
         fetchData(controller.signal);
+        firstRenderRef.current = false;
         return () => controller.abort();
-    }, [fetchData]);
+    }, [fetchData, initialData]);
 
     const refetch = useCallback(() => {
         fetchData();

@@ -4,7 +4,7 @@
  * Custom hook untuk fetch data realisasi program dari OPD terkait
  */
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 export interface ProgramKegiatanDetail {
     total_anggaran: number;
@@ -35,11 +35,12 @@ export interface UseRealisasiProgramResult {
     refetch: () => void;
 }
 
-export function useRealisasiProgram(slug: string, tahun: number | string): UseRealisasiProgramResult {
-    const [data, setData] = useState<RealisasiProgramResponse["result"]["data"] | null>(null);
-    const [summary, setSummary] = useState<RealisasiProgramResponse["result"]["summary"] | null>(null);
-    const [loading, setLoading] = useState(true);
+export function useRealisasiProgram(slug: string, tahun: number | string, initialData?: any): UseRealisasiProgramResult {
+    const [data, setData] = useState<RealisasiProgramResponse["result"]["data"] | null>(initialData?.result?.data || null);
+    const [summary, setSummary] = useState<RealisasiProgramResponse["result"]["summary"] | null>(initialData?.result?.summary || null);
+    const [loading, setLoading] = useState(!initialData);
     const [error, setError] = useState<Error | null>(null);
+    const firstRenderRef = useRef(true);
 
     const fetchData = useCallback(async () => {
         if (!slug || !tahun) return;
@@ -70,8 +71,13 @@ export function useRealisasiProgram(slug: string, tahun: number | string): UseRe
     }, [slug, tahun]);
 
     useEffect(() => {
+        if (firstRenderRef.current && initialData) {
+            firstRenderRef.current = false;
+            return;
+        }
         fetchData();
-    }, [fetchData]);
+        firstRenderRef.current = false;
+    }, [fetchData, initialData]);
 
     const refetch = useCallback(() => {
         fetchData();

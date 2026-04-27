@@ -26,6 +26,10 @@ interface OpdDetailPageProps {
     slug: string;
     namaOpd: string;
     tahun: number;
+    initialOpdDetail?: any;
+    realisasiProgram?: any;
+    opdPbj?: any[];
+    pendapatanDetail?: any;
 }
 
 /**
@@ -255,8 +259,8 @@ function fmtRupiahShort(v: number) {
 /**
  * Komponen section PBJ terkait untuk halaman detail OPD (type=belanja).
  */
-function OpdPbjSection({ namaOpd, tahun }: { namaOpd: string; tahun: number }) {
-    const { data, summary, loading, error, retry } = useOpdPbj(namaOpd, tahun);
+function OpdPbjSection({ namaOpd, tahun, initialData }: { namaOpd: string; tahun: number, initialData?: any[] }) {
+    const { data, summary, loading, error, retry } = useOpdPbj(namaOpd, tahun, initialData);
     const [activeJenis, setActiveJenis] = useState<PbjJenisTransaksi | "ALL">("CATALOG");
     const [showAll, setShowAll] = useState(false);
     const PAGE_SIZE = 8;
@@ -324,7 +328,7 @@ function OpdPbjSection({ namaOpd, tahun }: { namaOpd: string; tahun: number }) {
                                     }`}
                             >
                                 <span>{jenis === "ALL" ? "Semua" : JENIS_LABEL[jenis as PbjJenisTransaksi]}</span>
-                                <span className={`min-w-[20px] text-center px-1.5 py-0.5 rounded-md text-[10px] font-black ${active ? "bg-white/25" : "bg-neutral-200 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400"
+                                <span className={`min-w-[20px] text-center px-1.5 py-0.5 rounded-md text-[10px] font-semibold ${active ? "bg-white/25" : "bg-neutral-200 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400"
                                     }`}>
                                     {count}
                                 </span>
@@ -408,7 +412,7 @@ function OpdPbjSection({ namaOpd, tahun }: { namaOpd: string; tahun: number }) {
                                 >
                                     {/* Jenis badge + Name */}
                                     <div className="flex items-start gap-3 flex-1 min-w-0">
-                                        <span className={`shrink-0 mt-0.5 inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase ${JENIS_COLOR[item.jenis_transaksi]}`}>
+                                        <span className={`shrink-0 mt-0.5 inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px]  uppercase ${JENIS_COLOR[item.jenis_transaksi]}`}>
                                             {JENIS_LABEL[item.jenis_transaksi]}
                                         </span>
                                         <div className="min-w-0">
@@ -574,18 +578,18 @@ function getSummaryData(data: OpdBelanjaDetail | OpdPendapatanDetail, type: OpdD
 /**
  * Main component untuk halaman detail OPD.
  */
-function OpdDetailContent({ type, namaOpd, tahun, slug }: OpdDetailPageProps) {
+function OpdDetailContent({ type, namaOpd, tahun, slug, initialOpdDetail, realisasiProgram, opdPbj, pendapatanDetail: initialPendapatanDetail }: OpdDetailPageProps) {
     // Fetch data OPD dari layanan utama
-    const { data, loading, error } = useOpdDetail(type, namaOpd, tahun);
+    const { data, loading, error } = useOpdDetail(type, namaOpd, tahun, initialOpdDetail);
 
-    const pendapatanDetail = usePendapatanSkpdDetail(namaOpd, tahun);
+    const pendapatanDetail = usePendapatanSkpdDetail(namaOpd, tahun, initialPendapatanDetail);
 
     // Fetch realisasi program untuk type belanja
     const {
         data: realisasiData,
         loading: realisasiLoading,
         error: realisasiError
-    } = useRealisasiProgram(type === "belanja" ? slug : "", tahun);
+    } = useRealisasiProgram(type === "belanja" ? slug : "", tahun, realisasiProgram);
 
     const belanjaPrograms: BelanjaProgram[] = useMemo(() => {
         if (!realisasiData || Array.isArray(realisasiData)) return [];
@@ -783,7 +787,7 @@ function OpdDetailContent({ type, namaOpd, tahun, slug }: OpdDetailPageProps) {
                     {type === "belanja" ? (
                         <>
                             {/* PBJ Section — data pengadaan terkait OPD */}
-                            <OpdPbjSection namaOpd={namaOpd} tahun={tahun} />
+                            <OpdPbjSection namaOpd={namaOpd} tahun={tahun} initialData={opdPbj} />
 
                             <div className="border border-teal-200 mx-auto p-2 py-2 rounded-lg ">
                                 <div className="mb-2 dark:bg-teal-950 text-center bg-neutral-50 p-2 rounded-md">

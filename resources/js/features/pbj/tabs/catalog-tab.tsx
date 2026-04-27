@@ -26,14 +26,20 @@ const StatusBadge = ({ status }: { status: string }) => {
     );
 };
 
-export default function CatalogTab({ tahun, searchQuery, selectedSatker }: { tahun: number, searchQuery: string, selectedSatker: string }) {
-    const [data, setData] = useState<PbjDetailItem[]>([]);
-    const [loading, setLoading] = useState(true);
+export default function CatalogTab({ tahun, searchQuery, selectedSatker, initialData }: { tahun: number, searchQuery: string, selectedSatker: string, initialData?: any[] }) {
+    const [data, setData] = useState<PbjDetailItem[]>(initialData || []);
+    const [loading, setLoading] = useState(!initialData);
+    const isFirstRender = React.useRef(true);
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
     useEffect(() => {
+        if (isFirstRender.current && initialData) {
+            isFirstRender.current = false;
+            return;
+        }
+
         let isMounted = true;
         setLoading(true);
         pbjCatalogService.fetchList(tahun).then(res => {
@@ -43,8 +49,10 @@ export default function CatalogTab({ tahun, searchQuery, selectedSatker }: { tah
                 setCurrentPage(1);
             }
         });
+
+        isFirstRender.current = false;
         return () => { isMounted = false; };
-    }, [tahun]);
+    }, [tahun, initialData]);
 
     const filteredData = useMemo(() => {
         let result = data;

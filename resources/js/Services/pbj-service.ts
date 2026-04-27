@@ -71,15 +71,10 @@ function findItem<T extends { name: string }>(items: { name: string }[], name: s
 /**
  * Mengubah respons mentah API PBJ menjadi `PbjSummary` terstruktur.
  *
- * Melakukan normalisasi tipe data:
- * - `total_paket` string → angka via `parsePacketCount()`
- * - Rekap status yang mungkin undefined → fallback ke 0
- * - Agregasi total lintas jenis pengadaan
- *
  * @param raw - Respons mentah dari API PBJ
  * @returns Data PBJ yang sudah dinormalisasi dan siap dikonsumsi UI
  */
-function transformResponse(raw: PbjApiResponse): PbjSummary {
+export function transformResponse(raw: PbjApiResponse): PbjSummary {
     const items = raw.result.item;
 
     const hibah     = findItem<PbjHibah>(items, "hibah");

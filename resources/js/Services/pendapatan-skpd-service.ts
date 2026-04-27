@@ -97,6 +97,13 @@ function normalizeItem(raw: PendapatanSkpdApiResponse[0]): PendapatanSkpdNormali
 }
 
 /**
+ * Mengubah respons mentah API Pendapatan SKPD menjadi array ternormalisasi.
+ */
+export function transformPendapatanResponse(raw: any[]): PendapatanSkpdNormalized[] {
+    return raw.map(normalizeItem).sort((a, b) => b.persen - a.persen);
+}
+
+/**
  * Mengambil data pendapatan per-SKPD dari API Dashboard Padang.
  *
  * Alur:

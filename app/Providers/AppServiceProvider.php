@@ -39,7 +39,7 @@ final class AppServiceProvider extends ServiceProvider
 
         JsonResource::withoutWrapping();
         if (app()->isProduction()) {
-            URL::forceScheme('https');
+            URL::forceScheme('http');
         }
     }
 }

@@ -5,7 +5,7 @@
  * Menangani loading state, error handling, dan caching.
  */
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
     fetchOpdDetail,
     type OpdDetailResponse,
@@ -36,10 +36,12 @@ export function useOpdDetail(
     type: OpdDetailType,
     namaOpd: string,
     tahun: number | string = new Date().getFullYear(),
+    initialData?: OpdDetailResponse,
 ): UseOpdDetailResult {
-    const [data, setData] = useState<OpdDetailResponse | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [data, setData] = useState<OpdDetailResponse | null>(initialData || null);
+    const [loading, setLoading] = useState(!initialData);
     const [error, setError] = useState<Error | null>(null);
+    const firstRenderRef = useRef(true);
 
     const fetchData = useCallback(
         async (signal?: AbortSignal) => {
@@ -63,10 +65,16 @@ export function useOpdDetail(
     );
 
     useEffect(() => {
+        if (firstRenderRef.current && initialData) {
+            firstRenderRef.current = false;
+            return;
+        }
+
         const controller = new AbortController();
         fetchData(controller.signal);
+        firstRenderRef.current = false;
         return () => controller.abort();
-    }, [fetchData]);
+    }, [fetchData, initialData]);
 
     const refetch = useCallback(
         (skipCache: boolean = false) => {

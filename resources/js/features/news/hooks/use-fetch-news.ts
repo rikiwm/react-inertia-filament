@@ -58,9 +58,9 @@ const DEBOUNCE_MS = 500;
  * @example
  * const { articles, loading, setSearchQuery } = useFetchNews();
  */
-export function useFetchNews(): UseFetchNewsReturn {
-    const [articles, setArticles] = useState<NewsArticle[]>([]);
-    const [loading, setLoading] = useState(true);
+export function useFetchNews(initialArticles?: NewsArticle[]): UseFetchNewsReturn {
+    const [articles, setArticles] = useState<NewsArticle[]>(initialArticles || []);
+    const [loading, setLoading] = useState(!initialArticles);
     const [error, setError] = useState<string | null>(null);
     const [hasMore, setHasMore] = useState(true);
     const [usingFallback, setUsingFallback] = useState(false);
@@ -68,6 +68,7 @@ export function useFetchNews(): UseFetchNewsReturn {
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [page, setPage] = useState(1);
+    const firstRenderRef = useRef(true);
 
     /** Referensi AbortController untuk membatalkan request yang sedang berjalan. */
     const abortRef = useRef<AbortController | null>(null);
@@ -128,9 +129,15 @@ export function useFetchNews(): UseFetchNewsReturn {
      * dan ambil data dari awal (bukan append).
      */
     useEffect(() => {
+        if (firstRenderRef.current && initialArticles && initialArticles.length > 0) {
+            firstRenderRef.current = false;
+            return;
+        }
+
         setPage(1);
         setArticles([]);
         fetchPage(1, false);
+        firstRenderRef.current = false;
         // fetchPage sengaja tidak dimasukkan ke deps — stabil per perubahan kategori/pencarian
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeCategory, debouncedSearch]);

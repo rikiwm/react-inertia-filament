@@ -19,7 +19,7 @@ import type { ReactNode } from "react";
 
 // ─── Page Component ───────────────────────────────────────────────────────────
 
-const NewsPage = () => {
+const NewsPage = ({ initialArticles }: { initialArticles?: any[] }) => {
     const {
         articles,
         loading,
@@ -32,7 +32,7 @@ const NewsPage = () => {
         setSearchQuery,
         loadMore,
         retry,
-    } = useFetchNews();
+    } = useFetchNews(initialArticles);
 
     const [featuredArticle, ...gridArticles] = articles;
 

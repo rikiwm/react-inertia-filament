@@ -8,14 +8,20 @@ import { PbjDetailItem } from '@/Services/pbj-detail-service';
 const fmtRupiah = (v: number) =>
     new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(v);
 
-export default function TenderTab({ tahun, searchQuery, selectedSatker }: { tahun: number, searchQuery: string, selectedSatker: string }) {
-    const [data, setData] = useState<PbjDetailItem[]>([]);
-    const [loading, setLoading] = useState(true);
+export default function TenderTab({ tahun, searchQuery, selectedSatker, initialData }: { tahun: number, searchQuery: string, selectedSatker: string, initialData?: any[] }) {
+    const [data, setData] = useState<PbjDetailItem[]>(initialData || []);
+    const [loading, setLoading] = useState(!initialData);
+    const isFirstRender = React.useRef(true);
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
     useEffect(() => {
+        if (isFirstRender.current && initialData) {
+            isFirstRender.current = false;
+            return;
+        }
+
         let isMounted = true;
         setLoading(true);
         pbjTenderService.fetchList(tahun).then(res => {
@@ -25,8 +31,10 @@ export default function TenderTab({ tahun, searchQuery, selectedSatker }: { tahu
                 setCurrentPage(1);
             }
         });
+
+        isFirstRender.current = false;
         return () => { isMounted = false; };
-    }, [tahun]);
+    }, [tahun, initialData]);
 
     const filteredData = useMemo(() => {
         let result = data;
@@ -58,11 +66,11 @@ export default function TenderTab({ tahun, searchQuery, selectedSatker }: { tahu
                 <Table striped className="min-w-full">
                     <Table.Head>
                         <Table.Tr className="bg-amber-50/50 dark:bg-amber-900/10">
-                            <Table.Th className="text-[10px] font-black uppercase text-amber-400 tracking-widest py-5 px-6">ID Transaksi</Table.Th>
-                            <Table.Th className="text-[10px] font-black uppercase text-amber-400 tracking-widest py-5 px-6">Detail Paket</Table.Th>
-                            <Table.Th className="text-[10px] font-black uppercase text-amber-400 tracking-widest py-5 px-6">Satker & Penyedia</Table.Th>
-                            <Table.Th className="text-[10px] font-black uppercase text-amber-400 tracking-widest py-5 px-6">Status</Table.Th>
-                            <Table.Th className="text-[10px] font-black uppercase text-amber-400 tracking-widest py-5 px-6 text-right">Nilai</Table.Th>
+                            <Table.Th className="text-[10px] font-semibold uppercase text-amber-400 tracking-widest py-5 px-6">ID Transaksi</Table.Th>
+                            <Table.Th className="text-[10px] font-semibold uppercase text-amber-400 tracking-widest py-5 px-6">Detail Paket</Table.Th>
+                            <Table.Th className="text-[10px] font-semibold uppercase text-amber-400 tracking-widest py-5 px-6">Satker & Penyedia</Table.Th>
+                            <Table.Th className="text-[10px] font-semibold uppercase text-amber-400 tracking-widest py-5 px-6">Status</Table.Th>
+                            <Table.Th className="text-[10px] font-semibold uppercase text-amber-400 tracking-widest py-5 px-6 text-right">Nilai</Table.Th>
                         </Table.Tr>
                     </Table.Head>
                     <Table.Body>
@@ -79,8 +87,8 @@ export default function TenderTab({ tahun, searchQuery, selectedSatker }: { tahu
                                 <Table.Tr key={item.order_id} className="hover:bg-slate-50/50 dark:hover:bg-neutral-900/30 transition-colors group cursor-pointer">
                                     <Table.Td className="py-5 px-6">
                                         <div className="flex flex-col gap-1.5">
-                                            <span className="inline-flex w-fit items-center px-2 py-0.5 rounded-md text-[9px] font-black border uppercase tracking-tight bg-amber-100 text-amber-600 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800">Tender</span>
-                                            <p className="text-xs font-black text-slate-900 dark:text-white uppercase mt-1">TND-{item.kd_tender || '-'}</p>
+                                            <span className="inline-flex w-fit items-center px-2 py-0.5 rounded-md text-[9px] font-semibold border uppercase tracking-tight bg-amber-100 text-amber-600 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800">Tender</span>
+                                            <p className="text-xs font-semibold text-slate-900 dark:text-white uppercase mt-1">TND-{item.kd_tender || '-'}</p>
                                             <p className="text-[10px] text-slate-400 font-mono tracking-tight">RUP: {item.kd_rup_paket || item.kd_rup || '-'}</p>
                                         </div>
                                     </Table.Td>
@@ -129,7 +137,7 @@ export default function TenderTab({ tahun, searchQuery, selectedSatker }: { tahu
             {!loading && totalPages > 1 && (
                 <div className="p-4 border-t border-slate-100 dark:border-neutral-800 bg-teal-50/50 dark:bg-neutral-900/10 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest">
-                        Halaman <span className="text-neutral-600 font-black">{currentPage}</span> dari <span className="text-neutral-600 dark:text-neutral-300">{totalPages}</span>
+                        Halaman <span className="text-neutral-600 font-semibold">{currentPage}</span> dari <span className="text-neutral-600 dark:text-neutral-300">{totalPages}</span>
                     </p>
                     <div className="flex items-center gap-2">
                         <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)} className="h-10 w-10 flex items-center justify-center rounded-xl bg-teal-500 dark:bg-teal-500 border disabled:opacity-30">

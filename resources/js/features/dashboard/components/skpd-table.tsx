@@ -186,7 +186,7 @@ const SkpdTable = memo(function SkpdTable({
                                             <div className="w-12 h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
                                                 <div className="h-full bg-teal-500 dark:bg-teal-400 rounded-full transition-all" style={{ width: `${Math.min(item.persentase_anggaran, 100)}%` }} />
                                             </div>
-                                            <span className="text-xs lg:text-sm  font-semibold text-neutral-700 dark:text-neutral-300 w-12 text-right tabular-nums">{item.persentase_anggaran.toFixed(1)}%</span>
+                                            <span className="text-xs lg:text-sm  font-semibold text-neutral-700 dark:text-neutral-300 w-12 text-right tabular-nums">{(item.persentase_anggaran ?? 0).toFixed(1)}%</span>
                                         </div>
                                     </Table.Td>
                                 </>
@@ -206,7 +206,7 @@ const SkpdTable = memo(function SkpdTable({
                                             <div className="w-12 h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
                                                 <div className="h-full bg-teal-500 dark:bg-teal-400 rounded-full transition-all" style={{ width: `${Math.min(item.persentase_pad, 100)}%` }} />
                                             </div>
-                                            <span className="text-xs lg:text-sm  font-semibold text-neutral-700 dark:text-neutral-300 w-12 text-right tabular-nums">{item.persentase_pad.toFixed(1)}%</span>
+                                            <span className="text-xs lg:text-sm  font-semibold text-neutral-700 dark:text-neutral-300 w-12 text-right tabular-nums">{(item.persentase_pad ?? 0).toFixed(1)}%</span>
                                         </div>
                                     </Table.Td>
                                 </>

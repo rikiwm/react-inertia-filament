@@ -72,7 +72,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 // ─── Page Component ───────────────────────────────────────────────────────────
 
-const AnalyticsPage = () => {
+const AnalyticsPage = ({ initialData }: { initialData?: ComparisonDataPoint[] }) => {
     const currentYear = new Date().getFullYear();
     const availableYears = useMemo(() => {
         const years = [];
@@ -82,7 +82,7 @@ const AnalyticsPage = () => {
         return years;
     }, [currentYear]);
 
-    const { data, loading, error } = useComparisonData(availableYears);
+    const { data, loading, error } = useComparisonData(availableYears, initialData);
     const [activeTab, setActiveTab] = useState<"pendapatan" | "belanja">("pendapatan");
 
     const stats = useMemo(() => {
@@ -281,79 +281,82 @@ const AnalyticsPage = () => {
                 {/* ── Main Charts ─────────────────────────────────────────────── */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
                     {/* Primary Bar Chart */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="lg:col-span-2 bg-white dark:bg-neutral-900 p-6 rounded-3xl border border-teal-100 dark:border-neutral-800 shadow-sm overflow-hidden"
-                    >
-                        <div className="flex items-center justify-between mb-8">
-                            <div>
-                                <h3 className="text-lg font-bold text-neutral-900 dark:text-white">
-                                    Tren Komparasi {activeTab === "pendapatan" ? "Pendapatan" : "Belanja"}
-                                </h3>
-                                <p className="text-xs text-neutral-500">Anggaran vs Realisasi (Rp)</p>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-1.5">
-                                    <div className="w-3 h-3 rounded-sm bg-teal-500" />
-                                    <span className="text-[10px] font-bold text-neutral-500 uppercase">Realisasi</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                    <div className="w-3 h-3 rounded-sm bg-neutral-200 dark:bg-neutral-700" />
-                                    <span className="text-[10px] font-bold text-neutral-500 uppercase">{activeTab === "pendapatan" ? "Target" : "Anggaran"}</span>
-                                </div>
-                            </div>
-                        </div>
+                    <AnimatePresence>
 
-                        <div className="h-[350px] w-full">
-                            {loading ? (
-                                <div className="w-full h-full flex items-center justify-center bg-neutral-50 dark:bg-neutral-800/50 rounded-2xl animate-pulse">
-                                    <BarChart3 className="w-10 h-10 text-neutral-300 animate-bounce" />
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="lg:col-span-2 bg-white dark:bg-neutral-900 p-6 rounded-3xl border border-teal-100 dark:border-neutral-800 shadow-sm overflow-hidden"
+                        >
+                            <div className="flex items-center justify-between mb-8">
+                                <div>
+                                    <h3 className="text-lg font-bold text-neutral-900 dark:text-white">
+                                        Tren Komparasi {activeTab === "pendapatan" ? "Pendapatan" : "Belanja"}
+                                    </h3>
+                                    <p className="text-xs text-neutral-500">Anggaran vs Realisasi (Rp)</p>
                                 </div>
-                            ) : (
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart
-                                        data={data}
-                                        margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
-                                        barGap={8}
-                                    >
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e5e5" className="dark:stroke-neutral-800" />
-                                        <XAxis
-                                            dataKey="tahun"
-                                            axisLine={false}
-                                            tickLine={false}
-                                            tick={{ fontSize: 12, fontWeight: 600, fill: '#888' }}
-                                            dy={10}
-                                        />
-                                        <YAxis
-                                            axisLine={false}
-                                            tickLine={false}
-                                            tick={{ fontSize: 10, fill: '#888' }}
-                                            tickFormatter={(val) => formatRupiahCompact(val)}
-                                        />
-                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.02)' }} />
-                                        <Bar
-                                            name={activeTab === "pendapatan" ? "Target" : "Anggaran"}
-                                            dataKey={activeTab === "pendapatan" ? "pendapatan_target" : "belanja_anggaran"}
-                                            fill="#e5e7eb"
-                                            radius={[6, 6, 0, 0]}
-                                            className="dark:fill-neutral-800"
-                                        />
-                                        <Bar
-                                            name="Realisasi"
-                                            dataKey={activeTab === "pendapatan" ? "pendapatan_realisasi" : "belanja_realisasi"}
-                                            fill="#0d9488"
-                                            radius={[6, 6, 0, 0]}
+                                <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-3 h-3 rounded-sm bg-teal-500" />
+                                        <span className="text-[10px] font-bold text-neutral-500 uppercase">Realisasi</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-3 h-3 rounded-sm bg-neutral-200 dark:bg-neutral-700" />
+                                        <span className="text-[10px] font-bold text-neutral-500 uppercase">{activeTab === "pendapatan" ? "Target" : "Anggaran"}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="h-[350px] w-full">
+                                {loading ? (
+                                    <div className="w-full h-full flex items-center justify-center bg-neutral-50 dark:bg-neutral-800/50 rounded-2xl animate-pulse">
+                                        <BarChart3 className="w-10 h-10 text-neutral-300 animate-bounce" />
+                                    </div>
+                                ) : (
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart
+                                            data={data}
+                                            margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
+                                            barGap={8}
                                         >
-                                            {data.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={index === data.length - 1 ? "#0d9488" : "#0d9488cc"} />
-                                            ))}
-                                        </Bar>
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            )}
-                        </div>
-                    </motion.div>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e5e5" className="dark:stroke-neutral-800" />
+                                            <XAxis
+                                                dataKey="tahun"
+                                                axisLine={false}
+                                                tickLine={false}
+                                                tick={{ fontSize: 12, fontWeight: 600, fill: '#888' }}
+                                                dy={10}
+                                            />
+                                            <YAxis
+                                                axisLine={false}
+                                                tickLine={false}
+                                                tick={{ fontSize: 10, fill: '#888' }}
+                                                tickFormatter={(val) => formatRupiahCompact(val)}
+                                            />
+                                            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.02)' }} />
+                                            <Bar
+                                                name={activeTab === "pendapatan" ? "Target" : "Anggaran"}
+                                                dataKey={activeTab === "pendapatan" ? "pendapatan_target" : "belanja_anggaran"}
+                                                fill="#e5e7eb"
+                                                radius={[6, 6, 0, 0]}
+                                                className="dark:fill-neutral-800"
+                                            />
+                                            <Bar
+                                                name="Realisasi"
+                                                dataKey={activeTab === "pendapatan" ? "pendapatan_realisasi" : "belanja_realisasi"}
+                                                fill="#0d9488"
+                                                radius={[6, 6, 0, 0]}
+                                            >
+                                                {data.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={index === data.length - 1 ? "#0d9488" : "#0d9488cc"} />
+                                                ))}
+                                            </Bar>
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                )}
+                            </div>
+                        </motion.div>
+                    </AnimatePresence>
 
                     {/* Secondary Area Chart - Percentages */}
                     <motion.div

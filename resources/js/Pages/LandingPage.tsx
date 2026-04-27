@@ -33,7 +33,7 @@ const LandingPage = () => {
                         DASHBOARD PEMBANGUNAN Kota Padang
                     </div>
 
-                    <h1 className="text-6xl md:text-9xl font-extrabold tracking-tight text-neutral-900 dark:text-white leading-[0.9] mb-8">
+                    <h1 className="text-4xl md:text-9xl font-extrabold tracking-tight text-neutral-900 dark:text-white leading-[0.9] mb-8">
                         {siteSettings.name || appName}
                         <span className="text-teal-500">.</span>
                     </h1>
@@ -52,7 +52,7 @@ const LandingPage = () => {
                     transition={{ duration: 0.5, delay: 0.2 }}
                     className="bg-white/10 dark:bg-neutral-900/40 backdrop-blur-xl border border-white/20 dark:border-white/5 p-2 rounded-2xl "
                 >
-                    <FeedbackForm />
+                    {/* <FeedbackForm /> */}
                 </motion.div>
             </section>
 

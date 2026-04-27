@@ -37,10 +37,11 @@ const getCategoryStyles = (id: number) => {
 
 interface ProgulPageProps {
     initialCategories?: any[];
+    initialProgulData?: any[];
 }
 
-const ProgulPage = ({ initialCategories }: ProgulPageProps) => {
-    const { categories: hookCategories, loading: hookLoading, error: hookError } = useProgulData();
+const ProgulPage = ({ initialCategories, initialProgulData }: ProgulPageProps) => {
+    const { categories: hookCategories, loading: hookLoading, error: hookError } = useProgulData(initialProgulData);
 
     // Use initial data if provided by Inertia, otherwise use hook data
     const categories = initialCategories || hookCategories;

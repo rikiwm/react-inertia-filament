@@ -8,7 +8,7 @@
  * menampilkan rincian pengadaan barang/jasa OPD tersebut.
  */
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { pbjCatalogService, pbjTenderService, pbjNonTenderService } from "@/Services/pbj-split-service";
 import type { PbjDetailItem, PbjJenisTransaksi } from "@/Services/pbj-detail-service";
 
@@ -48,12 +48,13 @@ function matchSatker(item: PbjDetailItem, namaOpd: string): boolean {
     return satker === opd || satker.includes(opd) || opd.includes(satker);
 }
 
-export function useOpdPbj(namaOpd: string, tahun: number): UseOpdPbjResult {
-    const [catalog, setCatalog] = useState<PbjDetailItem[]>([]);
-    const [tender, setTender] = useState<PbjDetailItem[]>([]);
-    const [nonTender, setNonTender] = useState<PbjDetailItem[]>([]);
-    const [loading, setLoading] = useState(true);
+export function useOpdPbj(namaOpd: string, tahun: number, initialData?: any[]): UseOpdPbjResult {
+    const [catalog, setCatalog] = useState<PbjDetailItem[]>(initialData?.filter((i: any) => i.jenis_transaksi === "CATALOG") || []);
+    const [tender, setTender] = useState<PbjDetailItem[]>(initialData?.filter((i: any) => i.jenis_transaksi === "TENDER") || []);
+    const [nonTender, setNonTender] = useState<PbjDetailItem[]>(initialData?.filter((i: any) => i.jenis_transaksi === "NON-TENDER") || []);
+    const [loading, setLoading] = useState(!initialData);
     const [error, setError] = useState<Error | null>(null);
+    const firstRenderRef = useRef(true);
 
     const fetchAll = useCallback(async () => {
         if (!namaOpd) return;
@@ -77,8 +78,13 @@ export function useOpdPbj(namaOpd: string, tahun: number): UseOpdPbjResult {
     }, [namaOpd, tahun]);
 
     useEffect(() => {
+        if (firstRenderRef.current && initialData) {
+            firstRenderRef.current = false;
+            return;
+        }
         fetchAll();
-    }, [fetchAll]);
+        firstRenderRef.current = false;
+    }, [fetchAll, initialData]);
 
     const { data, summary } = useMemo(() => {
         const filtered: OpdPbjItem[] = [

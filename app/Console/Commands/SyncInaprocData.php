@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Services\Inaproc\CatalogService;
+use App\Services\Inaproc\NonTenderService;
+use App\Services\Inaproc\TenderPengumumanService;
+use App\Services\Inaproc\TenderService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use App\Services\Inaproc\CatalogService;
-use App\Services\Inaproc\TenderService;
-use App\Services\Inaproc\NonTenderService;
 
-class SyncInaprocData extends Command
+final class SyncInaprocData extends Command
 {
     /**
      * The name and signature of the console command.
@@ -33,10 +34,11 @@ class SyncInaprocData extends Command
     public function handle(
         CatalogService $catalogService,
         TenderService $tenderService,
+        TenderPengumumanService $tenderPengumumanService,
         NonTenderService $nonTenderService
     ) {
         $tahunOption = $this->option('tahun');
-        
+
         // JIKA VARIABEL TAHUN NULL MAKA, LOOPING TAHUN SEKARANG - 2 TAHUN TERAKHIR !
         if ($tahunOption) {
             $yearsToSync = [(int) $tahunOption];
@@ -46,10 +48,11 @@ class SyncInaprocData extends Command
         }
 
         $kodeKlpd = 'D471';
-        
+
         $services = [
             'CATALOG' => $catalogService,
             'TENDER' => $tenderService,
+            'TENDER-PENGUMUMAN' => $tenderPengumumanService,
             'NON-TENDER' => $nonTenderService,
         ];
 
@@ -59,13 +62,16 @@ class SyncInaprocData extends Command
             foreach ($services as $kategori => $service) {
                 $this->info("Menarik data {$kategori} {$tahun}...");
                 $data = $service->fetchAll($tahun);
-                
+
                 $cacheKey = "inaproc_{$kategori}_{$tahun}_{$kodeKlpd}";
                 // Cache selama 24 jam
                 Cache::put($cacheKey, $data, 24 * 60 * 60);
-                
-                $this->line("-> Berhasil mensinkronisasi " . count($data) . " baris {$kategori}");
+
+                $this->line('-> Berhasil mensinkronisasi '.count($data)." baris {$kategori}");
             }
+
+            // Hapus cache summary agar diregenerasi dengan data terbaru
+            Cache::forget("inaproc_summary_{$tahun}_{$kodeKlpd}");
         }
 
         $this->info('Sinkronisasi Inaproc selesai!');

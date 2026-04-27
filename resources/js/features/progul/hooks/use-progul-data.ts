@@ -4,7 +4,7 @@
  * Custom hook untuk mengelola data Progul.
  */
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
     fetchAllProgulData,
     getProgulCategories,
@@ -16,10 +16,11 @@ import {
     type ActivasiItem
 } from "@/Services/progul-service";
 
-export function useProgulData() {
-    const [data, setData] = useState<ProgulData[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+export function useProgulData(initialData?: ProgulData[]) {
+    const [data, setData] = useState<ProgulData[]>(initialData || []);
+    const [loading, setLoading] = useState(!initialData);
     const [error, setError] = useState<Error | null>(null);
+    const firstRenderRef = useRef(true);
 
     const fetchData = useCallback(async (signal?: AbortSignal) => {
         try {
@@ -37,10 +38,15 @@ export function useProgulData() {
     }, []);
 
     useEffect(() => {
+        if (firstRenderRef.current && initialData && initialData.length > 0) {
+            firstRenderRef.current = false;
+            return;
+        }
         const controller = new AbortController();
         fetchData(controller.signal);
+        firstRenderRef.current = false;
         return () => controller.abort();
-    }, [fetchData]);
+    }, [fetchData, initialData]);
 
     const categories = useMemo(() => getProgulCategories(data), [data]);
 

@@ -203,10 +203,12 @@ export const ApbdDonutChart = memo(function ApbdDonutChart({
  */
 export const ApbdDonutPanel = memo(function ApbdDonutPanel({
     tahun,
+    initialData = null,
 }: {
     tahun: number;
+    initialData?: any; // Menggunakan any sementara karena import type mungkin ribet, tapi sebaiknya ApbdSummary
 }) {
-    const { data, isLoading, error, retry } = useApbdData(tahun);
+    const { data, isLoading, error, retry } = useApbdData(tahun, initialData);
 
     return (
         <div className="lg:col-span-1 bg-white dark:bg-neutral-950 rounded-2xl border border-teal-200 dark:border-teal-900 p-2 lg:p-4">
