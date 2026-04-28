@@ -26,9 +26,6 @@ final class PbjInaprocController extends Controller
 
         // 1. Fetch Summary
         $summaryCacheKey = "inaproc_summary_{$tahun}_{$this->kodeKlpd}";
-        // if ($refresh) {
-        //     Cache::forget($summaryCacheKey);
-        // }
 
         $summary = Cache::remember($summaryCacheKey, 1800, function () use ($tahun, $summaryService) {
             return $summaryService->getSummary($tahun);
@@ -45,31 +42,10 @@ final class PbjInaprocController extends Controller
             return $response->successful() ? $response->json()['data'] : [];
         });
 
-        // 3. Fetch Tab Data (from cache)
-        $catalog = Cache::get("inaproc_CATALOG_{$tahun}_{$this->kodeKlpd}", []);
-        $tenderSelesai = Cache::get("inaproc_TENDER_{$tahun}_{$this->kodeKlpd}", []);
-        $tenderPengumuman = Cache::get("inaproc_TENDER-PENGUMUMAN_{$tahun}_{$this->kodeKlpd}", []);
-        $tender = collect($tenderSelesai)->map(function ($item) use ($tenderPengumuman) {
-            $tenderPengumumanItem = collect($tenderPengumuman)->firstWhere('kd_tender', $item['kd_tender']);
-            $payload = [
-                'nama_paket' => $tenderPengumumanItem['nama_paket'] ?? ($item['nama_paket'] ?? '-'),
-                'lokasi_pekerjaan' => $tenderPengumumanItem['lokasi_pekerjaan'] ?? '-',
-                'mtd_evaluasi' => $tenderPengumumanItem['mtd_evaluasi'] ?? '-',
-                'mtd_kualifikasi' => $tenderPengumumanItem['mtd_kualifikasi'] ?? '-',
-                'mtd_pemilihan' => $tenderPengumumanItem['mtd_pemilihan'] ?? '-',
-            ];
-
-            return $item + $payload;
-        })->toArray();
-        $nonTender = Cache::get("inaproc_NON-TENDER_{$tahun}_{$this->kodeKlpd}", []);
-
         return Inertia::render('Pbj/PbjListPage', [
             'initialTahun' => $tahun,
             'initialSummary' => $summary,
             'initialSatkers' => $satkers,
-            'initialCatalog' => $catalog,
-            'initialTender' => $tender,
-            'initialNonTender' => $nonTender,
         ]);
     }
 
@@ -86,7 +62,25 @@ final class PbjInaprocController extends Controller
      */
     public function tender(Request $request): JsonResponse
     {
-        return $this->responseFromCache('TENDER', $request);
+        $tahun = $request->query('tahun', date('Y'));
+        
+        $tenderSelesai = Cache::get("inaproc_TENDER_{$tahun}_{$this->kodeKlpd}", []);
+        $tenderPengumuman = Cache::get("inaproc_TENDER-PENGUMUMAN_{$tahun}_{$this->kodeKlpd}", []);
+        
+        $tender = collect($tenderSelesai)->map(function ($item) use ($tenderPengumuman) {
+            $tenderPengumumanItem = collect($tenderPengumuman)->firstWhere('kd_tender', $item['kd_tender']);
+            $payload = [
+                'nama_paket' => $tenderPengumumanItem['nama_paket'] ?? ($item['nama_paket'] ?? '-'),
+                'lokasi_pekerjaan' => $tenderPengumumanItem['lokasi_pekerjaan'] ?? '-',
+                'mtd_evaluasi' => $tenderPengumumanItem['mtd_evaluasi'] ?? '-',
+                'mtd_kualifikasi' => $tenderPengumumanItem['mtd_kualifikasi'] ?? '-',
+                'mtd_pemilihan' => $tenderPengumumanItem['mtd_pemilihan'] ?? '-',
+            ];
+
+            return $item + $payload;
+        })->toArray();
+
+        return response()->json($tender);
     }
 
     /**
@@ -144,9 +138,6 @@ final class PbjInaprocController extends Controller
         $cacheKey = "inaproc_{$kategori}_{$tahun}_{$this->kodeKlpd}";
         // Membaca dari scheduler cache
         $data = Cache::get($cacheKey, []);
-
-        // Pilihan: Jika belum di-sync cron, tapi ini diminta langsung, kita bisa mengembalikan array kosong.
-        // User disarankan menjalankan cron minimal sekali.
 
         return response()->json($data);
     }

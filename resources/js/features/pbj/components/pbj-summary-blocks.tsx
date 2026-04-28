@@ -19,6 +19,8 @@ export default function PbjSummaryBlocks({ tahun, activeTab, initialData }: PbjS
     const [summary, setSummary] = useState<any>(initialData || null);
     const [loading, setLoading] = useState(!initialData);
 
+    const isFirstRender = React.useRef(true);
+
     // Sync with initialData if it changes from Inertia props
     useEffect(() => {
         if (initialData) {
@@ -28,8 +30,8 @@ export default function PbjSummaryBlocks({ tahun, activeTab, initialData }: PbjS
     }, [initialData]);
 
     useEffect(() => {
-        // Jika sudah ada initialData untuk tahun ini, tidak perlu fetch ulang
-        if (initialData && summary === initialData) {
+        if (isFirstRender.current && initialData) {
+            isFirstRender.current = false;
             return;
         }
 
@@ -44,6 +46,7 @@ export default function PbjSummaryBlocks({ tahun, activeTab, initialData }: PbjS
             if (isMounted) setLoading(false);
         });
 
+        isFirstRender.current = false;
         return () => { isMounted = false; };
     }, [tahun]);
 
@@ -133,20 +136,20 @@ export default function PbjSummaryBlocks({ tahun, activeTab, initialData }: PbjS
                 <div className="bg-neutral-50 dark:bg-neutral-900 p-5 rounded-2xl border border-teal-200 hover:border-white dark:border-neutral-800 shadow-xs flex flex-col justify-between cursor-pointer hover:shadow-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all">
                     <div className="flex items-center justify-between mb-4">
                         <div className="p-2.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 rounded-xl">
-                            <CheckCircle2 className="w-5 h-5" />
+                            {activeTab === 'CATALOG' ? <Package className="w-5 h-5" /> : <CheckCircle2 className="w-5 h-5" />}
                         </div>
                         <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">
-                            {activeTab === 'CATALOG' ? 'Paket Selesai' : 'Efisiensi'}
+                            {activeTab === 'CATALOG' ? 'Total Paket' : 'Efisiensi'}
                         </span>
                     </div>
                     <div>
                         <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate">
                             {activeTab === 'CATALOG' 
-                                ? `${fmtInt(dataTab.status?.COMPLETED?.jumlah || 0)} Paket` 
+                                ? `${fmtInt(dataTab.count || 0)} Paket` 
                                 : fmtRupiah(dataTab.efisiensi || 0)}
                         </h3>
                         <p className={`text-xs mt-1 font-medium uppercase ${activeTab === 'CATALOG' ? 'text-slate-500' : 'text-emerald-600'}`}>
-                            {activeTab === 'CATALOG' ? 'Status Transaksi Selesai' : 'Penghematan Anggaran'}
+                            {activeTab === 'CATALOG' ? 'Semua Status Transaksi' : 'Penghematan Anggaran'}
                         </p>
                     </div>
                 </div>

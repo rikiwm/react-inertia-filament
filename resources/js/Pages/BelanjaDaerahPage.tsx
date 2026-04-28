@@ -93,10 +93,10 @@ const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: numbe
                                     <BarChart3 className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                                    <h1 className="text-lg md:text-3xl font-bold text-neutral-900 dark:text-neutral-100">
                                         Belanja Daerah
                                     </h1>
-                                    <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+                                    <p className="text-xs md:text-md text-neutral-500 dark:text-neutral-400 font-medium">
                                         Breakdown belanja per satuan kerja perangkat daerah
                                     </p>
                                 </div>

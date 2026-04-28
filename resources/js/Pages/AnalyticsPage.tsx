@@ -158,11 +158,11 @@ const AnalyticsPage = ({ initialData }: { initialData?: ComparisonDataPoint[] })
                             <ArrowLeft className="w-5 h-5" />
                         </button>
                         <div>
-                            <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight flex items-center gap-3">
+                            <h1 className="text-lg lg:text-3xl font-bold text-neutral-900 dark:text-neutral-100 tracking-tight flex items-center gap-3">
                                 <Activity className="w-8 h-8 text-teal-600" />
                                 Analitik & Komparasi
                             </h1>
-                            <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+                            <p className="text-xs md:text-md text-neutral-500 dark:text-neutral-400 font-medium">
                                 Visualisasi tren anggaran dan realisasi lintas tahun (2021 - {currentYear})
                             </p>
                         </div>

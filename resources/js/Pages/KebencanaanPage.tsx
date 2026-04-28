@@ -42,10 +42,10 @@ const KebencanaanPage = ({ weather, ispu, disasterMap, lastUpdate, hashtagNews =
                             </div>
                             <span className="text-sm font-bold text-teal-600 uppercase tracking-[0.2em]">Monitoring Kota</span>
                         </div>
-                        <h1 className="text-4xl md:text-4xl font-bold text-neutral-900 dark:text-white uppercase tracking-tighter leading-none">
+                        <h1 className="text-lg md:text-4xl font-bold text-neutral-900 dark:text-white uppercase tracking-tighter leading-none">
                             Informasi <span className="text-teal-600">Kebencanaan</span>
                         </h1>
-                        <p className="mt-4 text-neutral-500 dark:text-neutral-400 max-w-2xl text-lg font-medium leading-relaxed">
+                        <p className="text-xs md:text-md text-neutral-500 dark:text-neutral-400 font-medium">
                             Pusat kendali monitoring kondisi cuaca, kualitas udara, dan titik kejadian bencana di Kota Padang secara real-time.
                         </p>
                     </div>
@@ -121,72 +121,72 @@ const KebencanaanPage = ({ weather, ispu, disasterMap, lastUpdate, hashtagNews =
                     <>
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
                             {/* Left Column: Weather + Summary Cards */}
-                    <div className="lg:col-span-4 space-y-6">
-                        <motion.div
-                            initial={{ opacity: 0, x: -30 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                        >
-                            <WeatherWidget data={weather} />
-                        </motion.div>
+                            <div className="lg:col-span-4 space-y-6">
+                                <motion.div
+                                    initial={{ opacity: 0, x: -30 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.5, delay: 0.2 }}
+                                >
+                                    <WeatherWidget data={weather} />
+                                </motion.div>
 
-                        <motion.div
-                            initial={{ opacity: 0, x: -30 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.5, delay: 0.3 }}
-                            className="grid grid-cols-2 gap-4"
-                        >
-                            <div className="p-5 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm">
-                                <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center text-teal-600 mb-4">
-                                    <Wind className="w-5 h-5" />
-                                </div>
-                                <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1">Status Udara</p>
-                                <p className="text-lg font-bold text-neutral-800 dark:text-white uppercase truncate">
-                                    {ispu?.status_stasiun?.[0]?.kategori?.keterangan || 'Memuat...'}
-                                </p>
+                                <motion.div
+                                    initial={{ opacity: 0, x: -30 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.5, delay: 0.3 }}
+                                    className="grid grid-cols-2 gap-4"
+                                >
+                                    <div className="p-5 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm">
+                                        <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center text-teal-600 mb-4">
+                                            <Wind className="w-5 h-5" />
+                                        </div>
+                                        <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1">Status Udara</p>
+                                        <p className="text-lg font-bold text-neutral-800 dark:text-white uppercase truncate">
+                                            {ispu?.status_stasiun?.[0]?.kategori?.keterangan || 'Memuat...'}
+                                        </p>
+                                    </div>
+                                    <div className="p-5 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm">
+                                        <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 mb-4">
+                                            <MapPin className="w-5 h-5" />
+                                        </div>
+                                        <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1">Titik Kejadian</p>
+                                        <p className="text-lg font-bold text-neutral-800 dark:text-white uppercase">
+                                            {disasterMap?.length || 0} Lokasi
+                                        </p>
+                                    </div>
+                                </motion.div>
                             </div>
-                            <div className="p-5 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm">
-                                <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 mb-4">
-                                    <MapPin className="w-5 h-5" />
-                                </div>
-                                <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1">Titik Kejadian</p>
-                                <p className="text-lg font-bold text-neutral-800 dark:text-white uppercase">
-                                    {disasterMap?.length || 0} Lokasi
-                                </p>
-                            </div>
-                        </motion.div>
-                    </div>
 
-                    {/* Right Column: Map */}
-                    <div className="lg:col-span-8">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.98 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.5, delay: 0.4 }}
-                            className="h-full min-h-[500px] lg:min-h-full"
-                        >
-                            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 h-full shadow-xl overflow-hidden relative group">
-                                {/* <div className="absolute top-8 left-8 z-10">
+                            {/* Right Column: Map */}
+                            <div className="lg:col-span-8">
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.98 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.5, delay: 0.4 }}
+                                    className="h-full min-h-[500px] lg:min-h-full"
+                                >
+                                    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 h-full shadow-xl overflow-hidden relative group">
+                                        {/* <div className="absolute top-8 left-8 z-10">
                                     <div className="bg-white/90 dark:bg-black/80 backdrop-blur-md px-5 py-3 rounded-xl border border-neutral-200 dark:border-neutral-800 flex items-center gap-3 shadow-lg">
                                         <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
                                         <span className="text-sm font-bold text-neutral-800 dark:text-white uppercase tracking-wider">Live Map Kejadian</span>
                                     </div>
                                 </div> */}
-                                <DisasterMap points={disasterMap} />
+                                        <DisasterMap points={disasterMap} />
+                                    </div>
+                                </motion.div>
                             </div>
-                        </motion.div>
-                    </div>
-                </div>
+                        </div>
 
-                {/* ISPU Section */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.5 }}
-                    className="mb-3"
-                >
-                    <IspuWidget data={ispu} />
-                </motion.div>
+                        {/* ISPU Section */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.5 }}
+                            className="mb-3"
+                        >
+                            <IspuWidget data={ispu} />
+                        </motion.div>
                     </>
                 )}
 

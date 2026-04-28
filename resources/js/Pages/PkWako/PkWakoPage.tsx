@@ -47,10 +47,10 @@ const PkWakoPage = ({ initialData }: { initialData?: any[] }) => {
                                 <BarChart3 className="w-6 h-6" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                                <h1 className="text-lg lg:text-3xl font-bold text-neutral-900 dark:text-neutral-100">
                                     Perjanjian Kinerja Wali Kota
                                 </h1>
-                                <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+                                <p className="text-xs md:text-lg text-neutral-500 dark:text-neutral-400 font-medium">
                                     Perjanjian Kinerja Wali Kota Padang
                                 </p>
                             </div>

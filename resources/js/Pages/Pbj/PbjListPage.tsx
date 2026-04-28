@@ -23,20 +23,14 @@ interface PbjListProps {
     initialTahun: number;
     initialSummary: any;
     initialSatkers: any[];
-    initialCatalog: any[];
-    initialTender: any[];
-    initialNonTender: any[];
 }
 
-const PbjListPage = ({ 
-    initialTahun, 
-    initialSummary, 
-    initialSatkers,
-    initialCatalog,
-    initialTender,
-    initialNonTender 
+const PbjListPage = ({
+    initialTahun,
+    initialSummary,
+    initialSatkers
 }: PbjListProps) => {
-    const tahun = initialTahun;
+    const [tahun, setTahunLocal] = useState(initialTahun);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedSatker, setSelectedSatker] = useState('all');
     const [activeTab, setActiveTab] = useState<TabType>('CATALOG');
@@ -50,15 +44,34 @@ const PbjListPage = ({
         return { satkers: uniqueSatkers as string[] };
     }, [initialSatkers]);
 
+    // Pulihkan tahun dari cache jika tidak ada parameter tahun di URL
+    useEffect(() => {
+        const cachedTahun = localStorage.getItem("pbj_list_tahun");
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (cachedTahun && !urlParams.has('tahun') && parseInt(cachedTahun) !== initialTahun) {
+            const newTahun = parseInt(cachedTahun);
+            setTahunLocal(newTahun);
+
+            const url = new URL(window.location.href);
+            url.searchParams.set('tahun', newTahun.toString());
+            window.history.replaceState({}, '', url);
+        } else {
+            setTahunLocal(initialTahun);
+        }
+    }, [initialTahun]);
+
     /** 
-     * Mengubah tahun via Inertia navigation (SSR Pattern).
+     * Mengubah tahun secara lokal tanpa full reload data dari server
      */
     const setTahun = (newTahun: number) => {
         if (newTahun === tahun) return;
-        router.get(route("pbj.list"), { tahun: newTahun }, { 
-            preserveState: true, 
-            preserveScroll: true 
-        });
+        localStorage.setItem("pbj_list_tahun", newTahun.toString());
+        setTahunLocal(newTahun);
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('tahun', newTahun.toString());
+        window.history.pushState({}, '', url);
     };
 
     const resetFilters = () => {
@@ -84,11 +97,11 @@ const PbjListPage = ({
                                     <Package className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                                    <h1 className="text-lg lg:text-3xl font-bold text-neutral-900 dark:text-neutral-100">
                                         Pengadaan Barang & Jasa
 
                                     </h1>
-                                    <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+                                    <p className="text-xs md:text-md text-neutral-500 dark:text-neutral-400 font-medium">
                                         Rincian Paket Terintegrasi Pemerintah Kota Padang
                                     </p>
                                 </div>
@@ -196,9 +209,9 @@ const PbjListPage = ({
 
                     {/* Active Tab Rendering */}
                     <div className="flex-1 relative min-h-[300px] px-2">
-                        {activeTab === 'CATALOG' && <CatalogTab tahun={tahun} searchQuery={searchQuery} selectedSatker={selectedSatker} initialData={initialCatalog} />}
-                        {activeTab === 'TENDER' && <TenderTab tahun={tahun} searchQuery={searchQuery} selectedSatker={selectedSatker} initialData={initialTender} />}
-                        {activeTab === 'NON-TENDER' && <NonTenderTab tahun={tahun} searchQuery={searchQuery} selectedSatker={selectedSatker} initialData={initialNonTender} />}
+                        {activeTab === 'CATALOG' && <CatalogTab tahun={tahun} searchQuery={searchQuery} selectedSatker={selectedSatker} />}
+                        {activeTab === 'TENDER' && <TenderTab tahun={tahun} searchQuery={searchQuery} selectedSatker={selectedSatker} />}
+                        {activeTab === 'NON-TENDER' && <NonTenderTab tahun={tahun} searchQuery={searchQuery} selectedSatker={selectedSatker} />}
                     </div>
                 </div>
             </div>

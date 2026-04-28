@@ -654,10 +654,10 @@ function OpdDetailContent({ type, namaOpd, tahun, slug, initialOpdDetail, realis
                                     <BarChart3 className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                                    <h1 className="text-lg lg:text-3xl font-bold text-neutral-900 dark:text-neutral-100">
                                         {namaOpd}
                                     </h1>
-                                    <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+                                    <p className="text-xs md:text-md text-neutral-500 dark:text-neutral-400 font-medium">
                                         <span className="font-medium text-teal-600 dark:text-teal-400">{data?.kd_unit}</span> - {labels.title.toLowerCase()} per satuan kerja perangkat daerah
                                     </p>
                                 </div>
