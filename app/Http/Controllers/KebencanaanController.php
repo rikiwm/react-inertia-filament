@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Services\NewsScraperService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
@@ -13,7 +14,7 @@ final class KebencanaanController extends Controller
     /**
      * Display the disaster information page.
      */
-    public function index()
+    public function index(NewsScraperService $newsScraper)
     {
         // 1. Weather Data (Open-Meteo)
         $weather = Cache::remember('weather_padang_v3', 900, function () {
@@ -76,11 +77,14 @@ final class KebencanaanController extends Controller
             return [];
         });
 
+        $hashtagNews = $newsScraper->scrapeByQuery('bencana OR banjir OR gempa OR cuaca "padang"', 6);
+
         return Inertia::render('KebencanaanPage', [
             'weather' => $weather,
             'ispu' => $ispu,
             'disasterMap' => $disasterMap,
             'lastUpdate' => now()->format('Y-m-d H:i:s'),
+            'hashtagNews' => $hashtagNews,
         ]);
     }
 }

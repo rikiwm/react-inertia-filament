@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import FrontWrapper from '@/Wrappers/front-wrapper';
 import { useProgulData } from '@/features/progul/hooks/use-progul-data';
@@ -10,7 +10,8 @@ import {
     Target,
     BarChart3,
     ArrowRight,
-    Package
+    Package,
+    Newspaper
 } from 'lucide-react';
 import { cn } from '@/Lib/utils';
 
@@ -21,7 +22,8 @@ interface Props {
     initialProgulData?: any[];
 }
 
-const ActivasiPage = ({ id, progulName, hashtagNews, initialProgulData }: Props) => {
+const ActivasiPage = ({ id, progulName, hashtagNews = [], initialProgulData }: Props) => {
+    const [activeTab, setActiveTab] = useState<'overview' | 'dokumentasi'>('overview');
     const { getActivasiList, getProgulById, loading } = useProgulData(initialProgulData);
 
     const progul = useMemo(() => getProgulById(id), [getProgulById, id]);
@@ -54,6 +56,44 @@ const ActivasiPage = ({ id, progulName, hashtagNews, initialProgulData }: Props)
                         Pantau kinerja dan capaian program unggulan pemerintah Kota Padang untuk mewujudkan masyarakat yang lebih sejahtera dan mandiri.
                     </p>
 
+                    {/* Tabs */}
+                    <div className="flex items-center gap-2 border-b border-neutral-200 dark:border-neutral-800 pb-px mt-4">
+                        <button
+                            onClick={() => setActiveTab('overview')}
+                            className={cn(
+                                "px-4 py-2 text-sm font-semibold transition-colors relative",
+                                activeTab === 'overview'
+                                    ? "text-teal-600 dark:text-teal-400"
+                                    : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+                            )}
+                        >
+                            <span className="flex items-center gap-2">
+                                <Activity className="w-4 h-4" />
+                                Overview
+                            </span>
+                            {activeTab === 'overview' && (
+                                <motion.div layoutId="activasi-tab-indicator" className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 dark:bg-teal-400" />
+                            )}
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('dokumentasi')}
+                            className={cn(
+                                "px-4 py-2 text-sm font-semibold transition-colors relative",
+                                activeTab === 'dokumentasi'
+                                    ? "text-teal-600 dark:text-teal-400"
+                                    : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+                            )}
+                        >
+                            <span className="flex items-center gap-2">
+                                <Newspaper className="w-4 h-4" />
+                                Dokumentasi
+                            </span>
+                            {activeTab === 'dokumentasi' && (
+                                <motion.div layoutId="activasi-tab-indicator" className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 dark:bg-teal-400" />
+                            )}
+                        </button>
+                    </div>
+
                     {/* Loading State */}
                     {loading && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -64,8 +104,10 @@ const ActivasiPage = ({ id, progulName, hashtagNews, initialProgulData }: Props)
                     )}
 
                     {/* Activasi Cards Grid */}
-                    {!loading && activasiList.length > 0 ? (
-                        <motion.div
+                    {activeTab === 'overview' && (
+                        <>
+                            {!loading && activasiList.length > 0 ? (
+                                <motion.div
                             className="grid grid-cols-1 md:grid-cols-2 gap-4"
                             initial="hidden"
                             animate="visible"
@@ -118,10 +160,43 @@ const ActivasiPage = ({ id, progulName, hashtagNews, initialProgulData }: Props)
                                 </motion.div>
                             ))}
                         </motion.div>
-                    ) : !loading && (
-                        <div className="text-center p-12 rounded-3xl border-2 border-dashed border-neutral-200 dark:border-neutral-800">
-                            <Target className="w-12 h-12 text-neutral-300 dark:text-neutral-700 mx-auto mb-4" />
-                            <p className="text-neutral-500 dark:text-neutral-400 font-medium">Belum ada data activasi untuk program ini.</p>
+                            ) : !loading && (
+                                <div className="text-center p-12 rounded-3xl border-2 border-dashed border-neutral-200 dark:border-neutral-800">
+                                    <Target className="w-12 h-12 text-neutral-300 dark:text-neutral-700 mx-auto mb-4" />
+                                    <p className="text-neutral-500 dark:text-neutral-400 font-medium">Belum ada data activasi untuk program ini.</p>
+                                </div>
+                            )}
+                        </>
+                    )}
+
+                    {/* Dokumentasi Grid */}
+                    {activeTab === 'dokumentasi' && (
+                        <div className="space-y-6 pt-2">
+                            {hashtagNews && hashtagNews.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {hashtagNews.map((news, idx) => (
+                                        <a key={idx} href={news.link} target="_blank" rel="noreferrer" className="group block bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden hover:shadow-xl transition-all">
+                                            <div className="relative h-48 overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+                                                <img src={news.image} alt={news.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            </div>
+                                            <div className="p-5">
+                                                <div className="flex items-center gap-2 text-xs text-neutral-500 mb-2">
+                                                    <span className="font-semibold text-teal-600">{news.source}</span>
+                                                    <span>•</span>
+                                                    <span>{news.time_ago}</span>
+                                                </div>
+                                                <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mb-2 line-clamp-2 group-hover:text-teal-600 transition-colors">{news.title}</h3>
+                                                <p className="text-sm text-neutral-500 dark:text-neutral-400 line-clamp-3">{news.description}</p>
+                                            </div>
+                                        </a>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center p-12 rounded-3xl border-2 border-dashed border-neutral-200 dark:border-neutral-800">
+                                    <Newspaper className="w-12 h-12 text-neutral-300 dark:text-neutral-700 mx-auto mb-4" />
+                                    <p className="text-neutral-500 dark:text-neutral-400 font-medium">Belum ada dokumentasi atau berita terkait program ini.</p>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
