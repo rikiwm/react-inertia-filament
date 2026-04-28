@@ -7,4 +7,3 @@
 export { default as WeatherWidget } from "./weather-widget";
 export { default as IspuWidget } from "./ispu-widget";
 export { default as DisasterMap } from "./disaster-map";
-export { DisasterNews } from "./disaster-news";

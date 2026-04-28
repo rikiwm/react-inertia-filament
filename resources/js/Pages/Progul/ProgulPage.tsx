@@ -14,8 +14,7 @@ import {
     Lightbulb,
     TrendingUp,
     Users,
-
-    Package,
+    Package
 } from 'lucide-react';
 import { cn } from '@/Lib/utils';
 
@@ -35,6 +34,7 @@ const getCategoryStyles = (id: number) => {
     return styles[id] || { icon: LayoutDashboard, color: 'text-neutral-600', border: 'border-neutral-200', bg: 'bg-neutral-50' };
 };
 
+<<<<<<< HEAD
 interface ProgulPageProps {
     initialCategories?: any[];
     initialProgulData?: any[];
@@ -47,6 +47,10 @@ const ProgulPage = ({ initialCategories, initialProgulData }: ProgulPageProps) =
     const categories = initialCategories || hookCategories;
     const loading = !initialCategories && hookLoading;
     const error = !initialCategories && hookError;
+=======
+const ProgulPage = () => {
+    const { categories, loading, error } = useProgulData();
+>>>>>>> parent of ca842f5 (feat: implement news scraping service for programs and enhance responsive layout across dashboard pages)
 
     return (
         <>
@@ -55,20 +59,20 @@ const ProgulPage = ({ initialCategories, initialProgulData }: ProgulPageProps) =
                 <div className="max-w-screen-2xl mx-auto px-4 lg:px-0 space-y-6">
 
                     {/* Header Section */}
-                    <div className="flex  items-start gap-3">
+                    <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
                             <Package className="w-6 h-6" />
                         </div>
                         <div>
-                            <h1 className="lg:text-3xl md:text-2xl text-xl font-bold text-neutral-900 dark:text-neutral-100">
+                            <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
                                 Program Unggulan Kota Padang
                             </h1>
-                            <p className="lg:text-sm md:text-xs text-xs text-neutral-500 dark:text-neutral-400 font-medium">
+                            <p className="text-neutral-500 dark:text-neutral-400 font-medium">
                                 Satujuan Untuk Kejayaan Kota Padang
                             </p>
                         </div>
                     </div>
-                    <p className="lg:text-sm md:text-xs text-xs text-slate-500 dark:text-neutral-400">
+                    <p className="text-slate-500 dark:text-neutral-400">
                         Pantau kinerja dan capaian program unggulan pemerintah Kota Padang untuk mewujudkan masyarakat yang lebih sejahtera dan mandiri.
                     </p>
                     {/* <div>
@@ -188,8 +192,6 @@ const ProgulPage = ({ initialCategories, initialProgulData }: ProgulPageProps) =
                             })}
                         </motion.div>
                     )}
-
-                    {/* Hashtag News Feed */}
                 </div>
             </div>
         </>

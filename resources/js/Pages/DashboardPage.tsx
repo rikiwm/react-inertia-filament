@@ -105,7 +105,7 @@ const DashboardPage = ({
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-teal-500/10 rounded-full blur-[120px]" />
             </div>
-            <div className="max-w-screen-2xl mx-auto px-4 lg:px- py-2 lg:py-8 space-y-4">
+            <div className="max-w-screen-2xl mx-auto px-4 lg:px-8 lg:px-6 py-2 lg:py-8 space-y-4">
                 {/* ── Header ── */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
@@ -143,7 +143,7 @@ const DashboardPage = ({
 
                         <button
                             onClick={() => router.visit(route("analitik"))}
-                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-900 border border-teal-200 dark:border-teal-800 rounded-lg text-xs font-bold text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30 transition-all shadow-sm"
+                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-900 border border-teal-200 dark:border-teal-800 rounded-xl text-xs font-bold text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30 transition-all shadow-sm"
                         >
                             <Activity className="w-4 h-4" />
                             Analitik & Komparasi

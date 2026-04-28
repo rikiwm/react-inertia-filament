@@ -39,7 +39,7 @@ const LandingPage = () => {
                     </h1>
 
                     <p className="text-xl md:text-2xl text-neutral-500 dark:text-neutral-400 max-w-2xl mx-auto mb-12 font-medium leading-relaxed">
-                        {siteSettings.description || 'Portal data pembangunan Kota Padang'}
+                        Platform integrasi data pembangunan, keuangan, dan layanan publik Kota Padang yang modern & transparan.
                     </p>
                 </motion.div>
             </section>
@@ -66,12 +66,12 @@ const LandingPage = () => {
                 >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
                         <div>
-                            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white mb-8 leading-tight">
+                            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-neutral-900 dark:text-white mb-8 leading-tight">
                                 Transformasi Digital <br />
-                                <span className="text-teal-500">Membangun Kota.</span>
+                                <span className="text-teal-500">Membangun Kota Kita.</span>
                             </h2>
                             <p className="text-xl text-neutral-500 dark:text-neutral-400 font-medium mb-10 leading-relaxed">
-                                Kami berkomitmen untuk menyajikan data yang akurat, dan terbuka untuk seluruh masyarakat Kota Padang.
+                                Kami berkomitmen untuk menyajikan data yang akurat, terbuka, dan dapat dipertanggungjawabkan untuk seluruh masyarakat Kota Padang.
                             </p>
                             <div className="flex flex-wrap gap-6">
                                 <div className="flex items-center gap-3">
@@ -92,7 +92,7 @@ const LandingPage = () => {
                         <div className="relative group">
                             <div className="absolute -inset-4 bg-teal-500/10 rounded-[3rem] blur-2xl group-hover:bg-teal-500/20 transition-all" />
                             <div className="relative bg-neutral-900 rounded-xl p-12 text-white shadow-2xl overflow-hidden">
-                                <h4 className="text-3xl font-bold mb-6 relative z-10">Layanan Aspirasi</h4>
+                                <h4 className="text-3xl font-black mb-6 relative z-10">Layanan Aspirasi</h4>
                                 <p className="text-neutral-400 text-lg mb-10 relative z-10 leading-relaxed">
                                     Punya saran atau pertanyaan mengenai data pembangunan? Tim kami siap membantu Anda memberikan informasi terbaik.
                                 </p>

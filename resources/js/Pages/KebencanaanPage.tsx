@@ -1,44 +1,32 @@
 import React from 'react';
 import FrontWrapper from '@/Wrappers/front-wrapper';
-import { motion, AnimatePresence } from 'motion/react';
-import {
-    Cloud, MapPin, Wind, AlertTriangle, Info, ChevronRight,
-    Activity, Radar, Newspaper, LayoutDashboard
-} from 'lucide-react';
+import { motion } from 'motion/react';
+import { Cloud, MapPin, Wind, AlertTriangle, Info, ChevronRight } from 'lucide-react';
 import { cn } from '@/Lib/utils';
 import {
     WeatherWidget,
     IspuWidget,
     DisasterMap,
-    DisasterNews,
 } from "@/features/kebencanaan/components";
 
 interface KebencanaanPageProps {
     weather: any;
     ispu: any;
     disasterMap: any[];
-    disasterNews: any[];
     lastUpdate: string;
 }
 
-const KebencanaanPage = ({ weather, ispu, disasterMap, disasterNews, lastUpdate }: KebencanaanPageProps) => {
-    const [activeTab, setActiveTab] = React.useState('overview');
-
-    const tabs = [
-        { id: 'overview', label: 'Overview', icon: LayoutDashboard, desc: 'Data Cuaca & Udara' },
-        { id: 'monitoring', label: 'Monitoring', icon: Radar, desc: 'Peta Kejadian' },
-        { id: 'news', label: 'Berita / Isu', icon: Newspaper, desc: 'Informasi Terkini' },
-    ];
-
+const KebencanaanPage = ({ weather, ispu, disasterMap, lastUpdate }: KebencanaanPageProps) => {
     return (
-        <div className="min-h-screen w-full pt-4 pb-32 px-4 lg:px-2  overflow-hidden">
+        <div className="min-h-screen w-full pt-4 pb-20 px-4 md:px-8 lg:px-0  overflow-hidden">
             {/* Background Decorative Elements */}
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none -z-10">
                 <div className="absolute top-[-5%] left-[-5%] w-[30%] h-[30%] bg-teal-500/10 rounded-full blur-[100px]" />
+                <div className="absolute bottom-[-5%] right-[-5%] w-[30%] h-[30%] bg-red-500/5 rounded-full blur-[100px]" />
             </div>
 
             {/* Header Section */}
-            <div className="max-w-screen-2xl mx-auto mb-4">
+            <div className="max-w-screen-2xl mx-auto mb-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -50,12 +38,12 @@ const KebencanaanPage = ({ weather, ispu, disasterMap, disasterNews, lastUpdate 
                             <div className="p-2 bg-teal-500/20 rounded-xl">
                                 <AlertTriangle className="w-6 h-6 text-teal-600" />
                             </div>
-                            <h1 className="text-4xl md:text-4xl font-bold text-neutral-900 dark:text-white uppercase tracking-tighter leading-none">
-                                Informasi <span className="text-teal-600">Kebencanaan</span>
-                            </h1>
+                            <span className="text-sm font-bold text-teal-600 uppercase tracking-[0.2em]">Monitoring Kota</span>
                         </div>
-
-                        <p className="mt-2 text-neutral-500 dark:text-neutral-400 max-w-2xl text-xs lg:text-sm font-medium leading-relaxed">
+                        <h1 className="text-4xl md:text-4xl font-bold text-neutral-900 dark:text-white uppercase tracking-tighter leading-none">
+                            Informasi <span className="text-teal-600">Kebencanaan</span>
+                        </h1>
+                        <p className="mt-4 text-neutral-500 dark:text-neutral-400 max-w-2xl text-lg font-medium leading-relaxed">
                             Pusat kendali monitoring kondisi cuaca, kualitas udara, dan titik kejadian bencana di Kota Padang secara real-time.
                         </p>
                     </div>
@@ -71,130 +59,84 @@ const KebencanaanPage = ({ weather, ispu, disasterMap, disasterNews, lastUpdate 
                 </motion.div>
             </div>
 
-            {/* Tabs Navigation */}
-            <div className="max-w-screen-2xl mx-auto mb-2">
-                <div className="flex flex-wrap items-center gap-4 bg-white/50 dark:bg-neutral-900/50 backdrop-blur-md p-1 rounded-4xl border border-neutral-200 dark:border-neutral-800 w-fit">
-                    {tabs.map((tab) => {
-                        const Icon = tab.icon;
-                        const isActive = activeTab === tab.id;
-                        return (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={cn(
-                                    "relative flex items-center gap-3 px-4 py-2 rounded-full transition-all duration-300",
-                                    isActive
-                                        ? "text-white"
-                                        : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
-                                )}
-                            >
-                                {isActive && (
-                                    <motion.div
-                                        layoutId="activeTab"
-                                        className="absolute inset-0 bg-teal-600 rounded-full"
-                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                                    />
-                                )}
-                                <Icon className={cn("w-5 h-5 relative z-10", isActive ? "text-white" : "text-neutral-500")} />
-                                <div className="relative z-10 flex flex-col items-start">
-                                    <span className="text-xs font-bold uppercase tracking-wider leading-none">{tab.label}</span>
-                                    {/* <span className={cn("text-[10px] font-medium opacity-60 mt-1", isActive ? "text-teal-100" : "text-neutral-400")}>
-                                        {tab.desc}
-                                    </span> */}
-                                </div>
-                            </button>
-                        );
-                    })}
-                </div>
-            </div>
-
             <div className="max-w-screen-2xl mx-auto">
-                <AnimatePresence mode="wait">
-                    {activeTab === 'overview' && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+                    {/* Left Column: Weather + Summary Cards */}
+                    <div className="lg:col-span-4 space-y-6">
                         <motion.div
-                            key="overview"
-                            initial={{ opacity: 0, x: 20 }}
+                            initial={{ opacity: 0, x: -30 }}
                             animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.3 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
                         >
-                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-2 mb-10">
-                                <div className="lg:col-span-4 space-y-3">
-                                    <WeatherWidget data={weather} />
+                            <WeatherWidget data={weather} />
+                        </motion.div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="p-4 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm">
-                                            <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center text-teal-600 mb-4">
-                                                <Wind className="w-6 h-6" />
-                                            </div>
-                                            <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-1">Status Udara</p>
-                                            <p className="text-xl font-bold text-neutral-800 dark:text-white uppercase truncate">
-                                                {ispu?.status_stasiun?.[0]?.kategori?.keterangan || 'Memuat...'}
-                                            </p>
-                                        </div>
-                                        <div className="p-4 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm">
-                                            <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 mb-4">
-                                                <MapPin className="w-6 h-6" />
-                                            </div>
-                                            <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-1">Titik Kejadian</p>
-                                            <p className="text-xl font-bold text-neutral-800 dark:text-white uppercase">
-                                                {disasterMap?.length || 0} Lokasi
-                                            </p>
-                                        </div>
-                                    </div>
+                        <motion.div
+                            initial={{ opacity: 0, x: -30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.5, delay: 0.3 }}
+                            className="grid grid-cols-2 gap-4"
+                        >
+                            <div className="p-5 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm">
+                                <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center text-teal-600 mb-4">
+                                    <Wind className="w-5 h-5" />
                                 </div>
-                                <div className="lg:col-span-8">
-                                    <IspuWidget data={ispu} />
+                                <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1">Status Udara</p>
+                                <p className="text-lg font-bold text-neutral-800 dark:text-white uppercase truncate">
+                                    {ispu?.status_stasiun?.[0]?.kategori?.keterangan || 'Memuat...'}
+                                </p>
+                            </div>
+                            <div className="p-5 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm">
+                                <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 mb-4">
+                                    <MapPin className="w-5 h-5" />
                                 </div>
+                                <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1">Titik Kejadian</p>
+                                <p className="text-lg font-bold text-neutral-800 dark:text-white uppercase">
+                                    {disasterMap?.length || 0} Lokasi
+                                </p>
                             </div>
                         </motion.div>
-                    )}
+                    </div>
 
-                    {activeTab === 'monitoring' && (
+                    {/* Right Column: Map */}
+                    <div className="lg:col-span-8">
                         <motion.div
-                            key="monitoring"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.3 }}
-                            className="min-h-[600px]"
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.5, delay: 0.4 }}
+                            className="h-full min-h-[500px] lg:min-h-full"
                         >
-                            <div className="bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 p-4 h-fit shadow-2xl overflow-hidden relative group">
-                                <div className="absolute top-8 left-8 z-10">
-                                    <div className="bg-white/90 dark:bg-black/80 backdrop-blur-md px-6 py-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 flex items-center gap-4 shadow-xl">
-                                        <div className="w-4 h-4 rounded-full bg-red-500 animate-pulse" />
-                                        <div>
-                                            <span className="block text-sm font-bold text-neutral-800 dark:text-white uppercase tracking-wider">Live Map Kejadian</span>
-                                            <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest">{disasterMap?.length || 0} Titik Terdeteksi</span>
-                                        </div>
+                            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 h-full shadow-xl overflow-hidden relative group">
+                                {/* <div className="absolute top-8 left-8 z-10">
+                                    <div className="bg-white/90 dark:bg-black/80 backdrop-blur-md px-5 py-3 rounded-xl border border-neutral-200 dark:border-neutral-800 flex items-center gap-3 shadow-lg">
+                                        <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
+                                        <span className="text-sm font-bold text-neutral-800 dark:text-white uppercase tracking-wider">Live Map Kejadian</span>
                                     </div>
-                                </div>
+                                </div> */}
                                 <DisasterMap points={disasterMap} />
                             </div>
                         </motion.div>
-                    )}
+                    </div>
+                </div>
 
-                    {activeTab === 'news' && (
-                        <motion.div
-                            key="news"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            <DisasterNews news={disasterNews} />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                {/* ISPU Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                    className="mb-3"
+                >
+                    <IspuWidget data={ispu} />
+                </motion.div>
 
                 {/* Emergency Contact */}
-                {/* <motion.div
+                <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.6 }}
-                    className=" p-10 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-2xl mt-24 relative overflow-hidden"
+                    className="mt-12 p-10 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-2xl relative overflow-hidden"
                 >
-                    <div className=" bg-teal-500/20 rounded-full blur-[80px]" />
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/20 rounded-full blur-[80px] -mr-32 -mt-32" />
                     <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
                         <div className="text-center md:text-left flex items-center gap-6">
                             <div className="hidden sm:flex w-16 h-16 rounded-xl bg-teal-500/20 items-center justify-center text-teal-400">
@@ -215,7 +157,7 @@ const KebencanaanPage = ({ weather, ispu, disasterMap, disasterNews, lastUpdate 
                             <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                         </a>
                     </div>
-                </motion.div> */}
+                </motion.div>
             </div>
         </div>
     );

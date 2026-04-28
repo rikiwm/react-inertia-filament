@@ -61,12 +61,12 @@ const KinerjaDetailPage = ({ id, initialProgulData }: Props) => {
                 <div className="max-w-screen-2xl mx-auto px-4 lg:px-0 space-y-6">
 
                     {/* Header Section */}
-                    <div className="flex  items-start gap-3">
+                    <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
                             <Package className="w-6 h-6" />
                         </div>
                         <div>
-                            <h1 className="lg:text-3xl md:text-2xl text-xl font-bold text-neutral-900 dark:text-neutral-100">
+                            <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
                                 {activasi?.name}
                             </h1>
                             <div className="flex flex-wrap gap-4 mt-2">

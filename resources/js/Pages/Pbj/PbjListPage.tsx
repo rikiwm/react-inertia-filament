@@ -84,11 +84,11 @@ const PbjListPage = ({
                                     <Package className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h1 className="lg:text-3xl md:text-2xl text-xl font-bold text-neutral-900 dark:text-neutral-100">
+                                    <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
                                         Pengadaan Barang & Jasa
 
                                     </h1>
-                                    <p className="text-neutral-500 lg:text-sm md:text-xs text-xs dark:text-neutral-400 font-medium">
+                                    <p className="text-neutral-500 dark:text-neutral-400 font-medium">
                                         Rincian Paket Terintegrasi Pemerintah Kota Padang
                                     </p>
                                 </div>
