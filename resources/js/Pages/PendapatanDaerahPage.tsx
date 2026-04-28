@@ -133,11 +133,7 @@ const PendapatanDaerahPage = ({ initialTahun, initialData, initialRealisasiDetai
                         </div>
 
                         <div className="flex items-center gap-3">
-<<<<<<< HEAD
                             {/* <label htmlFor="year-select" className="lg:text-sm md:text-xs text-xs text-neutral-700 dark:text-neutral-300">
-=======
-                            <label htmlFor="year-select" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
->>>>>>> parent of ca842f5 (feat: implement news scraping service for programs and enhance responsive layout across dashboard pages)
                                 Tahun Anggaran:
                             </label>
                             <select

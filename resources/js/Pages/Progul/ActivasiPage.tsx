@@ -16,21 +16,13 @@ import { cn } from '@/Lib/utils';
 
 interface Props {
     id: number;
-<<<<<<< HEAD
     progulName?: string;
     hashtagNews?: any[];
     initialProgulData?: any[];
 }
 
 const ActivasiPage = ({ id, progulName, hashtagNews, initialProgulData }: Props) => {
-    const [activeTab, setActiveTab] = useState('overview');
     const { getActivasiList, getProgulById, loading } = useProgulData(initialProgulData);
-=======
-}
-
-const ActivasiPage = ({ id }: Props) => {
-    const { getActivasiList, getProgulById, loading } = useProgulData();
->>>>>>> parent of ca842f5 (feat: implement news scraping service for programs and enhance responsive layout across dashboard pages)
 
     const progul = useMemo(() => getProgulById(id), [getProgulById, id]);
     const activasiList = useMemo(() => getActivasiList(id), [getActivasiList, id]);

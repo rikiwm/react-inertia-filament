@@ -102,13 +102,8 @@ const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: numbe
                                 </div>
                             </div>
 
-<<<<<<< HEAD
                             <div className="flex  md:flex-row items-center gap-3">
                                 {/* <label htmlFor="year-select" className="text-xs md:text-sm font-medium text-neutral-700 dark:text-neutral-300">
-=======
-                            <div className="flex items-center gap-3">
-                                <label htmlFor="year-select" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
->>>>>>> parent of ca842f5 (feat: implement news scraping service for programs and enhance responsive layout across dashboard pages)
                                     Tahun Anggaran:
                                 </label>
                                 <select

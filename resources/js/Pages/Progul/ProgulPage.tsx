@@ -34,7 +34,6 @@ const getCategoryStyles = (id: number) => {
     return styles[id] || { icon: LayoutDashboard, color: 'text-neutral-600', border: 'border-neutral-200', bg: 'bg-neutral-50' };
 };
 
-<<<<<<< HEAD
 interface ProgulPageProps {
     initialCategories?: any[];
     initialProgulData?: any[];
@@ -47,10 +46,6 @@ const ProgulPage = ({ initialCategories, initialProgulData }: ProgulPageProps) =
     const categories = initialCategories || hookCategories;
     const loading = !initialCategories && hookLoading;
     const error = !initialCategories && hookError;
-=======
-const ProgulPage = () => {
-    const { categories, loading, error } = useProgulData();
->>>>>>> parent of ca842f5 (feat: implement news scraping service for programs and enhance responsive layout across dashboard pages)
 
     return (
         <>
