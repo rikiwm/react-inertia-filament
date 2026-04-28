@@ -30,7 +30,7 @@ Route::inertia('/dashboard/belanja', 'BelanjaDaerahPage')->name('belanja-daerah'
 Route::inertia('/dashboard/pendapatan', 'PendapatanDaerahPage')->name('pendapatan-daerah');
 
 // Pengadaan Barang & Jasa (PBJ)
-Route::inertia('/dashboard/pbj', 'Pbj/PbjListPage')->name('pbj.list');
+Route::get('/dashboard/pbj', [PbjInaprocController::class, 'index'])->name('pbj.list');
 Route::inertia('/dashboard/pbj/detail', 'Pbj/PbjShowPage')->name('pbj.show');
 Route::get('/satker', [PbjInaprocController::class, 'satker'])->name('api.pbj.satker');
 

@@ -33,6 +33,13 @@ final class SummaryService
             $data = Cache::get($cacheKey, []);
 
             if ($kategori === 'CATALOG') {
+                $allowedStatuses = ['COMPLETED', 'ON_ADDENDUM', 'ON_PROCESS', 'PAYMENT_OUTSIDE_SYSTEM'];
+                $data = collect($data)->filter(function ($item) use ($allowedStatuses) {
+                    $status = strtoupper(str_replace(' ', '_', (string) ($item['status'] ?? '')));
+                    return in_array($status, $allowedStatuses);
+                })->values()->toArray();
+            }
+            if ($kategori === 'CATALOG') {
                 $summary['kategori']['CATALOG']['status'] = collect($data)->groupBy(function ($item) {
                     return strtoupper((string) ($item['status'] ?? 'UNKNOWN'));
                 })->map(function ($item) {

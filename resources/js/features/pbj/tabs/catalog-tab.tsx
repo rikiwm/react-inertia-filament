@@ -57,6 +57,13 @@ export default function CatalogTab({ tahun, searchQuery, selectedSatker, initial
     const filteredData = useMemo(() => {
         let result = data;
 
+        // Filter status khusus untuk CATALOG
+        const allowedStatuses = ['COMPLETED', 'ON_ADDENDUM', 'ON_PROCESS', 'PAYMENT_OUTSIDE_SYSTEM'];
+        result = result.filter(item => {
+            const status = String(item.status || '').toUpperCase().replace(/ /g, '_');
+            return allowedStatuses.includes(status);
+        });
+
         if (selectedSatker && selectedSatker !== 'all') {
             result = result.filter(item => item.nama_satker === selectedSatker);
         }
