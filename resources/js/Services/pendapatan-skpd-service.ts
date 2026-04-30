@@ -21,7 +21,7 @@ const CACHE_KEY = "pendapatan_skpd";
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /** URL dasar API Dashboard Padang. */
-const BASE_URL = "http://103.141.75.86:8081/index.php/api/v1";
+const BASE_URL = "/api/proxy/103";
 
 /**
  * Membangun URL endpoint list-pendapatan-skpd untuk tahun tertentu.

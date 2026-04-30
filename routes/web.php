@@ -63,5 +63,12 @@ Route::group([
     Route::post('/', 'store')->name('submit');
 });
 
+// API Proxy to bypass HTTPS mixed content block from browser to HTTP 103... IPs
+Route::get('/api/proxy/103/{path}', function (string $path) {
+    $url = "http://103.141.75.86:8081/index.php/api/v1/" . $path;
+    $response = \Illuminate\Support\Facades\Http::get($url, request()->query());
+    return response()->json($response->json(), $response->status());
+})->where('path', '.*');
+
 // CATCH-ALL ROUTE untuk Menu Dinamis (Placeholder)
 Route::get('/{any}', [DynamicMenuController::class, 'show'])->where('any', '.*');

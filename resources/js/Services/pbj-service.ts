@@ -24,7 +24,7 @@ const CACHE_KEY = "pbj_data";
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /** URL dasar API Dashboard Padang. */
-const PBJ_BASE_URL = "http://103.141.75.86:8081/index.php/api/v1";
+const PBJ_BASE_URL = "/api/proxy/103";
 
 /**
  * Membangun URL endpoint PBJ untuk tahun tertentu.

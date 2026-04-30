@@ -154,7 +154,7 @@ export async function fetchRealisasiPendapatan(
     tahun: number | string,
     signal?: AbortSignal,
 ): Promise<RealisasiPendapatanResponse> {
-    const url = `http://103.141.75.86:8081/index.php/api/v1/realisasi-pendapatan/${tahun}`;
+    const url = `/api/proxy/103/realisasi-pendapatan/${tahun}`;
 
     try {
         const response = await fetch(url, {
