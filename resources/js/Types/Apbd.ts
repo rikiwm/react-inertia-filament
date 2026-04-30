@@ -4,7 +4,7 @@
  * Definisi tipe data untuk respons API APBD (Anggaran Pendapatan dan Belanja Daerah)
  * dari Dashboard Kota Padang.
  *
- * Endpoint: https://dashboard.padang.go.id/api/v1/apbd?tahun={tahun}
+ * Endpoint: http://103.141.75.86:8081/api/v1/apbd?tahun={tahun}
  */
 
 // ─── API Response Shape ──────────────────────────────────────────────────────

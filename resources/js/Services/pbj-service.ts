@@ -24,7 +24,7 @@ const CACHE_KEY = "pbj_data";
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /** URL dasar API Dashboard Padang. */
-const PBJ_BASE_URL = "https://dashboard.padang.go.id/api/v1";
+const PBJ_BASE_URL = "http://103.141.75.86:8081/index.php/api/v1";
 
 /**
  * Membangun URL endpoint PBJ untuk tahun tertentu.
@@ -77,45 +77,45 @@ function findItem<T extends { name: string }>(items: { name: string }[], name: s
 export function transformResponse(raw: PbjApiResponse): PbjSummary {
     const items = raw.result.item;
 
-    const hibah     = findItem<PbjHibah>(items, "hibah");
-    const ePurch    = findItem<PbjEPurchasing>(items, "e-purchasing");
-    const tender    = findItem<PbjTender>(items, "tender");
+    const hibah = findItem<PbjHibah>(items, "hibah");
+    const ePurch = findItem<PbjEPurchasing>(items, "e-purchasing");
+    const tender = findItem<PbjTender>(items, "tender");
     const nonTender = findItem<PbjNonTender>(items, "non-tender");
 
-    const hibahPaket      = parsePacketCount(hibah?.total_paket ?? "0");
-    const ePurchPaket     = parsePacketCount(ePurch?.total_paket ?? "0");
-    const tenderPaket     = parsePacketCount(tender?.total_paket ?? "0");
-    const nonTenderPaket  = parsePacketCount(nonTender?.total_paket ?? "0");
+    const hibahPaket = parsePacketCount(hibah?.total_paket ?? "0");
+    const ePurchPaket = parsePacketCount(ePurch?.total_paket ?? "0");
+    const tenderPaket = parsePacketCount(tender?.total_paket ?? "0");
+    const nonTenderPaket = parsePacketCount(nonTender?.total_paket ?? "0");
 
     return {
-        totalPagu:        (hibah?.total_pagu ?? 0) + (ePurch?.total_pagu ?? 0) + (tender?.total_pagu ?? 0) + (nonTender?.total_pagu ?? 0),
-        totalPaket:       hibahPaket + ePurchPaket + tenderPaket + nonTenderPaket,
+        totalPagu: (hibah?.total_pagu ?? 0) + (ePurch?.total_pagu ?? 0) + (tender?.total_pagu ?? 0) + (nonTender?.total_pagu ?? 0),
+        totalPaket: hibahPaket + ePurchPaket + tenderPaket + nonTenderPaket,
         totalBerlangsung: (hibah?.total_berlangsung ?? 0) + (ePurch?.rekap?.ON_PROCESS ?? 0) + (tender?.rekap?.Berlangsung ?? 0) + (nonTender?.rekap?.Berlangsung ?? 0),
-        totalSelesai:     (hibah?.total_selesai ?? 0) + (ePurch?.rekap?.COMPLETED ?? 0) + (nonTender?.rekap?.Selesai ?? 0),
+        totalSelesai: (hibah?.total_selesai ?? 0) + (ePurch?.rekap?.COMPLETED ?? 0) + (nonTender?.rekap?.Selesai ?? 0),
 
         hibah: {
-            pagu:        hibah?.total_pagu ?? 0,
-            paket:       hibahPaket,
+            pagu: hibah?.total_pagu ?? 0,
+            paket: hibahPaket,
             berlangsung: hibah?.total_berlangsung ?? 0,
-            selesai:     hibah?.total_selesai ?? 0,
+            selesai: hibah?.total_selesai ?? 0,
         },
         ePurchasing: {
-            pagu:           ePurch?.total_pagu ?? 0,
-            paket:          ePurchPaket,
-            onProcess:      ePurch?.rekap?.ON_PROCESS ?? 0,
-            completed:      ePurch?.rekap?.COMPLETED ?? 0,
+            pagu: ePurch?.total_pagu ?? 0,
+            paket: ePurchPaket,
+            onProcess: ePurch?.rekap?.ON_PROCESS ?? 0,
+            completed: ePurch?.rekap?.COMPLETED ?? 0,
             paymentOutside: ePurch?.rekap?.PAYMENT_OUTSIDE_SYSTEM ?? 0,
         },
         tender: {
-            pagu:        tender?.total_pagu ?? 0,
-            paket:       tenderPaket,
+            pagu: tender?.total_pagu ?? 0,
+            paket: tenderPaket,
             berlangsung: tender?.rekap?.Berlangsung ?? 0,
         },
         nonTender: {
-            pagu:        nonTender?.total_pagu ?? 0,
-            paket:       nonTenderPaket,
+            pagu: nonTender?.total_pagu ?? 0,
+            paket: nonTenderPaket,
             berlangsung: nonTender?.rekap?.Berlangsung ?? 0,
-            selesai:     nonTender?.rekap?.Selesai ?? 0,
+            selesai: nonTender?.rekap?.Selesai ?? 0,
         },
     };
 }

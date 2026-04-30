@@ -4,7 +4,7 @@
  * Definisi tipe data untuk respons API List Pendapatan Per-SKPD
  * dari Dashboard Kota Padang.
  *
- * Endpoint: https://dashboard.padang.go.id/api/v1/list-pendapatan-skpd/{tahun}
+ * Endpoint: http://103.141.75.86:8081/api/v1/list-pendapatan-skpd/{tahun}
  */
 
 // ─── API Response Shape ───────────────────────────────────────────────────────

@@ -64,6 +64,7 @@ export async function fetchAllProgulData(signal?: AbortSignal): Promise<ProgulDa
             signal,
             headers: {
                 "Accept": "application/json",
+                "ngrok-skip-browser-warning": "69420",
             },
         });
 

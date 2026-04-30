@@ -48,17 +48,17 @@ export function useRealisasiProgram(slug: string, tahun: number | string): UseRe
             setLoading(true);
             setError(null);
 
-            const response = await fetch(`https://dashboard.padang.go.id/api/v1/realisasi-program/${slug}/${tahun}`);
+            const response = await fetch(`http://103.141.75.86:8081/index.php/api/v1/realisasi-program/${slug}/${tahun}`);
             if (!response.ok) {
                 throw new Error(`Gagal memuat data realisasi program (${response.status})`);
             }
 
             const json: RealisasiProgramResponse = await response.json();
-            
+
             // API might return [] if empty, we handle it
             setData(json.result.data);
             setSummary(json.result.summary);
-            
+
         } catch (err) {
             if (err instanceof Error && err.name !== "AbortError") {
                 setError(err);

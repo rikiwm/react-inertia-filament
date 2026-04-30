@@ -18,7 +18,7 @@ const CACHE_KEY = "apbd_data";
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes (APBD changes less frequently)
 
 /** URL dasar API Dashboard Padang. */
-const APBD_BASE_URL = "https://dashboard.padang.go.id/api/v1";
+const APBD_BASE_URL = "http://103.141.75.86:8081/index.php/api/v1";
 
 /**
  * Membangun URL endpoint APBD untuk tahun tertentu.
@@ -43,13 +43,13 @@ function buildApbdUrl(tahun: number | string): string {
  */
 function normalizeItem(raw: ApbdApiResponse["result"]["item"][0]): ApbdItemNormalized {
     const persenRealisasi = raw.persen;
-    const persenSisa      = parseFloat(raw.persentase_sisa) || (100 - persenRealisasi);
+    const persenSisa = parseFloat(raw.persentase_sisa) || (100 - persenRealisasi);
 
     return {
-        name:            raw.name,
-        anggaran:        raw.anggaran,
-        realisasi:       raw.realisasi,
-        sisa:            raw.sisa,
+        name: raw.name,
+        anggaran: raw.anggaran,
+        realisasi: raw.realisasi,
+        sisa: raw.sisa,
         persenRealisasi,
         persenSisa,
     };
@@ -64,7 +64,7 @@ function normalizeItem(raw: ApbdApiResponse["result"]["item"][0]): ApbdItemNorma
 export function transformResponse(raw: any): ApbdSummary {
     const items = raw.result.item;
 
-    const belanja    = items.find((i) => i.slug === "belanja-daerah");
+    const belanja = items.find((i) => i.slug === "belanja-daerah");
     const pendapatan = items.find((i) => i.slug === "pendapatan-daerah");
 
     if (!belanja) {
@@ -75,8 +75,8 @@ export function transformResponse(raw: any): ApbdSummary {
     }
 
     return {
-        tahun:            raw.result.tahun,
-        belanjaDaerah:    normalizeItem(belanja),
+        tahun: raw.result.tahun,
+        belanjaDaerah: normalizeItem(belanja),
         pendapatanDaerah: normalizeItem(pendapatan),
     };
 }

@@ -4,7 +4,7 @@
  * Definisi tipe data untuk respons API Pengadaan Barang dan Jasa (PBJ)
  * dari Dashboard Kota Padang.
  *
- * Endpoint: https://dashboard.padang.go.id/api/v1/pbj?tahun={tahun}
+ * Endpoint: http://103.141.75.86:8081/api/v1/pbj?tahun={tahun}
  */
 
 // ─── API Response Shape ──────────────────────────────────────────────────────

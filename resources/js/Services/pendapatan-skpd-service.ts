@@ -21,7 +21,7 @@ const CACHE_KEY = "pendapatan_skpd";
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /** URL dasar API Dashboard Padang. */
-const BASE_URL = "https://dashboard.padang.go.id/api/v1";
+const BASE_URL = "http://103.141.75.86:8081/index.php/api/v1";
 
 /**
  * Membangun URL endpoint list-pendapatan-skpd untuk tahun tertentu.
@@ -135,7 +135,14 @@ export async function fetchPendapatanSkpd(
     console.log(`[Cache MISS] Fetching Pendapatan SKPD ${tahun} from API...`);
     const url = buildUrl(tahun);
 
-    const response = await fetch(url, { signal });
+    const response = await fetch(url, {
+        signal,
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "69420",
+        },
+    });
 
     if (!response.ok) {
         throw new Error(`API Pendapatan SKPD merespons dengan status HTTP ${response.status}`);
