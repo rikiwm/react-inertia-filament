@@ -48,7 +48,7 @@ export function useRealisasiProgram(slug: string, tahun: number | string): UseRe
             setLoading(true);
             setError(null);
 
-            const response = await fetch(`/api/proxy/103/realisasi-program/${slug}/${tahun}`);
+            const response = await fetch(`https://dashboard.padang.go.id/api/v1/realisasi-program/${slug}/${tahun}`);
             if (!response.ok) {
                 throw new Error(`Gagal memuat data realisasi program (${response.status})`);
             }

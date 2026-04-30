@@ -101,7 +101,7 @@ export async function fetchNewsArticles(
 ): Promise<FetchNewsResult> {
     const query = searchQuery.trim() || CATEGORY_QUERY_MAP[category];
 
-    const url = new URL(`${GNEWS_BASE_URL}/search`);
+    const url = new URL(`${GNEWS_BASE_URL}/search`, window.location.origin);
     url.searchParams.set("q", query);
     url.searchParams.set("lang", "id");
     url.searchParams.set("country", "id");
@@ -166,7 +166,7 @@ export async function fetchRelatedArticles(
 ): Promise<NewsArticle[]> {
     const query = sourceName || "Indonesia";
 
-    const url = new URL(`${GNEWS_BASE_URL}/search`);
+    const url = new URL(`${GNEWS_BASE_URL}/search`, window.location.origin);
     url.searchParams.set("q", query);
     url.searchParams.set("lang", "id");
     url.searchParams.set("max", "5");

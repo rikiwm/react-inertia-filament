@@ -31,7 +31,7 @@ export interface BelanjaDaerahResponse {
     data: SkpdBelanja[];
 }
 
-const BASE_URL = "http://103.141.74.143/api/public/summary-report";
+const BASE_URL = "/api/summary-report";
 const CACHE_KEY_PREFIX = "belanja_daerah";
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
@@ -71,7 +71,6 @@ export async function fetchBelanjaDaerahBySkpd(
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                "ngrok-skip-browser-warning": "69420",
             },
         });
 

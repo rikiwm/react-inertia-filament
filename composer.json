@@ -23,6 +23,7 @@
         "joaopaulolndev/filament-edit-profile": "^2.0",
         "laravel/framework": "^12.22",
         "laravel/pulse": "^1.4",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "notebrainslab/filament-menu-manager": "^1.0",
         "predis/predis": "^3.4",

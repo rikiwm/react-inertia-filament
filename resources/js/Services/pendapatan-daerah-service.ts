@@ -55,7 +55,7 @@ export interface RealisasiPendapatanResponse {
     result: RealisasiPendapatanCategory[];
 }
 
-const BASE_URL = "http://103.141.74.143/api/public/summary-report";
+const BASE_URL = "/api/summary-report";
 const CACHE_KEY_PREFIX = "pendapatan_daerah";
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
@@ -154,14 +154,13 @@ export async function fetchRealisasiPendapatan(
     tahun: number | string,
     signal?: AbortSignal,
 ): Promise<RealisasiPendapatanResponse> {
-    const url = `/api/proxy/103/realisasi-pendapatan/${tahun}`;
+    const url = `/api/realisasi-pendapatan/${tahun}`;
 
     try {
         const response = await fetch(url, {
             signal,
             headers: {
                 "Accept": "application/json",
-                "ngrok-skip-browser-warning": "69420",
             },
         });
 

@@ -14,7 +14,7 @@ import type { NewsArticle } from "@/Types/types";
 export const GNEWS_TOKEN: string =
     import.meta.env.VITE_GNEWS_TOKEN ?? "a3fcb25cb5b5e258d98d09e4f8b47efc";
 
-export const GNEWS_BASE_URL = "https://gnews.io/api/v4";
+export const GNEWS_BASE_URL = "/api/news";
 
 /** Number of articles per page request. */
 export const ARTICLES_PER_PAGE = 9;

@@ -53,7 +53,7 @@ export interface ActivasiCategory {
     count: number;
 }
 
-const API_URL = "http://103.141.74.143/api/progul";
+const API_URL = "/api/progul";
 
 /**
  * Mengambil semua data progul dari API.

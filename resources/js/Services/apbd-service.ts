@@ -18,7 +18,7 @@ const CACHE_KEY = "apbd_data";
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes (APBD changes less frequently)
 
 /** URL dasar API Dashboard Padang. */
-const APBD_BASE_URL = "/api/proxy/103";
+const APBD_BASE_URL = "/api";
 
 /**
  * Membangun URL endpoint APBD untuk tahun tertentu.

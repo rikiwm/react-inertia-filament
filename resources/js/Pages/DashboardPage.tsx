@@ -141,7 +141,7 @@ const DashboardPage = () => {
                             )}
                         </div>
                         <a
-                            href={`http://103.141.75.86:8081/index.php/api/v1/pbj?tahun=${tahun}`}
+                            href={`https://dashboard.padang.go.id/api/v1/pbj?tahun=${tahun}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs text-teal-500 hover:underline hidden sm:inline"
@@ -218,7 +218,7 @@ const DashboardPage = () => {
                 <p className="text-center text-neutral-400 dark:text-neutral-600 text-xs pb-4">
                     Data PBJ bersumber dari{" "}
                     <a
-                        href="http://103.141.75.86:8081"
+                        href="https://dashboard.padang.go.id"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-teal-500 hover:underline"
