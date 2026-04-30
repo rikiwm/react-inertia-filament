@@ -1,5 +1,5 @@
 /**
- * @file Types/PendapatanSkpd.ts
+ * @file Types/pendapatan-skpd.ts
  *
  * Definisi tipe data untuk respons API List Pendapatan Per-SKPD
  * dari Dashboard Kota Padang.

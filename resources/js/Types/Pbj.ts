@@ -1,5 +1,5 @@
 /**
- * @file Types/Pbj.ts
+ * @file Types/pbj.ts
  *
  * Definisi tipe data untuk respons API Pengadaan Barang dan Jasa (PBJ)
  * dari Dashboard Kota Padang.
