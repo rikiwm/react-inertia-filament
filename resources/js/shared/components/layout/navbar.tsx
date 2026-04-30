@@ -66,8 +66,8 @@ const Navbar = () => {
     return (
         <motion.div
             className={cn(
-                "shadow-input fixed lg:inset-x-4 inset-x-2 top-1.5 z-20 mx-auto max-w-screen-2xl rounded-full lg:top-2.5",
-                "flex items-center justify-between space-x-4 bg-black/50 px-6 py-2 lg:py-2",
+                "shadow-input fixed lg:inset-x-4 inset-x-2 top-1.5 z-20 mx-auto max-w-screen-2xl rounded-xl lg:top-2.5",
+                "flex items-center justify-between space-x-4 bg-black/50 px-4 py-2 lg:py-2",
                 "border-1 border-teal-400/50 dark:border-teal-700/60",
             )}
             initial={{

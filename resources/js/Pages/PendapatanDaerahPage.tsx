@@ -119,8 +119,8 @@ const PendapatanDaerahPage = ({ initialTahun, initialData, initialRealisasiDetai
                     <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
 
-                            <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
-                                <BarChart3 className="w-6 h-6" />
+                            <div className="w-12 h-10 lg:h-12 rounded-md lg:rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
+                                <BarChart3 className="w-6 h-5" />
                             </div>
                             <div>
                                 <h1 className="text-lg md:text-3xl font-bold text-neutral-900 dark:text-neutral-100">
@@ -150,7 +150,7 @@ const PendapatanDaerahPage = ({ initialTahun, initialData, initialRealisasiDetai
                             </select> */}
                             <button
                                 onClick={() => router.visit(route("analitik"))}
-                                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-900 border border-teal-200 dark:border-teal-800 rounded-lg text-xs font-bold text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30 transition-all shadow-sm"
+                                className="flex items-center gap-2 px-2 py-2 bg-white dark:bg-neutral-900 border border-teal-200 dark:border-teal-800 rounded-lg text-xs font-bold text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30 transition-all shadow-sm"
                             >
                                 <Activity className="w-4 h-4" />
                                 Analitik

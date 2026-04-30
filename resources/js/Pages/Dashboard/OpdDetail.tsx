@@ -61,10 +61,10 @@ function StatCard({
     tahun?: string;
 }) {
     return (
-        <div className="mt-4 rounded-xl border border-teal-200 bg-teal-50/80 p-2 dark:border-teal-900 dark:bg-neutral-900/60">
-            <div className="mb-2 flex flex-1 justify-between rounded-md border border-teal-200 bg-teal-200/80 p-1 dark:border-teal-950 dark:bg-teal-800/10">
-                <p className="text-xs font-semisemibold text-neutral-600 dark:text-teal-400">{label}</p>
-                <p className="text-xs font-semisemibold text-neutral-600 dark:text-lime-300">{tahun}</p>
+        <div className="mt-2 rounded-xl border border-teal-200 bg-teal-50/80 p-1 dark:border-teal-900 dark:bg-neutral-900/60">
+            <div className="mb-2 flex flex-1 justify-between rounded-md border  border-teal-200 bg-teal-600/80 p-2 dark:border-teal-950 dark:bg-teal-800/10">
+                <p className="text-xs font-semisemibold text-neutral-100 dark:text-teal-400">{label}</p>
+                <p className="text-xs font-semisemibold text-neutral-100 dark:text-lime-300">{tahun}</p>
             </div>
             <p className="mb-2 px-2 text-2xl font-semisemibold text-neutral-900 dark:text-white">{value}</p>
 
@@ -86,7 +86,7 @@ function StatCard({
             )}
 
             {subLabel && subValue && (
-                <div className="border-t border-neutral-200 pt-4 dark:border-teal-700">
+                <div className="border-t border-neutral-200 pt-4 px-2 lg:px-3 dark:border-teal-700">
                     <p className="mb-1 text-xs font-medium text-neutral-600 dark:text-neutral-400">{subLabel}</p>
                     <p className="text-xs font-medium text-neutral-900 dark:text-white">{subValue}</p>
                 </div>
@@ -648,22 +648,22 @@ function OpdDetailContent({ type, namaOpd, tahun, slug, initialOpdDetail, realis
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className=" text-left">
-                        <div className="flex items-end justify-between gap-3">
-                            <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
-                                    <BarChart3 className="w-6 h-6" />
+                        <div className="flex items-start justify-between gap-1">
+                            <div className="flex items-start gap-2">
+                                <div className="w-12 h-10 lg:h-12 rounded-md lg:rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
+                                    <BarChart3 className="w-6 h-5" />
                                 </div>
                                 <div>
-                                    <h1 className="text-lg lg:text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+                                    <h1 className="text-lg lg:text-3xl font-semibold text-neutral-900 dark:text-neutral-100 line-clamp-1">
                                         {namaOpd}
                                     </h1>
-                                    <p className="text-xs md:text-md text-neutral-500 dark:text-neutral-400 font-medium">
-                                        <span className="font-medium text-teal-600 dark:text-teal-400">{data?.kd_unit}</span> - {labels.title.toLowerCase()} per satuan kerja perangkat daerah
+                                    <p className="text-xs md:text-md text-neutral-500 dark:text-neutral-400 font-medium capitalize">
+                                        {labels.title} - <code>{data?.kd_unit}</code>
                                     </p>
                                 </div>
                             </div>
                             {/* ── Year Selector ───────────────────────────────────── */}
-                            <div className="flex items-end gap-3 bg-white dark:bg-neutral-900/50 p-2 rounded-md border border-teal-100 dark:border-teal-900/50 shadow-xs justify-end">
+                            <div className="flex items-end gap-1 bg-white dark:bg-neutral-900/50 p-2 rounded-md border border-teal-100 dark:border-teal-900/50 shadow-xs justify-end">
                                 <div className="bg-teal-50 dark:bg-teal-900/20 pl-2  rounded-lg text-teal-600 dark:text-teal-400">
                                     <Calendar className="w-4 h-4" />
                                 </div>
@@ -721,7 +721,7 @@ function OpdDetailContent({ type, namaOpd, tahun, slug, initialOpdDetail, realis
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="grid grid-cols-1 gap-2 lg:gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        className="grid grid-cols-1 gap-1 lg:gap-4 md:grid-cols-2 lg:grid-cols-4">
                         <StatCard
                             label={labels.paguLabel}
                             value={formatRupiah(summary.pagu)}

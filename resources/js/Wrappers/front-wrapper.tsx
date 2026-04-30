@@ -81,7 +81,7 @@ const FrontWrapper: FC<LayoutProps> = (props) => {
             {/* Wrapper konten dengan latar grid dekoratif */}
             <div
                 className={cn(
-                    "w-screen pb-32 lg:pb-0",
+                    "w-screen pb-16 lg:pb-0",
                     "[background-size:70px_70px]",
                     /* Mode terang: garis grid abu-abu muda */
                     "[background-image:linear-gradient(to_right,#f1f1f1_1px,transparent_1px),linear-gradient(to_bottom,#f1f1f1_1px,transparent_1px)]",

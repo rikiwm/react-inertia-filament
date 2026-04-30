@@ -11,7 +11,8 @@ import {
     ArrowUpRight,
     Sparkles,
     ShieldCheck,
-    Globe2
+    Globe2,
+    GlobeLockIcon
 } from 'lucide-react';
 import { SharedData } from '@/Types/types';
 import { cn } from '@/Lib/utils';
@@ -27,7 +28,7 @@ const Footer = () => {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="relative w-full overflow-hidden bg-white/30 dark:bg-black/30 backdrop-blur-xl border-t border-neutral-200/50 dark:border-neutral-800/50 pt-16 pb-32 lg:pb-12">
+        <footer className="relative w-full overflow-hidden bg-white/30 dark:bg-black/30 backdrop-blur-xl border-t border-neutral-200/50 dark:border-neutral-800/50 pt-16 pb-20 lg:pb-12">
             {/* Background Decorative Accent */}
             <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[500px] h-[500px] bg-teal-500/5 dark:bg-teal-500/10 rounded-full blur-[100px] pointer-events-none" />
 
@@ -61,7 +62,7 @@ const Footer = () => {
 
                     {/* Quick Navigation (from Menus) */}
                     <div>
-                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-teal-600 dark:text-teal-400 mb-6">Navigasi Utama</h4>
+                        <h4 className="text-xs font-black  tracking-[0.1em] text-teal-600 dark:text-teal-400 mb-6">Navigasi Utama</h4>
                         <ul className="space-y-4">
                             {menus?.slice(0, 5).map((menu) => (
                                 <li key={menu.id}>
@@ -73,18 +74,18 @@ const Footer = () => {
 
                     {/* Important Services */}
                     <div>
-                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-teal-600 dark:text-teal-400 mb-6">Layanan Digital</h4>
+                        <h4 className="text-xs font-semibold  tracking-[0.1em] text-teal-600 dark:text-teal-400 mb-6">Partner Data</h4>
                         <ul className="space-y-4">
-                            <li><FooterLink href="/dashboard" label="Dashboard Terpadu" isExternal /></li>
-                            <li><FooterLink href="/pk-wako" label="Kinerja Wali Kota" isExternal /></li>
-                            <li><FooterLink href="/progul" label="Program Unggulan" isExternal /></li>
-                            <li><FooterLink href="/dashboard/pbj" label="E-Katalog Padang" isExternal /></li>
+                            <li><FooterLink href="https://lpse.padang.go.id/" label="Inaproc LPSE" isExternal /></li>
+                            <li><FooterLink href="https://bpkad.padang.go.id/" label="BPKAD" isExternal /></li>
+                            <li><FooterLink href="https://bappeda.padang.go.id/" label="Bappeda" isExternal /></li>
+                            <li><FooterLink href="https://bpbj.padang.go.id/" label="BPBJ" isExternal /></li>
                         </ul>
                     </div>
 
                     {/* Contact & Address */}
                     <div>
-                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-teal-600 dark:text-teal-400 mb-6">Kontak Kami</h4>
+                        <h4 className="text-xs font-black  tracking-[0.1em] text-teal-600 dark:text-teal-400 mb-6">Kontak Kami</h4>
                         <div className="space-y-5">
                             <div className="flex items-start gap-3">
                                 <MapPin className="w-5 h-5 text-neutral-400 shrink-0 mt-0.5" />
@@ -111,17 +112,17 @@ const Footer = () => {
 
                 {/* Bottom Bar */}
                 <div className="mt-16 pt-8 border-t border-neutral-200/50 dark:border-neutral-800/50 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest">
-                        &copy; {currentYear} <span className="text-neutral-600 dark:text-neutral-300">DISKOMINFO KOTA PADANG</span>. ALL RIGHTS RESERVED.
+                    <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest">
+                        &copy; {currentYear} <span className="text-neutral-600 dark:text-neutral-300">PEMERINTAH KOTA PADANG</span>. ALL RIGHTS RESERVED.
                     </p>
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-1.5 opacity-60">
                             <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Pusat Data Padang</span>
+                            <span className="text-[10px] font-medium  tracking-widest text-neutral-500">SPBE</span>
                         </div>
                         <div className="flex items-center gap-1.5 opacity-60">
-                            <Globe2 className="w-4 h-4 text-blue-500" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Global Accessibility</span>
+                            <GlobeLockIcon className="w-4 h-4 text-lime-500" />
+                            <span className="text-[10px] font-medium  tracking-widest text-neutral-500">Develop by Diskominfo Kota Padang</span>
                         </div>
                     </div>
                 </div>

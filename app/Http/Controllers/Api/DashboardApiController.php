@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Log;
 
 final class DashboardApiController extends Controller
 {
@@ -264,55 +265,69 @@ final class DashboardApiController extends Controller
     public function getRawDataPad($tahun)
     {
         try {
+            // 1. Standarisasi Parameter Tahun
+            $tahunSelected = $tahun ?? session('tahun', date('Y'));
+
             $padType = [
                 '4.1.01' => 'Pajak Daerah',
                 '4.1.02' => 'Retribusi Daerah',
                 '4.1.03' => 'Hasil Pengelolaan Kekayaan Daerah yang Dipisahkan',
                 '4.1.04' => 'Lain-lain PAD yang Sah',
             ];
-            $sikdPendapatan = $this->keuanganService->getRawPad($tahun);
-            $collectData = collect($sikdPendapatan);
-            $result = $collectData
-                ->map(function ($item) {
+
+            // 2. Fetch Data
+            $sikdPendapatan = $this->keuanganService->getRawPad($tahunSelected);
+
+            if (empty($sikdPendapatan)) {
+                return $this->success([], '0 ms', 'Data '.$tahunSelected.' tidak ditemukan');
+            }
+
+            $data = collect($sikdPendapatan)
+                ->groupBy(function ($item) {
+                    // Ekstrak prefix 3 bagian (4.1.01) langsung saat grouping
                     $parts = explode('.', $item['KODEREKENING']);
-                    $prefix = implode('.', array_slice($parts, 0, 3));
+
+                    return implode('.', array_slice($parts, 0, 3));
+                })
+                ->map(function ($items, $prefix) use ($padType, $tahunSelected) {
+                    $totalAnggaran = $items->sum(fn ($i) => (float) $i['ANGGARAN']);
+                    $totalRealisasi = $items->sum(fn ($i) => (float) $i['REALISASI']);
+
+                    // 3. Cegah Division by Zero
+                    $persen = $totalAnggaran > 0 ? ($totalRealisasi / $totalAnggaran) * 100 : 0;
 
                     return [
-                        'prefix' => $prefix,
-                        'kode_rekening' => $item['KODEREKENING'],
-                        'nama_rekening' => $item['NAMAREKENING'],
-                        'skpd' => $item['SKPD'],
-                        'realisasi' => (float) $item['REALISASI'],
-                        'anggaran' => (float) $item['ANGGARAN'],
-                        'tahun' => $item['tahun'] ?? session('tahun', date('Y')),
+                        'code_rekening' => $prefix,
+                        'name' => $padType[$prefix] ?? 'Lainnya',
+                        'total_realisasi' => $totalRealisasi,
+                        'total_anggaran' => $totalAnggaran,
+                        'persen' => round($persen, 2),
+                        'tahun' => $tahunSelected,
+                        'item' => $items->map(function ($it) use ($tahunSelected) {
+                            return [
+                                'kode_rekening' => $it['KODEREKENING'],
+                                'nama_rekening' => $it['NAMAREKENING'],
+                                'skpd' => $it['SKPD'],
+                                'kd_opd' => $it['KDUNIT'],
+                                'realisasi' => (float) $it['REALISASI'],
+                                'anggaran' => (float) $it['ANGGARAN'],
+                                'tahun' => $tahunSelected,
+                            ];
+                        })->values()->toArray(),
                     ];
                 })
-                ->groupBy('prefix')
-                ->map(function ($items, $prefix) {
-                    return [
-                        'prefix' => $prefix,
-                        'tahun' => $items[0]['tahun'],
-                        'total_realisasi' => $items->sum('realisasi'),
-                        'total_anggaran' => $items->sum('anggaran'),
-                        'persen' => ($items->sum('anggaran') > 0) ? ($items->sum('realisasi') / $items->sum('anggaran')) * 100 : 0,
-                        'items' => $items,
-                    ];
-                })
-                ->values()->sortBy('prefix');
-            $data = $result->map(function ($item) use ($padType) {
-                return [
-                    'code_rekening' => $item['prefix'],
-                    'total_realisasi' => $item['total_realisasi'],
-                    'total_anggaran' => $item['total_anggaran'],
-                    'persen' => $item['persen'],
-                    'name' => $padType[$item['prefix']] ?? 'Lainnya',
-                    'item' => $item['items']->toArray(),
-                ];
-            });
+                ->sortBy('code_rekening')
+                ->values();
 
-            return $this->success($data, '200 ms');
+            $time = round((microtime(true) - LARAVEL_START) * 1000, 2).' ms';
+
+            return $this->success($data, $time, 'Data '.$tahunSelected.' berhasil diproses');
+
         } catch (Exception $e) {
-            return $this->errorResponse($e->getMessage());
+            // Log error untuk mempermudah debugging di VPS
+            Log::error('Error RawDataPads: '.$e->getMessage());
+
+            return $this->errorResponse('Gagal memproses data PAD: '.$e->getMessage());
         }
     }
 

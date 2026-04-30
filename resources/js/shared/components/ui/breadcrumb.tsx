@@ -61,7 +61,7 @@ const Breadcrumb = () => {
     ];
 
     return (
-        <nav aria-label="Breadcrumb" className="w-full pt-20 pb-1">
+        <nav aria-label="Breadcrumb" className="w-full lg:pt-20 pt-16 pb-1">
             <div className="mx-auto max-w-screen-2xl px-4 lg:px-1">
                 <ol className="flex flex-wrap items-center gap-2 text-xs lg:text-sm font-medium text-neutral-500 dark:text-neutral-400">
                     {breadcrumbs.map((item, index) => (

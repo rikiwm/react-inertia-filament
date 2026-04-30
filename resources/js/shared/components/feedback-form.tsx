@@ -33,7 +33,7 @@ const FeedbackForm = () => {
     const feedbackEndpoint = "";
 
     const { errors, data, setData, setError } = useForm({
-        message: "Hey! I installed PDG Kit.",
+        message: "Mau Cari Apa ?",
     });
 
     /**
@@ -88,23 +88,23 @@ const FeedbackForm = () => {
             <Input
                 type="text"
                 name="message"
-                label="Show some love "
+                // label="Show some love "
                 value={data.message}
                 onChange={(e) => setData("message", e.target.value)}
                 errorMessage={errors.message}
                 autoFocus
-                helperText="Feedbacks are appreciated."
+            // helperText="Feedbacks are appreciated."
             />
-            <Button
+            {/* <Button
                 loading={status === "loading"}
-                className="w-1/2 mx-auto bg-teal-400 hover:bg-teal-500 dark:bg-teal-400 dark:hover:bg-teal-500"
+                className="w-1/2 mx-auto bg-black/40 hover:bg-teal-500 dark:bg-teal-400 dark:hover:bg-teal-500"
                 isSuccess={status === "success"}
                 isError={status === "error"}
                 type="submit"
                 onClick={() => setStatus("loading")}
             >
                 Submit
-            </Button>
+            </Button> */}
         </form>
     );
 };

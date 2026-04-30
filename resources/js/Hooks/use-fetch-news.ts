@@ -132,7 +132,7 @@ export function useFetchNews(): UseFetchNewsReturn {
         setArticles([]);
         fetchPage(1, false);
         // fetchPage sengaja tidak dimasukkan ke deps — stabil per perubahan kategori/pencarian
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+         
     }, [activeCategory, debouncedSearch]);
 
     // ── Fungsi aksi yang diekspos ke komponen ──────────────────────────────────
