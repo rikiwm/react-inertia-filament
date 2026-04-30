@@ -1,5 +1,5 @@
 /**
- * @file Types/Apbd.ts
+ * @file Types/apbd.ts
  *
  * Definisi tipe data untuk respons API APBD (Anggaran Pendapatan dan Belanja Daerah)
  * dari Dashboard Kota Padang.
