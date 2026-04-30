@@ -34,12 +34,6 @@ Route::get('/dashboard/pbj', [PbjInaprocController::class, 'index'])->name('pbj.
 Route::inertia('/dashboard/pbj/detail', 'Pbj/PbjShowPage')->name('pbj.show');
 Route::get('/satker', [PbjInaprocController::class, 'satker'])->name('api.pbj.satker');
 
-Route::prefix('api/pbj-inaproc')->group(function () {
-    Route::get('/catalog', [PbjInaprocController::class, 'catalog'])->name('api.pbj.catalog');
-    Route::get('/tender', [PbjInaprocController::class, 'tender'])->name('api.pbj.tender');
-    Route::get('/non-tender', [PbjInaprocController::class, 'nonTender'])->name('api.pbj.nontender');
-    Route::get('/summary', [PbjInaprocController::class, 'summary'])->name('api.pbj.summary');
-});
 
 // Program Unggulan (Progul)
 Route::get('/progul', [ProgulController::class, 'index'])->name('progul');

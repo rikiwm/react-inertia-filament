@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Exception;
 use Illuminate\Support\Facades\Http;
 
-class RealisasiPendapatanController extends Controller
+final class RealisasiPendapatanController extends Controller
 {
     public function getRealisasiPendapatan($tahun)
     {
@@ -20,14 +22,14 @@ class RealisasiPendapatanController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengambil data pendapatan dari server',
-                'error' => $response->json() ?? $response->body()
+                'error' => $response->json() ?? $response->body(),
             ], $response->status());
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menghubungi server',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

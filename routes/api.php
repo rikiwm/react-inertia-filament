@@ -19,3 +19,14 @@ Route::get('/pbj', [DashboardApiController::class, 'getPbj']);
 Route::get('/summary-report', [DashboardApiController::class, 'getSummaryReport']);
 Route::get('/progul', [DashboardApiController::class, 'getProgul']);
 Route::get('/news/search', [DashboardApiController::class, 'getNews']);
+
+Route::get('/raw-data-apbd-pad/{tahun}', [DashboardApiController::class, 'getRawDataApbdPad']);
+Route::get('/raw-data-pad/{tahun}', [DashboardApiController::class, 'getRawDataPad']);
+
+Route::prefix('pbj-inaproc')->group(function () {
+    Route::get('/', [\App\Http\Controllers\PbjInaprocController::class, 'all'])->name('api.pbj.all');
+    Route::get('/catalog', [\App\Http\Controllers\PbjInaprocController::class, 'catalog'])->name('api.pbj.catalog');
+    Route::get('/tender', [\App\Http\Controllers\PbjInaprocController::class, 'tender'])->name('api.pbj.tender');
+    Route::get('/non-tender', [\App\Http\Controllers\PbjInaprocController::class, 'nonTender'])->name('api.pbj.nontender');
+    Route::get('/summary', [\App\Http\Controllers\PbjInaprocController::class, 'summary'])->name('api.pbj.summary');
+});

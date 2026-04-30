@@ -50,6 +50,32 @@ final class PbjInaprocController extends Controller
     }
 
     /**
+     * GET /api/pbj-inaproc?tahun=YYYY
+     *
+     * Menggabungkan data CATALOG, TENDER, NON-TENDER dari cache
+     * menjadi satu array dengan flag `jenis_transaksi`.
+     * Frontend: pbj-detail-service.ts → fetchPbjList
+     */
+    public function all(Request $request): JsonResponse
+    {
+        $tahun = $request->query('tahun', date('Y'));
+        $result = [];
+
+        $categories = ['CATALOG', 'TENDER', 'NON-TENDER'];
+        foreach ($categories as $kategori) {
+            $cacheKey = "inaproc_{$kategori}_{$tahun}_{$this->kodeKlpd}";
+            $items = Cache::get($cacheKey, []);
+
+            foreach ($items as $item) {
+                $item['jenis_transaksi'] = $kategori;
+                $result[] = $item;
+            }
+        }
+
+        return response()->json($result);
+    }
+
+    /**
      * Endpoint untuk CATALOG (E-Purchasing)
      */
     public function catalog(Request $request): JsonResponse
