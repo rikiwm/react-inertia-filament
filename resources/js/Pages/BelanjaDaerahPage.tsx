@@ -13,6 +13,9 @@
  */
 
 import { useBelanjaDaerahData } from "@/features/belanja-daerah/hooks/use-belanja-daerah-data";
+import { useApbdData } from "@/features/dashboard/hooks/use-apbd-data";
+import { type BelanjaDaerahResponse } from "@/Services/belanja-daerah-service";
+
 import { SkpdTable } from "@/features/dashboard/components/skpd-table";
 import { fmtNumber, formatRupiahCompact } from "@/Lib/formatters";
 import FrontWrapper from "@/Wrappers/front-wrapper";
@@ -23,6 +26,9 @@ import { ReactNode } from "react";
 import { motion, AnimatePresence } from 'motion/react';
 import { BarChart3, FileText, Target, Activity, TargetIcon } from "lucide-react";
 import { RadialChartStacked } from "@/shared/components/radial-chart-stacked";
+import { cn } from "@/Lib/utils";
+import { AVAILABLE_YEARS } from "@/features/dashboard/constants";
+
 
 
 
@@ -33,13 +39,17 @@ const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: numbe
     const [selectedYear, setSelectedYear] = useState(initialTahun || currentYear);
 
     const { data, loading, error, setTahun } = useBelanjaDaerahData(selectedYear, initialData);
+    const { data: apbdData, isLoading: apbdLoading } = useApbdData(selectedYear);
+
 
     const handleYearChange = useCallback(
-        (e: React.ChangeEvent<HTMLSelectElement>) => {
-            const year = parseInt(e.target.value);
+        (year: number) => {
+            setSelectedYear(year);
+            // Optional: update URL query param without full page reload
             router.get(route("belanja-daerah"), { tahun: year }, {
                 preserveState: true,
                 preserveScroll: true,
+                replace: true,
             });
         },
         [],
@@ -47,13 +57,15 @@ const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: numbe
 
 
 
+
     const percentageColor = useMemo(() => {
-        if (!data) return "text-neutral-600";
-        const p = data.total_persentase;
+        if (!apbdData) return "text-neutral-600";
+        const p = apbdData.belanjaDaerah.persenRealisasi;
         if (p >= 75) return "text-teal-600";
         if (p >= 50) return "text-amber-600";
         return "text-red-600";
-    }, [data?.total_persentase]);
+    }, [apbdData?.belanjaDaerah.persenRealisasi]);
+
 
     const availableYears = useMemo(() => {
         const years = [];
@@ -64,12 +76,13 @@ const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: numbe
     }, [currentYear]);
 
     const percentageStatus = useMemo(() => {
-        if (!data) return "";
-        const p = data.total_persentase;
+        if (!apbdData) return "";
+        const p = apbdData.belanjaDaerah.persenRealisasi;
         if (p >= 75) return "Sangat Baik";
         if (p >= 50) return "Cukup";
         return "Perlu Ditingkatkan";
-    }, [data?.total_persentase]);
+    }, [apbdData?.belanjaDaerah.persenRealisasi]);
+
     // console.log("data", data);
 
     return (
@@ -103,22 +116,23 @@ const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: numbe
                                 </div>
                             </div>
 
-                            <div className="flex  md:flex-row items-center gap-3">
-                                {/* <label htmlFor="year-select" className="text-xs md:text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                                    Tahun Anggaran:
-                                </label>
-                                <select
-                                    id="year-select"
-                                    value={selectedYear}
-                                    onChange={handleYearChange}
-                                    className="px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500"
-                                >
-                                    {availableYears.map((year) => (
-                                        <option key={year} value={year}>
-                                            {year}
-                                        </option>
+                            <div className="flex flex-col md:flex-row items-center gap-3">
+                                <div className="lg:block hidden flex items-center gap-1 bg-neutral-100 dark:bg-neutral-900 p-1 rounded-xl border border-teal-200 dark:border-teal-800">
+                                    {AVAILABLE_YEARS.map((y) => (
+                                        <button
+                                            key={y}
+                                            onClick={() => handleYearChange(y)}
+                                            className={cn(
+                                                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200",
+                                                y === selectedYear
+                                                    ? "bg-teal-600 text-white shadow-md"
+                                                    : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200",
+                                            )}
+                                        >
+                                            {y}
+                                        </button>
                                     ))}
-                                </select> */}
+                                </div>
                                 <button
                                     onClick={() => router.visit(route("analitik"))}
                                     className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-900 border border-teal-200 dark:border-teal-800 rounded-lg text-xs font-bold text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30 transition-all shadow-sm"
@@ -127,6 +141,7 @@ const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: numbe
                                     Analitik
                                 </button>
                             </div>
+
                         </div>
 
                         {/* Stats Cards */}
@@ -135,13 +150,14 @@ const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: numbe
                     </motion.div>
 
                     {/* ── Summary Cards ───────────────────────────────────────────── */}
-                    {!loading && data && (
+                    {!loading && !apbdLoading && data && apbdData && (
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.2 }}
                             className="mb-8"
                         >
+
                             <div className="flex flex-col lg:flex-row gap-4 items-stretch">
                                 <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 flex-1">
                                     {/* Anggaran */}
@@ -152,13 +168,14 @@ const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: numbe
                                         </div>
                                         <div>
                                             <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-                                                {formatRupiahCompact(data.total_pagu)}
+                                                {formatRupiahCompact(apbdData.belanjaDaerah.anggaran)}
                                             </p>
                                             <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
-                                                Rp. {fmtNumber(data.total_pagu)}
+                                                Rp. {fmtNumber(apbdData.belanjaDaerah.anggaran)}
                                             </p>
                                         </div>
                                     </div>
+
 
                                     {/* Realisasi */}
                                     <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm flex flex-col justify-center">
@@ -168,49 +185,54 @@ const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: numbe
                                         </div>
                                         <div>
                                             <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-                                                {formatRupiahCompact(data.total_realisasi)}
+                                                {formatRupiahCompact(apbdData.belanjaDaerah.realisasi)}
                                             </p>
                                             <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
-                                                {data.total_persentase.toFixed(1)}% dari anggaran
+                                                {apbdData.belanjaDaerah.persenRealisasi.toFixed(1)}% dari anggaran
                                             </p>
                                         </div>
                                     </div>
+
 
                                     {/* Sisa */}
                                     <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm flex flex-col justify-center">
                                         <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Sisa</p>
                                         <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-                                            {formatRupiahCompact(data.total_sisa)}
+                                            {formatRupiahCompact(apbdData.belanjaDaerah.sisa)}
                                         </p>
                                     </div>
+
                                     {/* Persentase */}
                                     <div className={`rounded-lg lg:rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-700 flex flex-col justify-center`}>
                                         <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Persentase</p>
                                         <div>
                                             <p className={`text-2xl font-semibold ${percentageColor}`}>
-                                                {(data?.total_persentase ?? 0).toFixed(1)}%
+                                                {(apbdData?.belanjaDaerah.persenRealisasi ?? 0).toFixed(1)}%
                                             </p>
                                             <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
                                                 {percentageStatus}
                                             </p>
                                         </div>
                                     </div>
+
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-0 flex-1">
                                     <RadialChartStacked
-                                        anggaran={data.total_pagu}
-                                        realisasi={data.total_realisasi}
+                                        anggaran={apbdData.belanjaDaerah.anggaran}
+                                        realisasi={apbdData.belanjaDaerah.realisasi}
                                         title="Pagu Belanja Daerah"
                                         description="Realisasi Belanja Daerah"
                                     />
                                 </div>
+
 
                             </div>
                         </motion.div>
                     )}
 
                     {/* ── Loading State ───────────────────────────────────────────── */}
-                    {loading && (
+                    {(loading || apbdLoading) && (
+
                         <div className="mb-8">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                 {Array.from({ length: 4 }).map((_, i) => (

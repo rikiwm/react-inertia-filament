@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark bg-white dark:bg-black">
+<html lang="id" class="dark bg-white dark:bg-black">
 
 <head>
     @php
@@ -14,6 +14,8 @@
     @if($siteSettings->favicon)
         <link rel="shortcut icon" type="image/x-icon" href="{{ asset("storage/" . $siteSettings->favicon) }}">
     @endif
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon-1.ico') }}">
+
     @if(config('app.env') !== 'production')
         <meta name="robots" content="noindex, nofollow">
     @endif

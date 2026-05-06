@@ -33,6 +33,8 @@ import {
 } from "@/shared/components/ui/dialog";
 import { RealisasiPendapatanCategory } from "@/Services/pendapatan-daerah-service";
 import { cn } from "@/Lib/utils";
+import { AVAILABLE_YEARS } from "@/features/dashboard/constants";
+
 
 
 
@@ -67,15 +69,17 @@ const PendapatanDaerahPage = ({ initialTahun, initialData, initialRealisasiDetai
     }, [pajakDaerah]);
 
     const handleYearChange = useCallback(
-        (e: React.ChangeEvent<HTMLSelectElement>) => {
-            const year = parseInt(e.target.value);
+        (year: number) => {
+            setSelectedYear(year);
             router.get(route("pendapatan-daerah"), { tahun: year }, {
                 preserveState: true,
                 preserveScroll: true,
+                replace: true,
             });
         },
         [],
     );
+
 
     const goBack = useCallback(() => {
         router.visit(route("dashboard"));
@@ -134,21 +138,22 @@ const PendapatanDaerahPage = ({ initialTahun, initialData, initialRealisasiDetai
                         </div>
 
                         <div className="flex items-center gap-3">
-                            {/* <label htmlFor="year-select" className="lg:text-sm md:text-xs text-xs text-neutral-700 dark:text-neutral-300">
-                                Tahun Anggaran:
-                            </label>
-                            <select
-                                 id="year-select"
-                                 value={selectedYear}
-                                 onChange={handleYearChange}
-                                 className="px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500"
-                            >
-                                {availableYears.map((year) => (
-                                    <option key={year} value={year}>
-                                        {year}
-                                    </option>
+                            <div className="lg:block hidden flex items-center gap-1 bg-neutral-100 dark:bg-neutral-900 p-1 rounded-xl border border-teal-200 dark:border-teal-800">
+                                {AVAILABLE_YEARS.map((y) => (
+                                    <button
+                                        key={y}
+                                        onClick={() => handleYearChange(y)}
+                                        className={cn(
+                                            "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200",
+                                            y === selectedYear
+                                                ? "bg-teal-600 text-white shadow-md"
+                                                : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200",
+                                        )}
+                                    >
+                                        {y}
+                                    </button>
                                 ))}
-                            </select> */}
+                            </div>
                             <button
                                 onClick={() => router.visit(route("analitik"))}
                                 className="flex items-center gap-2 px-2 py-2 bg-white dark:bg-neutral-900 border border-teal-200 dark:border-teal-800 rounded-lg text-xs font-bold text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30 transition-all shadow-sm"
@@ -157,6 +162,7 @@ const PendapatanDaerahPage = ({ initialTahun, initialData, initialRealisasiDetai
                                 Analitik
                             </button>
                         </div>
+
                     </div>
                 </motion.div>
 
