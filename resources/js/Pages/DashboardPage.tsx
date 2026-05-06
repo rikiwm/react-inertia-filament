@@ -140,14 +140,14 @@ const DashboardPage = () => {
                                 </span>
                             )}
                         </div>
-                        <a
+                        {/* <a
                             href={`https://dashboard.padang.go.id/api/v1/pbj?tahun=${tahun}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs text-teal-500 hover:underline hidden sm:inline"
                         >
                             Lihat API ↗
-                        </a>
+                        </a> */}
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -218,12 +218,12 @@ const DashboardPage = () => {
                 <p className="text-center text-neutral-400 dark:text-neutral-600 text-xs pb-4">
                     Data PBJ bersumber dari{" "}
                     <a
-                        href="https://dashboard.padang.go.id"
+                        href="https://data.inaproc.id/docs"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-teal-500 hover:underline"
                     >
-                        dashboard.padang.go.id
+                        data.inaproc.id
                     </a>
                     {" "}· Data chart aset untuk tujuan demonstrasi.
                 </p>
