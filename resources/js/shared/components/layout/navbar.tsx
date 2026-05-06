@@ -74,7 +74,7 @@ const Navbar = () => {
                 y: -20,
                 backgroundColor: "rgba(0, 0, 0, 0)",
                 backdropFilter: "blur(0px)",
-                WebkitBackdropFilter: "blur(0px)",
+                WebkitBackdropFilter: "blur(5px)",
             }}
             animate={
                 isDarkMode

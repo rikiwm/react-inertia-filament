@@ -97,7 +97,7 @@ const LandingPage = () => {
                     transition={{ duration: 0.8, ease: "circOut" }}
                     className="text-center mx-auto lg:pb-24"
                 >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-600 dark:text-teal-400 text-[8px] lg:text-xs font-bold uppercase tracking-widest mb-2 animate-bounce">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-600 dark:text-teal-400 text-[8px] lg:text-xs font-medium uppercase tracking-widest mb-2 animate-bounce">
                         <span className="relative flex h-2 w-2">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>

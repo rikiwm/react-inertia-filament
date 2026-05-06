@@ -22,7 +22,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ data }) => {
 
     return (
         <div className={cn(
-            "p-8 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl h-full relative overflow-hidden",
+            "p-6 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl h-full relative overflow-hidden",
             "bg-white dark:bg-neutral-900"
         )}>
             {/* Top Section */}
@@ -38,7 +38,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ data }) => {
 
             {/* Main Temp */}
             <div className="flex items-end gap-3 mb-10">
-                <span className="text-7xl font-black text-neutral-900 dark:text-white tracking-tighter">{Math.round(current.temperature_2m)}°</span>
+                <span className="text-7xl font-bold text-neutral-900 dark:text-white tracking-tighter">{Math.round(current.temperature_2m)}°</span>
                 <div className="mb-3">
                     <span className="text-2xl font-bold text-neutral-400 uppercase">Celsius</span>
                 </div>
@@ -64,12 +64,12 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ data }) => {
 
             {/* Hourly Forecast (Next 5 hours) */}
             <div className="pt-6 border-t border-neutral-100 dark:border-neutral-800">
-                <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-4">Prakiraan 5 Jam Kedepan</p>
+                <p className="text-[10px] font-bold text-neutral-900 uppercase tracking-widest mb-4">Prakiraan 5 Jam Kedepan</p>
                 <div className="flex justify-between items-center px-1">
-                    {hourly.time.slice(1, 6).map((time: string, idx: number) => (
+                    {hourly.time.slice(1, 7).map((time: string, idx: number) => (
                         <div key={time} className="flex flex-col items-center gap-2">
                             <span className="text-[10px] font-bold text-neutral-400">
-                                {new Date(time).getHours()}:00
+                                {new Date(time).getUTCHours()}:00
                             </span>
                             {getWeatherIcon(hourly.weather_code[idx + 1], "w-6 h-6")}
                             <span className="text-xs font-black text-neutral-800 dark:text-white">

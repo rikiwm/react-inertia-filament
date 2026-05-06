@@ -19,8 +19,8 @@ export const AVAILABLE_YEARS = [2026, 2025, 2024, 2023];
 export const COLOR_MAP = {
     teal: {
         bg: "bg-teal-100 dark:bg-teal-950/30",
-        text: "text-teal-600 dark:text-teal-400",
-        icon: "bg-teal-50 dark:bg-teal-900/50",
+        text: "text-teal-50 dark:text-teal-400",
+        icon: "bg-teal-500/90 dark:bg-teal-900/50",
         stroke: "#0ea69eff",
     },
     emerald: {

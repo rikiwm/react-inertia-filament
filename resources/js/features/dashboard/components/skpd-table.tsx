@@ -152,7 +152,7 @@ const SkpdTable = memo(function SkpdTable({
                                     header.sortable && "cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800",
                                 )}
                             >
-                                <div className={cn("flex items-center gap-2 font-semibold text-neutral-700 dark:text-neutral-300", header.align === "right" && "justify-end")}>
+                                <div className={cn("flex items-center gap-2 font-medium text-neutral-700 dark:text-neutral-300", header.align === "right" && "justify-end")}>
                                     <span>{header.label}</span>
                                     {header.sortable && <span className="text-xs opacity-60">{getSortIcon(header.key)}</span>}
                                 </div>
@@ -174,7 +174,7 @@ const SkpdTable = memo(function SkpdTable({
                                 <>
                                     <Table.Td className="text-neutral-800 dark:text-neutral-200 text-sm">
                                         <div>
-                                            <span className="font-semibold text-xs lg:text-sm text-teal-950 dark:text-neutral-400">{item.nama_opd}</span>
+                                            <span className="font-medium text-xs lg:text-sm text-teal-950 dark:text-neutral-400">{item.nama_opd}</span>
                                             <p className="text-[8px] lg:text-xs text-teal-500 text-light dark:text-neutral-400">{item.kd_unit}</p>
                                         </div>
                                     </Table.Td>
@@ -194,7 +194,7 @@ const SkpdTable = memo(function SkpdTable({
                                 <>
                                     <Table.Td className="font-medium text-neutral-800 dark:text-neutral-200 text-sm">
                                         <div>
-                                            <span className="font-semibold text-xs lg:text-sm text-teal-950 dark:text-neutral-400">{item.nama_opd}</span>
+                                            <span className="font-medium text-xs lg:text-sm text-teal-950 dark:text-neutral-400">{item.nama_opd}</span>
                                             <p className="text-[8px] lg:text-xs text-teal-500 text-light dark:text-neutral-400">{item.kd_unit}</p>
                                         </div>
                                     </Table.Td>

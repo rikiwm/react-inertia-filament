@@ -13,6 +13,7 @@ export * from "./dialog";
 export * from "./table";
 export { FloatingDock } from "./floating-dock";
 export { default as Breadcrumb } from "./breadcrumb";
+export * from "./chart";
 
 // Form inputs
 export { default as Input } from "./input";

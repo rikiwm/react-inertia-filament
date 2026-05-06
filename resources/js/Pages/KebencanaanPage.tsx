@@ -20,12 +20,8 @@ interface KebencanaanPageProps {
 const KebencanaanPage = ({ weather, ispu, disasterMap, lastUpdate, hashtagNews = [] }: KebencanaanPageProps) => {
     const [activeTab, setActiveTab] = useState<'overview' | 'monitoring' | 'berita'>('overview');
     return (
-        <div className="min-h-screen w-full pt-4 pb-20 px-4 md:px-8 lg:px-0  overflow-hidden">
-            {/* Background Decorative Elements */}
-            <div className="absolute top-0 left-0 w-full h-full pointer-events-none -z-10">
-                <div className="absolute top-[-5%] left-[-5%] w-[30%] h-[30%] bg-teal-500/10 rounded-full blur-[100px]" />
-                <div className="absolute bottom-[-5%] right-[-5%] w-[30%] h-[30%] bg-red-500/5 rounded-full blur-[100px]" />
-            </div>
+        <div className="min-h-screen w-full pt-4 pb-20 px-4 md:px-0 lg:px-0  overflow-hidden">
+
 
             {/* Header Section */}
             <div className="max-w-screen-2xl mx-auto mb-10">
@@ -54,7 +50,7 @@ const KebencanaanPage = ({ weather, ispu, disasterMap, lastUpdate, hashtagNews =
                         <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                             <span className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
-                                Terakhir Diperbarui: {lastUpdate}
+                                Info Terkini: {lastUpdate}
                             </span>
                         </div>
                     </div>
@@ -116,7 +112,7 @@ const KebencanaanPage = ({ weather, ispu, disasterMap, lastUpdate, hashtagNews =
                 </div>
             </div>
 
-            <div className="max-w-screen-2xl mx-auto">
+            <div className="max-w-8xl mx-auto">
                 {activeTab === 'overview' && (
                     <>
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
@@ -136,7 +132,7 @@ const KebencanaanPage = ({ weather, ispu, disasterMap, lastUpdate, hashtagNews =
                                     transition={{ duration: 0.5, delay: 0.3 }}
                                     className="grid grid-cols-2 gap-4"
                                 >
-                                    <div className="p-5 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm">
+                                    {/* <div className="p-4 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm">
                                         <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center text-teal-600 mb-4">
                                             <Wind className="w-5 h-5" />
                                         </div>
@@ -153,7 +149,7 @@ const KebencanaanPage = ({ weather, ispu, disasterMap, lastUpdate, hashtagNews =
                                         <p className="text-lg font-bold text-neutral-800 dark:text-white uppercase">
                                             {disasterMap?.length || 0} Lokasi
                                         </p>
-                                    </div>
+                                    </div> */}
                                 </motion.div>
                             </div>
 
@@ -163,30 +159,14 @@ const KebencanaanPage = ({ weather, ispu, disasterMap, lastUpdate, hashtagNews =
                                     initial={{ opacity: 0, scale: 0.98 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ duration: 0.5, delay: 0.4 }}
-                                    className="h-full min-h-[500px] lg:min-h-full"
+                                    className="h-full min-h-[480px] lg:min-h-full"
                                 >
-                                    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 h-full shadow-xl overflow-hidden relative group">
-                                        {/* <div className="absolute top-8 left-8 z-10">
-                                    <div className="bg-white/90 dark:bg-black/80 backdrop-blur-md px-5 py-3 rounded-xl border border-neutral-200 dark:border-neutral-800 flex items-center gap-3 shadow-lg">
-                                        <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
-                                        <span className="text-sm font-bold text-neutral-800 dark:text-white uppercase tracking-wider">Live Map Kejadian</span>
-                                    </div>
-                                </div> */}
-                                        <DisasterMap points={disasterMap} />
-                                    </div>
+                                    <IspuWidget data={ispu} />
+
                                 </motion.div>
                             </div>
                         </div>
 
-                        {/* ISPU Section */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.5 }}
-                            className="mb-3"
-                        >
-                            <IspuWidget data={ispu} />
-                        </motion.div>
                     </>
                 )}
 
@@ -243,10 +223,10 @@ const KebencanaanPage = ({ weather, ispu, disasterMap, lastUpdate, hashtagNews =
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.6 }}
-                    className="mt-12 p-10 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-2xl relative overflow-hidden"
+                    className="mt-4 p-10 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xl relative overflow-hidden"
                 >
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/20 rounded-full blur-[80px] -mr-32 -mt-32" />
-                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+                    {/* <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/20 rounded-full blur-[80px] -mr-32 -mt-32" /> */}
+                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-4">
                         <div className="text-center md:text-left flex items-center gap-6">
                             <div className="hidden sm:flex w-16 h-16 rounded-xl bg-teal-500/20 items-center justify-center text-teal-400">
                                 <AlertTriangle className="w-8 h-8" />
@@ -260,7 +240,7 @@ const KebencanaanPage = ({ weather, ispu, disasterMap, lastUpdate, hashtagNews =
                         </div>
                         <a
                             href="tel:112"
-                            className="group px-10 py-5 bg-teal-600 hover:bg-teal-500 text-white rounded-[2rem] font-bold text-xl transition-all shadow-2xl shadow-teal-500/20 active:scale-95 flex items-center gap-3"
+                            className="group px-6 py-4 bg-teal-600 hover:bg-teal-500 text-white rounded-[2rem] font-bold text-xl transition-all shadow-2xl shadow-teal-500/20 active:scale-95 flex items-center gap-3"
                         >
                             CALL 112
                             <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />

@@ -104,7 +104,7 @@ export const ApbdDonutChart = memo(function ApbdDonutChart({
             </div>
 
             {/* Donut Chart dengan label tengah */}
-            <div className="relative flex items-center justify-center max-w-full px-2">
+            <div className="relative flex items-center justify-center max-w-full px-2 mx-auto">
                 <ResponsiveContainer width={190} height={190}>
                     <PieChart>
                         <Pie
@@ -277,7 +277,7 @@ export const ApbdDonutPanel = memo(function ApbdDonutPanel({
             {/* Success — 2 donut chart berdampingan */}
             {data && (
                 <>
-                    <div className="grid grid-cols-2 gap-1.5 md:gap-3 py-2">
+                    <div className="grid mx-auto grid-cols-1 lg:grid-cols-2 gap-1.5 md:gap-3 py-2">
                         <ApbdDonutChart
                             item={data.belanjaDaerah}
                             title="Belanja Daerah"
@@ -316,7 +316,7 @@ export const ApbdDonutPanel = memo(function ApbdDonutPanel({
                         </div>
                     </div>
                     <p className="text-[10px] text-neutral-300 dark:text-neutral-700 mt-4 text-right">
-                        Sumber: dashboard.padang.go.id · {data.tahun}
+                        Sumber: SIPKD · {data.tahun}
                     </p>
                 </>
             )}

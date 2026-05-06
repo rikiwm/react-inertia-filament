@@ -75,7 +75,7 @@ const DashboardPage = () => {
                 {/* ── Header ── */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
-                        <h1 className="text-xl md:text-3xl font-bold uppercase text-neutral-900 dark:text-white">
+                        <h1 className="text-xl md:text-4xl font-bold uppercase text-neutral-900 dark:text-white">
                             Dashboard{" "}
                             <span className="text-transparent bg-clip-text bg-gradient-to-l from-zinc-900 to-teal-700 dark:from-zinc-100 dark:to-zinc-500">
                                 Pembangunan

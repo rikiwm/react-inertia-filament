@@ -21,7 +21,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { route } from "ziggy-js";
 import { ReactNode } from "react";
 import { motion, AnimatePresence } from 'motion/react';
-import { BarChart3, FileText, Target, Activity } from "lucide-react";
+import { BarChart3, FileText, Target, Activity, TargetIcon } from "lucide-react";
+import { RadialChartStacked } from "@/shared/components/radial-chart-stacked";
 
 
 
@@ -139,60 +140,71 @@ const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: numbe
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.2 }}
-                            className="mb-4 text-left"
+                            className="mb-8"
                         >
-                            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                                {/* Anggaran */}
-
-                                <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm">
-                                    <div className="flex items-center gap-3 text-teal-600 mb-2">
-                                        <Target className="w-4 h-4" />
-                                        <span className="text-xs font-bold uppercase tracking-wider">Total Anggaran</span>
+                            <div className="flex flex-col lg:flex-row gap-4 items-stretch">
+                                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 flex-1">
+                                    {/* Anggaran */}
+                                    <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm flex flex-col justify-center">
+                                        <div className="flex items-center gap-3 text-teal-600 mb-2">
+                                            <Target className="w-4 h-4" />
+                                            <span className="text-xs font-bold uppercase tracking-wider">Total Anggaran</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+                                                {formatRupiahCompact(data.total_pagu)}
+                                            </p>
+                                            <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
+                                                Rp. {fmtNumber(data.total_pagu)}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
+
+                                    {/* Realisasi */}
+                                    <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm flex flex-col justify-center">
+                                        <div className="flex items-center gap-3 text-teal-600 mb-2">
+                                            <BarChart3 className="w-4 h-4" />
+                                            <span className="text-xs font-bold uppercase tracking-wider">Total Realisasi</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+                                                {formatRupiahCompact(data.total_realisasi)}
+                                            </p>
+                                            <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
+                                                {data.total_persentase.toFixed(1)}% dari anggaran
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Sisa */}
+                                    <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm flex flex-col justify-center">
+                                        <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Sisa</p>
                                         <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-                                            {formatRupiahCompact(data.total_pagu)}
-                                        </p>
-                                        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
-                                            Rp. {fmtNumber(data.total_pagu)}
+                                            {formatRupiahCompact(data.total_sisa)}
                                         </p>
                                     </div>
-                                </div>
-
-                                {/* Realisasi */}
-                                <div className={`rounded-lg lg:rounded-xl bg-gradient-to-br from-teal-50 to-cyan-100 dark:from-teal-900/30 dark:to-cyan-800/20 p-4 border border-teal-200 dark:border-teal-600`}>
-                                    <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Realisasi</p>
-                                    <div>
-                                        <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-                                            {formatRupiahCompact(data.total_realisasi)}
-                                        </p>
-                                        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
-                                            {data.total_persentase.toFixed(1)}% dari anggaran
-                                        </p>
+                                    {/* Persentase */}
+                                    <div className={`rounded-lg lg:rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-700 flex flex-col justify-center`}>
+                                        <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Persentase</p>
+                                        <div>
+                                            <p className={`text-2xl font-semibold ${percentageColor}`}>
+                                                {(data?.total_persentase ?? 0).toFixed(1)}%
+                                            </p>
+                                            <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
+                                                {percentageStatus}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-
-
-                                {/* Sisa */}
-                                <div className={`rounded-lg lg:rounded-xl bg-gradient-to-br from-teal-50 to-cyan-100 dark:from-teal-900/30 dark:to-cyan-800/20 p-4 border border-teal-200 dark:border-teal-600`}>
-                                    <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Sisa</p>
-                                    <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-                                        {formatRupiahCompact(data.total_sisa)}
-                                    </p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-0 flex-1">
+                                    <RadialChartStacked
+                                        anggaran={data.total_pagu}
+                                        realisasi={data.total_realisasi}
+                                        title="Pagu Belanja Daerah"
+                                        description="Realisasi Belanja Daerah"
+                                    />
                                 </div>
 
-                                {/* Persentase */}
-                                <div className={`rounded-lg lg:rounded-xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-600`}>
-                                    <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Persentase</p>
-                                    <div>
-                                        <p className={`text-2xl font-bold ${percentageColor}`}>
-                                            {data.total_persentase.toFixed(1)}%
-                                        </p>
-                                        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
-                                            {percentageStatus}
-                                        </p>
-                                    </div>
-                                </div>
                             </div>
                         </motion.div>
                     )}
@@ -224,8 +236,8 @@ const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: numbe
                     )}
 
                     {/* ── SKPD Table ──────────────────────────────────────────────── */}
-                    <div className="rounded-lg lg:rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-4 lg:p-6">
-                        <h2 className="text-md lg:text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-6">
+                    <div className="rounded-lg lg:rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-2 lg:p-3">
+                        <h2 className="text-md lg:text-xl font-medium text-neutral-900 dark:text-neutral-100 mb-6">
                             {loading ? (
                                 <div className="flex flex-col gap-4">
                                     {Array.from({ length: 8 }).map((_, i) => (
@@ -233,7 +245,7 @@ const BelanjaDaerahPage = ({ initialTahun, initialData }: { initialTahun?: numbe
                                     ))}
                                 </div>
                             ) : data && (
-                                <>Breakdown per SKPD (Satuan Kerja Perangkat Daerah)</>
+                                <>Breakdown per (Satuan Kerja Perangkat Daerah)</>
                             )}
                         </h2>
 

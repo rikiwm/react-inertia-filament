@@ -23,6 +23,7 @@ import { ReactNode } from "react";
 import { ArrowLeft } from "lucide-react";
 import { motion } from 'motion/react';
 import { BarChart3, Target, Info, TrendingUp, Wallet, Banknote, Activity } from 'lucide-react';
+import { RadialChartStacked } from "@/shared/components/radial-chart-stacked";
 import {
     Dialog,
     DialogContent,
@@ -161,175 +162,190 @@ const PendapatanDaerahPage = ({ initialTahun, initialData, initialRealisasiDetai
 
                 {/* ── Summary Cards ───────────────────────────────────────────── */}
                 {!loading && data && (
-                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                        {/* Target PAD */}
-                        <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/30 dark:to-teal-800/20 p-4 border border-teal-200 dark:border-teal-700">
-                            <p className="text-sm font-medium text-teal-600 dark:text-teal-300 mb-2">Target PAD</p>
-                            <p className="text-2xl font-semibold text-teal-900 dark:text-teal-100">
-                                {formatRupiahCompact(data.total_pagu_pads)}
-                            </p>
-                        </div>
-
-                        {/* Realisasi PAD */}
-                        <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/30 dark:to-teal-800/20 p-4 border border-teal-200 dark:border-teal-700">
-                            <p className="text-sm font-medium text-teal-600 dark:text-teal-300 mb-2">Realisasi PAD</p>
-                            <p className="text-2xl font-semibold text-teal-900 dark:text-teal-100">
-                                {formatRupiahCompact(data.total_realisasi_pad)}
-                            </p>
-                        </div>
-
-                        {/* Sisa */}
-                        <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-700">
-                            <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Sisa</p>
-                            <p className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
-                                {formatRupiahCompact(data.total_sisa_pad)}
-                            </p>
-                        </div>
-
-                        {/* Persentase */}
-                        <div className={`rounded-lg lg:rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-700`}>
-                            <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Persentase</p>
-                            <div>
-                                <p className={`text-2xl font-semibold ${percentageColor}`}>
-                                    {(data?.total_persentase_pad ?? 0).toFixed(1)}%
-                                </p>
-                                <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
-                                    {percentageStatus}
+                    <div className="flex flex-col lg:flex-row gap-3 items-stretch mb-3">
+                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
+                            {/* Target PAD */}
+                            <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-white to-white dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-700 flex flex-col justify-center">
+                                <p className="text-sm font-medium text-teal-600 dark:text-teal-300 mb-2">Target PAD</p>
+                                <p className="text-2xl font-semibold text-teal-900 dark:text-teal-100">
+                                    {formatRupiahCompact(data.total_pagu_pads)}
                                 </p>
                             </div>
+
+                            {/* Realisasi PAD */}
+                            <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-white to-white dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-700 flex flex-col justify-center">
+                                <p className="text-sm font-medium text-teal-600 dark:text-teal-300 mb-2">Realisasi PAD</p>
+                                <p className="text-2xl font-semibold text-teal-900 dark:text-teal-100">
+                                    {formatRupiahCompact(data.total_realisasi_pad)}
+                                </p>
+                            </div>
+
+                            {/* Sisa */}
+                            <div className="rounded-lg lg:rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-700 flex flex-col justify-center">
+                                <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Sisa</p>
+                                <p className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
+                                    {formatRupiahCompact(data.total_sisa_pad)}
+                                </p>
+                            </div>
+
+                            {/* Persentase */}
+                            <div className={`rounded-lg lg:rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900/30 dark:to-neutral-800/20 p-4 border border-neutral-200 dark:border-neutral-700 flex flex-col justify-center`}>
+                                <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300 mb-2">Persentase</p>
+                                <div>
+                                    <p className={`text-2xl font-semibold ${percentageColor}`}>
+                                        {(data?.total_persentase_pad ?? 0).toFixed(1)}%
+                                    </p>
+                                    <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
+                                        {percentageStatus}
+                                    </p>
+                                </div>
+                            </div>
                         </div>
+
                     </div>
                 )}
 
                 {/* ── Detailed Summary Cards ───────────────────────────────────── */}
-                {!loadingDetail && realisasiDetail && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        {/* Pajak Daerah */}
-                        <div
-                            onClick={() => openModal(pajakDaerah)}
-                            className="bg-white dark:bg-neutral-900/50 p-5 rounded-2xl border border-teal-100 dark:border-teal-900 shadow-sm hover:shadow-md transition-all cursor-pointer group"
-                        >
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className="w-8 h-8 rounded-lg bg-teal-600/10 flex items-center justify-center text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors">
-                                    <Target className="w-4 h-4" />
-                                </div>
-                                <h3 className="font-bold text-sm text-neutral-800 dark:text-neutral-200">Pajak Daerah</h3>
-                            </div>
-                            <div className="space-y-2">
-                                <div>
-                                    <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Target</p>
-                                    <p className="text-lg font-bold text-neutral-900 dark:text-white tabular-nums">
-                                        {formatRupiahCompact(pajakDaerah?.total_anggaran || 0)}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] uppercase tracking-wider text-teal-600 font-bold">Realisasi ({pajakDaerah?.persen}%)</p>
-                                    <p className="text-lg font-bold text-teal-600 dark:text-teal-400 tabular-nums">
-                                        {formatRupiahCompact(pajakDaerah?.total_realisasi || 0)}
-                                    </p>
-                                </div>
-
-                            </div>
-                            <div className="mt-4 flex justify-end">
-                                <span className="text-[10px] font-bold text-teal-600 group-hover:underline flex items-center gap-1 uppercase tracking-wider">
-                                    Lihat Detail <TrendingUp className="w-3 h-3" />
-                                </span>
-                            </div>
+                {!loadingDetail && realisasiDetail && data && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 mb-3">
+                        <div className="flex-shrink-0 w-full ">
+                            <RadialChartStacked
+                                anggaran={data.total_pagu_pads}
+                                realisasi={data.total_realisasi_pad}
+                                title="Capaian PAD"
+                                description="Realisasi Target PAD"
+                            />
                         </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-3">
 
-                        {/* Retribusi Daerah */}
-                        <div
-                            onClick={() => openModal(retribusiDaerah)}
-                            className="bg-white dark:bg-neutral-900/50 p-5 rounded-2xl border border-teal-100 dark:border-teal-900 shadow-sm hover:shadow-md transition-all cursor-pointer group"
-                        >
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className="w-8 h-8 rounded-lg bg-amber-600/10 flex items-center justify-center text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                                    <Target className="w-4 h-4" />
-                                </div>
-                                <h3 className="font-bold text-sm text-neutral-800 dark:text-neutral-200">Retribusi Daerah</h3>
-                            </div>
-                            <div className="space-y-2">
-                                <div>
-                                    <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Target</p>
-                                    <p className="text-lg font-bold text-neutral-900 dark:text-white tabular-nums">
-                                        {formatRupiahCompact(retribusiDaerah?.total_anggaran || 0)}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] uppercase tracking-wider text-amber-600 font-bold">Realisasi ({retribusiDaerah?.persen}%)</p>
-                                    <p className="text-lg font-bold text-amber-600 dark:text-amber-400 tabular-nums">
-                                        {formatRupiahCompact(retribusiDaerah?.total_realisasi || 0)}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="mt-4 flex justify-end">
-                                <span className="text-[10px] font-bold text-amber-600 group-hover:underline flex items-center gap-1 uppercase tracking-wider">
-                                    Lihat Detail <TrendingUp className="w-3 h-3" />
-                                </span>
-                            </div>
-                        </div>
+                            {/* Pajak Daerah */}
 
-                        {/* Hasil Pengelolaan Kekayaan */}
-                        <div
-                            onClick={() => openModal(kekayaanDaerah)}
-                            className="bg-white dark:bg-neutral-900/50 p-5 rounded-2xl border border-teal-100 dark:border-teal-900 shadow-sm hover:shadow-md transition-all cursor-pointer group"
-                        >
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                    <Target className="w-4 h-4" />
+                            <div
+                                onClick={() => openModal(pajakDaerah)}
+                                className="bg-white dark:bg-neutral-900/50 p-5 rounded-2xl border border-teal-100 dark:border-teal-900 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+                            >
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-8 h-8 rounded-lg bg-teal-600/10 flex items-center justify-center text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                                        <Target className="w-4 h-4" />
+                                    </div>
+                                    <h3 className="font-bold text-sm text-neutral-800 dark:text-neutral-200">Pajak Daerah</h3>
                                 </div>
-                                <h3 className="font-bold text-sm text-neutral-800 dark:text-neutral-200">Hasil Pengelolaan Kekayaan</h3>
-                            </div>
-                            <div className="space-y-2">
-                                <div>
-                                    <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Target</p>
-                                    <p className="text-lg font-bold text-neutral-900 dark:text-white tabular-nums">
-                                        {formatRupiahCompact(kekayaanDaerah?.total_anggaran || 0)}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] uppercase tracking-wider text-blue-600 font-bold">Realisasi ({kekayaanDaerah?.persen}%)</p>
-                                    <p className="text-lg font-bold text-blue-600 dark:text-blue-400 tabular-nums">
-                                        {formatRupiahCompact(kekayaanDaerah?.total_realisasi || 0)}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="mt-4 flex justify-end">
-                                <span className="text-[10px] font-bold text-blue-600 group-hover:underline flex items-center gap-1 uppercase tracking-wider">
-                                    Lihat Detail <TrendingUp className="w-3 h-3" />
-                                </span>
-                            </div>
-                        </div>
+                                <div className="space-y-2">
+                                    <div>
+                                        <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Target</p>
+                                        <p className="text-lg font-bold text-neutral-900 dark:text-white tabular-nums">
+                                            {formatRupiahCompact(pajakDaerah?.total_anggaran || 0)}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] uppercase tracking-wider text-teal-600 font-bold">Realisasi ({pajakDaerah?.persen}%)</p>
+                                        <p className="text-lg font-bold text-teal-600 dark:text-teal-400 tabular-nums">
+                                            {formatRupiahCompact(pajakDaerah?.total_realisasi || 0)}
+                                        </p>
+                                    </div>
 
-                        {/* Lain-lain PAD yang Sah */}
-                        <div
-                            onClick={() => openModal(lainLainPad)}
-                            className="bg-white dark:bg-neutral-900/50 p-5 rounded-2xl border border-teal-100 dark:border-teal-900 shadow-sm hover:shadow-md transition-all cursor-pointer group"
-                        >
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className="w-8 h-8 rounded-lg bg-purple-600/10 flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                                    <Target className="w-4 h-4" />
                                 </div>
-                                <h3 className="font-bold text-sm text-neutral-800 dark:text-neutral-200">Lain-lain PAD Sah</h3>
-                            </div>
-                            <div className="space-y-2">
-                                <div>
-                                    <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Target</p>
-                                    <p className="text-lg font-bold text-neutral-900 dark:text-white tabular-nums">
-                                        {formatRupiahCompact(lainLainPad?.total_anggaran || 0)}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] uppercase tracking-wider text-purple-600 font-bold">Realisasi ({lainLainPad?.persen}%)</p>
-                                    <p className="text-lg font-bold text-purple-600 dark:text-purple-400 tabular-nums">
-                                        {formatRupiahCompact(lainLainPad?.total_realisasi || 0)}
-                                    </p>
+                                <div className="mt-4 flex justify-end">
+                                    <span className="text-[10px] font-bold text-teal-600 group-hover:underline flex items-center gap-1 uppercase tracking-wider">
+                                        Lihat Detail <TrendingUp className="w-3 h-3" />
+                                    </span>
                                 </div>
                             </div>
-                            <div className="mt-4 flex justify-end">
-                                <span className="text-[10px] font-bold text-purple-600 group-hover:underline flex items-center gap-1 uppercase tracking-wider">
-                                    Lihat Detail <TrendingUp className="w-3 h-3" />
-                                </span>
+
+                            {/* Retribusi Daerah */}
+                            <div
+                                onClick={() => openModal(retribusiDaerah)}
+                                className="bg-white dark:bg-neutral-900/50 p-5 rounded-2xl border border-teal-100 dark:border-teal-900 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+                            >
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-8 h-8 rounded-lg bg-amber-600/10 flex items-center justify-center text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                                        <Target className="w-4 h-4" />
+                                    </div>
+                                    <h3 className="font-bold text-sm text-neutral-800 dark:text-neutral-200">Retribusi Daerah</h3>
+                                </div>
+                                <div className="space-y-2">
+                                    <div>
+                                        <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Target</p>
+                                        <p className="text-lg font-bold text-neutral-900 dark:text-white tabular-nums">
+                                            {formatRupiahCompact(retribusiDaerah?.total_anggaran || 0)}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] uppercase tracking-wider text-amber-600 font-bold">Realisasi ({retribusiDaerah?.persen}%)</p>
+                                        <p className="text-lg font-bold text-amber-600 dark:text-amber-400 tabular-nums">
+                                            {formatRupiahCompact(retribusiDaerah?.total_realisasi || 0)}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="mt-4 flex justify-end">
+                                    <span className="text-[10px] font-bold text-amber-600 group-hover:underline flex items-center gap-1 uppercase tracking-wider">
+                                        Lihat Detail <TrendingUp className="w-3 h-3" />
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Hasil Pengelolaan Kekayaan */}
+                            <div
+                                onClick={() => openModal(kekayaanDaerah)}
+                                className="bg-white dark:bg-neutral-900/50 p-5 rounded-2xl border border-teal-100 dark:border-teal-900 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+                            >
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                        <Target className="w-4 h-4" />
+                                    </div>
+                                    <h3 className="font-bold text-sm text-neutral-800 dark:text-neutral-200">Hasil Pengelolaan Kekayaan</h3>
+                                </div>
+                                <div className="space-y-2">
+                                    <div>
+                                        <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Target</p>
+                                        <p className="text-lg font-bold text-neutral-900 dark:text-white tabular-nums">
+                                            {formatRupiahCompact(kekayaanDaerah?.total_anggaran || 0)}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] uppercase tracking-wider text-blue-600 font-bold">Realisasi ({kekayaanDaerah?.persen}%)</p>
+                                        <p className="text-lg font-bold text-blue-600 dark:text-blue-400 tabular-nums">
+                                            {formatRupiahCompact(kekayaanDaerah?.total_realisasi || 0)}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="mt-4 flex justify-end">
+                                    <span className="text-[10px] font-bold text-blue-600 group-hover:underline flex items-center gap-1 uppercase tracking-wider">
+                                        Lihat Detail <TrendingUp className="w-3 h-3" />
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Lain-lain PAD yang Sah */}
+                            <div
+                                onClick={() => openModal(lainLainPad)}
+                                className="bg-white dark:bg-neutral-900/50 p-5 rounded-2xl border border-teal-100 dark:border-teal-900 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+                            >
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-8 h-8 rounded-lg bg-purple-600/10 flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                                        <Target className="w-4 h-4" />
+                                    </div>
+                                    <h3 className="font-bold text-sm text-neutral-800 dark:text-neutral-200">Lain-lain PAD Sah</h3>
+                                </div>
+                                <div className="space-y-2">
+                                    <div>
+                                        <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Target</p>
+                                        <p className="text-lg font-bold text-neutral-900 dark:text-white tabular-nums">
+                                            {formatRupiahCompact(lainLainPad?.total_anggaran || 0)}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] uppercase tracking-wider text-purple-600 font-bold">Realisasi ({lainLainPad?.persen}%)</p>
+                                        <p className="text-lg font-bold text-purple-600 dark:text-purple-400 tabular-nums">
+                                            {formatRupiahCompact(lainLainPad?.total_realisasi || 0)}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="mt-4 flex justify-end">
+                                    <span className="text-[10px] font-bold text-purple-600 group-hover:underline flex items-center gap-1 uppercase tracking-wider">
+                                        Lihat Detail <TrendingUp className="w-3 h-3" />
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -465,8 +481,8 @@ const PendapatanDaerahPage = ({ initialTahun, initialData, initialRealisasiDetai
                 )}
 
                 {/* ── SKPD Table ──────────────────────────────────────────────── */}
-                <div className="rounded-lg lg:rounded-2xl bg-neutral-50 dark:bg-zinc-900/30 border border-neutral-200 dark:border-teal-950 p-4 lg:p-6">
-                    <h2 className="text-md font-semibold text-neutral-900 dark:text-neutral-100 mb-6">
+                <div className="rounded-lg lg:rounded-2xl bg-neutral-50 dark:bg-zinc-900/30 border border-neutral-200 dark:border-teal-950 p-2 lg:p-3">
+                    <h2 className="text-md font-medium text-neutral-900 dark:text-neutral-100 mb-6">
                         {!loading && data && (
                             <>
                                 Breakdown per SKPD (Satuan Kerja Perangkat Daerah)
